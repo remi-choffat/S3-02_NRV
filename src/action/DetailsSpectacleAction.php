@@ -20,5 +20,8 @@ class DetailsSpectacleAction extends Action
             <p><b>Nombre de places :</b> {$spectacle['nb_places']}</p>
             <p><b>Description :</b> {$spectacle['description']}</p>
             </div>";
+
+        // TODO - Pour le moment, l'affichage est fait en récupérant les informations de la liste de spectacles fictifs (Repository).
+        //  Créer une méthode string afficher() dans Spectacle et dans Soiree.
     }
 }

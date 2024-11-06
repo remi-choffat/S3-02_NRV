@@ -49,6 +49,10 @@ class Dispatcher
     </head>
     <body>
     <div class='header'>
+       <h1 class="title">
+            <img src='resources/logo.png' style='height: 40px;' alt='NRV'/>
+            Nancy Rock Vibration 🎶
+       </h1>
        <nav>
             <ul>
                 <li><a href='?action=default'>Accueil</a></li>
@@ -58,7 +62,6 @@ class Dispatcher
         </nav>
     </div>
     <hr/>
-    <br/>
     $html
     </body>
     </html>

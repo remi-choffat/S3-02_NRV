@@ -1,35 +1,40 @@
 <?php
+
 namespace iutnc\nrv\festival;
 
 class Spectacle
 {
-private string $titre;
-private array $artites;
-private array $images;
-private string $url;
-private string $horaire;
-public function __construct($titre,$artites,$horaire)
-{
-$this->images=[];
-$this->artites=$artites;
-$this->titre=$titre;
-$this->url="";
-$this->horaire=$horaire;
-}
+    private string $titre;
+    private array $artistes;
+    private array $images;
+    private string $url;
+    private string $horaire;
+    private Lieu $lieu;
+
+    public function __construct(string $titre, array $artistes, string $horaire, Lieu $lieu)
+    {
+        $this->images = [];
+        $this->artistes = $artistes;
+        $this->titre = $titre;
+        $this->url = "";
+        $this->horaire = $horaire;
+        $this->lieu = $lieu;
+    }
 
     /**
      * @param Soiree $s
      * @return string génére une description du spectacle
      */
-public function genererDescription(Soiree $s):string{
-    $res = "Le $this->titre sera réalisé par les artistes: ";
-    for ($i=0;$i<sizeof($this->artites)-2;$i++){
-        $res.=$this->artites[$i].", ";
+    public function genererDescription(Soiree $s): string
+    {
+        $res = "Le $this->titre sera réalisé par les artistes: ";
+        for ($i = 0; $i < sizeof($this->artistes) - 2; $i++) {
+            $res .= $this->artistes[$i] . ", ";
+        }
+        $date = $s->getDate();
+        $res .= "et " . $this->artistes[sizeof($this->artistes) - 1] . " aura lieu le $date à $this->horaire";
+        return $res;
     }
-    $date=$s->getDate();
-    $res.="et ".$this->artites[sizeof($this->artites)-1]." aura lieu le $date à $this->horaire";
-    return $res;
-}
 
     /**
      * @return string
@@ -42,9 +47,9 @@ public function genererDescription(Soiree $s):string{
     /**
      * @return array
      */
-    public function getArtites(): array
+    public function getartistes(): array
     {
-        return $this->artites;
+        return $this->artistes;
     }
 
     /**
@@ -69,6 +74,11 @@ public function genererDescription(Soiree $s):string{
     public function getUrl(): string
     {
         return $this->url;
+    }
+
+    public function getLieu(): Lieu
+    {
+        return $this->lieu;
     }
 
 }
