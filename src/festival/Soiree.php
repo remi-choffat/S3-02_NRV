@@ -4,7 +4,7 @@ use iutnc\nrv\festival\Spectacle;
 use iutnc\nrv\festival\Lieu;
 use iutnc\nrv\exception\LieuIncompatibleException;
 /**
- * classe Spectacle
+ * classe Soiree
  */
 class Soiree
 {

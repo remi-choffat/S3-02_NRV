@@ -1,11 +1,11 @@
 <?php
 namespace iutnc\nrv\exception;
 /**
- * exception thrown when an invalid property name is used
+ * exception lancée lorsqu'un spectacle n'est pas compatible avec le lieu de la soirée
  */
 class LieuIncompatibleException extends \Exception {
     /**
-     * constructor of the class
+     * constructeur
      * @param string $message
      */
     public function __construct(){
