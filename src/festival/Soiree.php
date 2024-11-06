@@ -121,4 +121,21 @@ class Soiree
             unset($this->spectacles[$key]);
         }
     }
+
+    public function afficherCompact():string
+    {
+        $affichage = "<h3>" . $this->nom . "</h3>" . "<br/>" . "<p>" . $this->theme . "</p>" . " - " . "<p>" . $this->date . "</p>" . " - " . "<p>" . $this->lieu . "</p>";
+        return $affichage;
+    }
+
+    public function afficherComplet():string
+    {
+        $sortie = "<div class='list-spectacle'>";
+        foreach ($this->spectacles as $spectacle){
+            $sortie .= "<p>" . $spectacle . "</p>";
+        }
+        $sortie .= "</div>";
+        $affichage = "<h3>" . $this->nom . "</h3>" . "<br/>" . "<p><b>" . "Theme : " . "</b>" . $this->theme . "</p>" . "<br/>" . "<p><b>" . "Date : " . "</b>" . $this->date . "</p>" . "<br/>" . "<p><b>" . "Débute à : " . "</b>". $this->heureDebut . "</p>" . "<br/>" . "<p><b>" . "Lieu : " . "</b>". $this->lieu->getNom() . "</p>" . "<br/>" . "<p>" . "Liste des spectacles :" . "<br/>" . $sortie . "</p>";
+        return $affichage;
+    }
 }
