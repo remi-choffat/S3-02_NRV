@@ -1,0 +1,10 @@
+/node_modules/
+*.log
+*.cache
+*.env
+*.bak
+*.tmp
+*.swp
+*.ini
+*.pdf
+.idea/

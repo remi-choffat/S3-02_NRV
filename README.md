@@ -1,2 +1,3 @@
-# S3-02_NRV
-SAÉ Développer une application web sécurisée
+# Application Web "Nancy Rock Vibration"
+
+> Rémi CHOFFAT, Gabriel COMTE, Mathis SEGARD, Nathan VIRY
