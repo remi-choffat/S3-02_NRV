@@ -5,6 +5,9 @@ namespace iutnc\nrv\festival;
 
 use DateTime;
 
+/**
+ * Représente un spectacle
+ */
 class Spectacle
 {
     private int $id;

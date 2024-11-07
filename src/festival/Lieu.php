@@ -2,6 +2,10 @@
 declare(strict_types=1);
 
 namespace iutnc\nrv\festival;
+
+/**
+ * Représente un lieu
+ */
 class Lieu
 {
 
@@ -20,7 +24,6 @@ class Lieu
      * @param int $nb_places_debout
      * Crée un Lieu
      */
-
     public function __construct(int $id, string $nom, string $adresse, int $nb_places_assises, int $nb_places_debout)
     {
         $this->id = $id;
