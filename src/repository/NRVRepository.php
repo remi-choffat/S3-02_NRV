@@ -16,32 +16,32 @@ class NRVRepository
 
     private function __construct()
     {
-//        $dsn = sprintf(
-//            '%s:host=%s;dbname=%s;charset=utf8mb4',
-//            self::$config['driver'],
-//            self::$config['host'],
-//            self::$config['dbname']
-//        );
-//
-//        try {
-//            $this->pdo = new PDO($dsn, self::$config['username'], self::$config['password']);
-//            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//        } catch (PDOException $e) {
-//            throw new \RuntimeException('Database connection error : ' . $e->getMessage());
-//        }
+        $dsn = sprintf(
+            '%s:host=%s;dbname=%s;charset=utf8mb4',
+            self::$config['driver'],
+            self::$config['host'],
+            self::$config['dbname']
+        );
+
+        try {
+            $this->pdo = new PDO($dsn, self::$config['username'], self::$config['password']);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            throw new \RuntimeException('Erreur de connexion à la base de données : ' . $e->getMessage());
+        }
     }
 
     public static function setConfig(string $file): void
     {
         if (!file_exists($file)) {
-            // throw new \InvalidArgumentException("Configuration file not found : $file");
             self::$config = [];
+            throw new \InvalidArgumentException("Configuration file not found : $file");
         }
 
-//        self::$config = parse_ini_file($file);
-//        if (self::$config === false) {
-//            throw new \RuntimeException("Error parsing configuration file : $file");
-//        }
+        self::$config = parse_ini_file($file);
+        if (self::$config === false) {
+            throw new \RuntimeException("Error parsing configuration file : $file");
+        }
     }
 
     public static function getInstance(): NRVRepository
