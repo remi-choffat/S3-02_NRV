@@ -22,9 +22,7 @@ class Soiree
      * @param string $nom
      * @param string $theme
      * @param string $date
-     * @param string $heureDebut
      * @param Lieu $lieu
-     * @param array $spectacles
      */
     public function __construct(string $nom, string $theme, string $date, Lieu $lieu){
         $this->nom = $nom;
@@ -90,7 +88,7 @@ class Soiree
      */
     public  function ajouteSpectacle(Spectacle $spectacle){
         if(!in_array($spectacle, $this->spectacles)){
-            if($spectacle->getLieu().equals($this->lieu)){
+            if($spectacle->getLieu()->equals($this->lieu)){
                 $this->spectacles[] = $spectacle;
             }else{
                 throw new LieuIncompatibleException();

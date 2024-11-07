@@ -80,6 +80,5 @@ class Lieu{
      */
     public function equals(Lieu $l):bool{
         return $this->nom === $l->getNom() && $this->addresse ===$l->getAddresse();
-
     }
 }

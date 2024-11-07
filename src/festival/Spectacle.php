@@ -4,14 +4,14 @@ namespace iutnc\nrv\festival;
 class Spectacle
 {
 private string $titre;
-private array $artites;
+private array $artistes;
 private array $images;
 private string $url;
 private string $horaire;
 public function __construct($titre,$artites,$horaire)
 {
 $this->images=[];
-$this->artites=$artites;
+$this->artistes=$artites;
 $this->titre=$titre;
 $this->url="";
 $this->horaire=$horaire;
@@ -23,11 +23,11 @@ $this->horaire=$horaire;
      */
 public function genererDescription(Soiree $s):string{
     $res = "Le $this->titre sera réalisé par les artistes: ";
-    for ($i=0;$i<sizeof($this->artites)-2;$i++){
-        $res.=$this->artites[$i].", ";
+    for ($i=0;$i<sizeof($this->artistes)-2;$i++){
+        $res.=$this->artistes[$i].", ";
     }
     $date=$s->getDate();
-    $res.="et ".$this->artites[sizeof($this->artites)-1]." aura lieu le $date à $this->horaire";
+    $res.="et ".$this->artistes[sizeof($this->artistes)-1]." aura lieu le $date à $this->horaire";
     return $res;
 }
 
@@ -42,9 +42,9 @@ public function genererDescription(Soiree $s):string{
     /**
      * @return array
      */
-    public function getArtites(): array
+    public function getArtistes(): array
     {
-        return $this->artites;
+        return $this->artistes;
     }
 
     /**
