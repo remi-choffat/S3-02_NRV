@@ -35,7 +35,7 @@ class NRVRepository
             self::$config = [];
         }
 
-//        self::$config = parse_ini_file($file);
+        self::$config = parse_ini_file($file);
 //        if (self::$config === false) {
 //            throw new \RuntimeException("Error parsing configuration file : $file");
 //        }

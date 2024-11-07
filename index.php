@@ -8,7 +8,7 @@ use iutnc\nrv\repository\NRVRepository;
 require_once 'vendor/autoload.php';
 session_start();
 
-NRVRepository::setConfig('UN_FICHIER_DE_CONFIG');
+NRVRepository::setConfig('config.db.ini');
 
 // Crée un dispatcheur et exécute l'action
 $action = $_GET['action'] ?? 'null';
