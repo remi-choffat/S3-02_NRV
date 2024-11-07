@@ -6,6 +6,10 @@ use iutnc\nrv\repository\NRVRepository;
 
 class ListeSpectaclesAction extends Action
 {
+    /**
+     * fonction execute qui permet de lister les spectacles de la soirée
+     * @return string
+     */
     public function execute(): string
     {
         $html = "<h2 class='subtitle'>Liste des spectacles du festival</h2>";

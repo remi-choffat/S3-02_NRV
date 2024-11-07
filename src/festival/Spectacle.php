@@ -30,20 +30,6 @@ class Spectacle
         $this->nb_places = $nb_places;
     }
 
-    /**
-     * @param Soiree $s
-     * @return string génére une description du spectacle
-     */
-    public function genererDescription(Soiree $s): string
-    {
-        $res = "Le $this->titre sera réalisé par les artistes: ";
-        for ($i = 0; $i < sizeof($this->artistes) - 2; $i++) {
-            $res .= $this->artistes[$i] . ", ";
-        }
-        $date = $s->getDate();
-        $res .= "et " . $this->artistes[sizeof($this->artistes) - 1] . " aura lieu le $date à $this->horaire";
-        return $res;
-    }
 
     /**
      * @return string

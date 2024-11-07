@@ -121,7 +121,11 @@ class Soiree
 //            }
         }
     }
-
+    /**
+     * 
+     * affiche le résumé de la soirée en html
+     * @return string
+     */
     public function afficherResume(): string
     {
         return <<<HTML
@@ -135,7 +139,10 @@ class Soiree
 HTML;
 
     }
-
+    /**
+     * affiche les détails de la soirée en html
+     * @return string
+     */
     public function afficherDetails(): string
     {
         $sortie = "<div class='box list-spectacle'>

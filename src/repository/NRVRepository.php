@@ -30,7 +30,11 @@ class NRVRepository
             throw new \RuntimeException('Erreur de connexion à la base de données : ' . $e->getMessage());
         }
     }
-
+    /**
+     * 
+     * * Méthode permettant de définir la configuration de la base de données
+     * @return void
+     */
     public static function setConfig(string $file): void
     {
         if (!file_exists($file)) {
@@ -43,7 +47,11 @@ class NRVRepository
             throw new \RuntimeException("Error parsing configuration file : $file");
         }
     }
-
+    /**
+     * methode permettant de récupérer l'instance de la classe NRVRepository
+     * ne peut être instanciée qu'une seule fois grâce au singleton
+     * @return NRVRepository
+     */
     public static function getInstance(): NRVRepository
     {
         if (self::$instance === null) {
@@ -63,7 +71,10 @@ class NRVRepository
     private array $soirees = [
         ['id' => 1, 'nom' => 'Un soirée interdite aux moins de 18 ans', 'theme' => '🤫', 'date' => '2024-11-07', 'lieu' => 'Un endroit secret', 'heureDebut' => '19h00'],
     ];
-
+    /**
+     * retourne la liste de soirées
+     * @return array
+     */
     public function getSoirees(): array
     {
         $listeSoirees = [];
@@ -84,7 +95,14 @@ class NRVRepository
 
         return $listeSoirees;
     }
-
+    /**
+     * 
+     * * Méthode permettant de récupérer une soirée en fonction de son identifiant
+     * @param int $idSoiree
+     * @throws \InvalidArgumentException
+     * renvoi un erruer si la soirée n'est pas trouvée
+     * @return \iutnc\nrv\festival\Soiree
+     */
     public function getSoiree(int $idSoiree): Soiree
     {
         $soiree = null;
@@ -112,7 +130,10 @@ class NRVRepository
 
         return $soireeAAjouter;
     }
-
+    /**
+     * getter de la liste des spectacles
+     * @return array
+     */
     public function getSpectacles(): array
     {
         $listeSpectacles = [];
@@ -131,7 +152,13 @@ class NRVRepository
 
         return $listeSpectacles;
     }
-
+    /**
+     * 
+     * * Méthode permettant de récupérer un spectacle en fonction de son identifiant
+     * @param int $idSpectacle
+     * @throws \InvalidArgumentException
+     * @return \iutnc\nrv\festival\Spectacle
+     */
     public function getSpectacle(int $idSpectacle): Spectacle
     {
         $spectacle = null;
