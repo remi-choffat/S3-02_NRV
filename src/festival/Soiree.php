@@ -33,7 +33,7 @@ class Soiree
      * @param Lieu $lieu
      * @param array $spectacles
      */
-    public function __construct(int $id, string $nom, string $theme, DateTime $date, Lieu $lieu, $spectacles = [])
+    public function __construct(int $id, string $nom, string $theme, DateTime $date, Lieu $lieu, array $spectacles = [])
     {
         $this->id = $id;
         $this->nom = $nom;
@@ -41,7 +41,7 @@ class Soiree
         $this->date = $date;
         $this->lieu = $lieu;
         $this->spectacles = $spectacles;
-        $this->heureDebut = $date->format('HH:II');
+        $this->heureDebut = $date->format('H:i');
     }
 
 
@@ -163,6 +163,7 @@ HTML;
         <p><b>Thème : </b>{$this->theme}</p>
         <p><b>Date : </b>{$this->date->format('d/m/Y')}</p>
         <p><b>Débute à : </b>{$this->heureDebut}</p>
+        <p><b>Finit à : </b>{$this->getFin()->format("H:i")}</p>
         <p><b>Lieu : </b>{$this->lieu->getNom()}</p>
         <br/>
         <h4 class='title is-4'>Spectacles :</h4>";
@@ -174,10 +175,12 @@ HTML;
     }
 
     /**
-     * @return string retourne la date avec l'heure de fin dans une chaîne sous la forme yyyy-mm-dd hh:ii:ss
+     * Renvoie la date (et l'heure) de fin de la soirée (fin du dernier spectacle)
+     * @return DateTime retourne la date avec l'heure de fin
      */
-    public function getFin():string{
-        return $this->getSpectacles()[sizeof($this->getSpectacles())-1]->getFin();
+    public function getFin(): DateTime
+    {
+        return $this->getSpectacles()[sizeof($this->getSpectacles()) - 1]->getFin();
     }
 
 }
