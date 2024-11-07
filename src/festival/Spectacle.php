@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types= 1);
 namespace iutnc\nrv\festival;
 
 class Spectacle
@@ -75,10 +75,37 @@ class Spectacle
     {
         return $this->url;
     }
-
+    /**
+     * @return Lieu
+     */
     public function getLieu(): Lieu
     {
         return $this->lieu;
+    }
+    /**
+     * Helper method to implode artistes array
+     * @return string
+     */
+    private function implodeArtistes(): string
+    {
+        return implode(", ", $this->artistes);
+    }
+    
+    /**rendu html de l'objet
+     * @return string
+     */
+    public function renduHtml(): string
+    {
+                return <<<HTML
+                <ul>
+                    <li>Titre: {$this->titre}</li>
+                    <li>Artistes: "  {$this->implodeArtistes()}  "</li>
+                    <li>Horaire: {$this->horaire}</li>
+                    <li>Lieu: {$this->lieu->getNom()}</li>
+                    <li>Adresse: {$this->lieu->getAddresse()}</li>
+                    <li>URL: {$this->url}</li>
+                </ul>
+        HTML;
     }
 
 }

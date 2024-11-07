@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types= 1);
 namespace iutnc\nrv\festival;
 
 use iutnc\nrv\festival\Spectacle;
@@ -110,25 +110,13 @@ class Soiree
         }
     }
 
-    /**
-     * supprimer un spectacle
-     * @param Spectacle $spectacle
-     */
-    public function supprimeSpectacle(Spectacle $spectacle)
-    {
-        $key = array_search($spectacle, $this->spectacles);
-        if ($key !== false) {
-            unset($this->spectacles[$key]);
-        }
-    }
-
-    public function afficherCompact():string
+    public function renduHtmlSimple():string
     {
         $affichage = "<h3>" . $this->nom . "</h3>" . "<br/>" . "<p>" . $this->theme . "</p>" . " - " . "<p>" . $this->date . "</p>" . " - " . "<p>" . $this->lieu . "</p>";
         return $affichage;
     }
 
-    public function afficherComplet():string
+    public function renduHtmlDetaille():string
     {
         $sortie = "<div class='list-spectacle'>";
         foreach ($this->spectacles as $spectacle){
