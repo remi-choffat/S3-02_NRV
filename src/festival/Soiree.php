@@ -159,4 +159,16 @@ HTML;
         $sortie .= "</div>";
         return $sortie;
     }
+
+    /**
+     * @return string retourne la date avec leur de fin dans une chaîne sous la forme yyyy-mm-dd hh:ii:ss
+     */
+    public function getFin():string{
+        $d = new \DateTime();
+        $ds =str_getcsv($this->getDate(),"-");
+        $d->setDate($ds[0],$ds[1],$ds[2]);
+        $ds =str_getcsv($this->getHeureDebut(),":");
+        $d->setTime($ds[0],$ds[1],$ds[2]);
+        return $d->format("YY-MM-DD HH:II:SS");
+    }
 }
