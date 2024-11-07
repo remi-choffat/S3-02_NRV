@@ -1,6 +1,31 @@
-html, body {
-    background-color: #f0f0f0;
-    font-family: Arial, sans-serif;
-    margin: 10px;
+html {
+    background-color: antiquewhite;
+}
+
+body {
+    margin: 20px;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+}
+
+nav ul {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
     padding: 0;
+}
+
+nav ul li a {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    color: chocolate;
 }

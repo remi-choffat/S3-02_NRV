@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace iutnc\nrv\dispatch;
 
 use iutnc\nrv\action\DefaultAction;
+use iutnc\nrv\action\DetailsSpectacleAction;
+use iutnc\nrv\action\ListeSpectaclesAction;
 
 class Dispatcher
 {
@@ -24,6 +26,8 @@ class Dispatcher
     {
         $action = match ($this->action) {
             default => new DefaultAction(),
+            'liste-spectacles' => new ListeSpectaclesAction(),
+            'details-spectacle' => new DetailsSpectacleAction(),
         };
         $html = $action->execute();
         $this->renderPage($html);
@@ -40,20 +44,24 @@ class Dispatcher
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css'>
 <!--    <link rel='icon' type='image/png' href='resources/logo.png'>-->
     <link rel='stylesheet' type='text/css' href='resources/style.css'>
-    <title>NRV</title>
+    <link rel="icon" type="image/png" href="resources/logo.png">
+    <title>Nancy Rock Vibration 🎶</title>
     </head>
     <body>
     <div class='header'>
+       <h1 class="title">
+            <img src='resources/logo.png' style='height: 40px;' alt='NRV'/>
+            Nancy Rock Vibration 🎶
+       </h1>
        <nav>
             <ul>
                 <li><a href='?action=default'>Accueil</a></li>
-                <li><a href='?action=#'>Action 1</a></li>
-                <li><a href='?action=#'>Action 2</a></li>
+                <li><a href='?action=liste-spectacles'>Liste des spectacles</a></li>
+                <li><a href='?action=#'>Action inexistante...</a></li>
             </ul>
         </nav>
     </div>
     <hr/>
-    <br/>
     $html
     </body>
     </html>

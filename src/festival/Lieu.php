@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
+
 namespace iutnc\nrv\festival;
-class Lieu{
+class Lieu
+{
 
     private string $nom;
     private string $addresse;
@@ -17,13 +19,13 @@ class Lieu{
      *crée un Lieu
      */
 
-    public function __construct(string $nom,string $addresse,int $nb_places_assises,int $nb_places_debout)
+    public function __construct(string $nom, string $addresse, int $nb_places_assises, int $nb_places_debout)
     {
-        $this->image= [];
-        $this->nom=$nom;
-        $this->addresse=$addresse;
+        $this->image = [];
+        $this->nom = $nom;
+        $this->addresse = $addresse;
         $this->nb_places_debout = $nb_places_debout;
-        $this->nb_places_assises=$nb_places_assises;
+        $this->nb_places_assises = $nb_places_assises;
     }
 
     /**
@@ -38,7 +40,8 @@ class Lieu{
      * @param string $lien
      * @return void
      */
-    public function addImage(string $lien){
+    public function addImage(string $lien)
+    {
         $this->image[] = $lien;
     }
 
@@ -78,7 +81,9 @@ class Lieu{
      * @param Lieu $l
      * @return bool vrai si les deux Lieux sont identiques
      */
-    public function equals(Lieu $l):bool{
-        return $this->nom === $l->getNom() && $this->addresse ===$l->getAddresse();
+    public function equals(Lieu $l): bool
+    {
+        return $this->nom === $l->getNom() && $this->addresse === $l->getAddresse();
+
     }
 }
