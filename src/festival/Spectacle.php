@@ -110,6 +110,24 @@ class Spectacle
     }
 
     /**
+     * @return int
+     */
+    public function getDuree(): int
+    {
+        return $this->duree;
+    }
+
+    /**
+     * @return string retourne la date avec l'heure de fin dans une chaîne sous la forme yyyy-mm-dd hh:ii:ss
+     */
+    public function getFin():string{
+        $d = $this->date;
+        $temps = $this->getDuree();
+        $d=$d->add(\DateInterval::createFromDateString("$temps minutes"));
+        return $d->format("YY-MM-DD HH:II");
+    }
+
+    /**
      * Rendu HTML de l'objet
      * @return string
      */
