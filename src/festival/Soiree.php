@@ -120,7 +120,7 @@ class Soiree
     {
         $sortie = "<div class='list-spectacle'>";
         foreach ($this->spectacles as $spectacle){
-            $sortie .= "<p>" . $spectacle . "</p>";
+            $sortie .= $spectacle->renduHtmlDetaille;
         }
         $sortie .= "</div>";
         $affichage = "<h3>" . $this->nom . "</h3>" . "<br/>" . "<p><b>" . "Theme : " . "</b>" . $this->theme . "</p>" . "<br/>" . "<p><b>" . "Date : " . "</b>" . $this->date . "</p>" . "<br/>" . "<p><b>" . "Débute à : " . "</b>". $this->heureDebut . "</p>" . "<br/>" . "<p><b>" . "Lieu : " . "</b>". $this->lieu->getNom() . "</p>" . "<br/>" . "<p>" . "Liste des spectacles :" . "<br/>" . $sortie . "</p>";
