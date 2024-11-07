@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace iutnc\nrv\festival;
 
-use DateTime;
+use \DateTime;
 use iutnc\nrv\festival\Spectacle;
 use iutnc\nrv\festival\Lieu;
 use iutnc\nrv\exception\LieuIncompatibleException;
@@ -19,7 +19,7 @@ class Soiree
     private int $id;
     private string $nom;
     private string $theme;
-    private \DateTime $date;
+    private DateTime $date;
     private string $heureDebut;
     private Lieu $lieu;
     private array $spectacles;
@@ -40,7 +40,7 @@ class Soiree
         $this->date = $date;
         $this->lieu = $lieu;
         $this->spectacles = $spectacles;
-        $this->heureDebut = $date->format('H:i');
+        $this->heureDebut = $date->format('HH:II');
     }
 
     /**
@@ -161,14 +161,10 @@ HTML;
     }
 
     /**
-     * @return string retourne la date avec leur de fin dans une chaîne sous la forme yyyy-mm-dd hh:ii:ss
+     * @return string retourne la date avec l'heure de fin dans une chaîne sous la forme yyyy-mm-dd hh:ii:ss
      */
     public function getFin():string{
-        $d = new \DateTime();
-        $ds =str_getcsv($this->getDate(),"-");
-        $d->setDate($ds[0],$ds[1],$ds[2]);
-        $ds =str_getcsv($this->getHeureDebut(),":");
-        $d->setTime($ds[0],$ds[1],$ds[2]);
-        return $d->format("YY-MM-DD HH:II:SS");
+        return $this->getSpectacles()[sizeof($this->getSpectacles())-1]->getFin();
     }
+
 }
