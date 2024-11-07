@@ -4,17 +4,16 @@ declare(strict_types=1);
 namespace iutnc\nrv\festival;
 
 use DateTime;
-use iutnc\nrv\festival\Spectacle;
-use iutnc\nrv\festival\Lieu;
 use iutnc\nrv\exception\LieuIncompatibleException;
 
 /**
- * classe Soiree
+ * Représente une soirée
  */
 class Soiree
 {
+
     /**
-     * attribut de la classe
+     * Attributs de la classe
      */
     private int $id;
     private string $nom;
@@ -24,6 +23,7 @@ class Soiree
     private Lieu $lieu;
     private array $spectacles;
 
+
     /**
      * Constructeur de la classe
      * @param int $id
@@ -31,6 +31,7 @@ class Soiree
      * @param string $theme
      * @param DateTime $date
      * @param Lieu $lieu
+     * @param array $spectacles
      */
     public function __construct(int $id, string $nom, string $theme, DateTime $date, Lieu $lieu, $spectacles = [])
     {
@@ -43,6 +44,7 @@ class Soiree
         $this->heureDebut = $date->format('H:i');
     }
 
+
     /**
      * getter de l'attribut id
      * @return int
@@ -51,6 +53,7 @@ class Soiree
     {
         return $this->id;
     }
+
 
     /**
      * getter de l'attribut nom
@@ -61,6 +64,7 @@ class Soiree
         return $this->nom;
     }
 
+
     /**
      * getter de l'attribut theme
      * @return string
@@ -70,14 +74,16 @@ class Soiree
         return $this->theme;
     }
 
+
     /**
      * getter de l'attribut date
-     * @return string
+     * @return DateTime
      */
-    public function getDate(): string
+    public function getDate(): DateTime
     {
         return $this->date;
     }
+
 
     /**
      * getter de l'attribut heureDebut
@@ -88,14 +94,16 @@ class Soiree
         return $this->heureDebut;
     }
 
+
     /**
-     * getter de l'attribut lieu
+     * Getter de l'attribut lieu
      * @return Lieu
      */
     public function getLieu(): Lieu
     {
         return $this->lieu;
     }
+
 
     /**
      * getter de l'attribut spectacles
@@ -106,24 +114,27 @@ class Soiree
         return $this->spectacles;
     }
 
+
     /**
      * Ajoute un spectacle
      * Vérifie si le spectacle n'est pas déjà dans la liste
      * @param Spectacle $spectacle
+     * @throws LieuIncompatibleException
      */
     public function ajouterSpectacle(Spectacle $spectacle): void
     {
         if (!in_array($spectacle, $this->spectacles)) {
             if ($spectacle->getLieu()->equals($this->lieu)) {
-            $this->spectacles[] = $spectacle;
+                $this->spectacles[] = $spectacle;
             } else {
                 throw new LieuIncompatibleException();
             }
         }
     }
+
+
     /**
-     * 
-     * affiche le résumé de la soirée en html
+     * Affiche le résumé de la soirée en html
      * @return string
      */
     public function afficherResume(): string
@@ -139,8 +150,10 @@ class Soiree
 HTML;
 
     }
+
+
     /**
-     * affiche les détails de la soirée en html
+     * Affiche les détails de la soirée en HTML
      * @return string
      */
     public function afficherDetails(): string
