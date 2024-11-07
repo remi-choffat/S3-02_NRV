@@ -15,10 +15,17 @@ body {
     margin: 20px;
 }
 
+
+
 .box{
     background-color: #bbe0ff;
     margin: 20px;
 }
+
+.box .box{
+    background-color: white;
+}
+
 
 .header{
     padding: 20px 20px 0px 20px;
