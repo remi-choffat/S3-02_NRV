@@ -3,7 +3,6 @@
 namespace iutnc\nrv\action;
 
 class SupprimerSpectaclePrefAction extends Action{
-
     public function execute(): string
     {
         $html = "";

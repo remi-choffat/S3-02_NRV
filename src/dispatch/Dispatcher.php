@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace iutnc\nrv\dispatch;
 
+use iutnc\nrv\action\AjouterSpectaclePrefAction;
 use iutnc\nrv\action\DefaultAction;
 use iutnc\nrv\action\DetailsSoireeAction;
 use iutnc\nrv\action\DetailsSpectacleAction;
 use iutnc\nrv\action\ListeSoireesAction;
+use iutnc\nrv\action\ListeSpectaclePrefAction;
 use iutnc\nrv\action\ListeSpectaclesAction;
+use iutnc\nrv\action\SupprimerSpectaclePrefAction;
 
 class Dispatcher
 {
@@ -27,11 +30,14 @@ class Dispatcher
     public function run(): void
     {
         $action = match ($this->action) {
-            default => new DefaultAction(),
             'liste-spectacles' => new ListeSpectaclesAction(),
             'details-spectacle' => new DetailsSpectacleAction(),
             'liste-soirees' => new ListeSoireesAction(),
             'details-soiree' => new DetailsSoireeAction(),
+            'ajouter-pref' => new AjouterSpectaclePrefAction(),
+            'supprimer-pref'=> new SupprimerSpectaclePrefAction(),
+            'liste-favoris' => new ListeSpectaclePrefAction(),
+            default => new DefaultAction()
         };
         $html = $action->execute();
         $this->renderPage($html);
