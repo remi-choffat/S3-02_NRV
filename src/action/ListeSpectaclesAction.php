@@ -13,7 +13,7 @@ class ListeSpectaclesAction extends Action
     public function execute(): string
     {
         $html = "<h2 class='subtitle'>Liste des spectacles du festival</h2>";
-        $spectacles = NRVRepository::getInstance()->getSpectacles();
+        $spectacles = $_SESSION["favoris"];
         foreach ($spectacles as $spectacle) {
             $html .= $spectacle->afficherResume();
         }
