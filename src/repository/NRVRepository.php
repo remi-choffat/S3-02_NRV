@@ -3,13 +3,18 @@
 namespace iutnc\nrv\repository;
 
 use DateMalformedStringException;
+use DateTime;
 use InvalidArgumentException;
 use iutnc\nrv\festival\Lieu;
 use iutnc\nrv\festival\Spectacle;
 use iutnc\nrv\festival\Soiree;
 use PDO;
 use PDOException;
+use RuntimeException;
 
+/**
+ * Repository : accès à la base de données
+ */
 class NRVRepository
 {
     private static array $config;
@@ -29,10 +34,16 @@ class NRVRepository
             $this->pdo = new PDO($dsn, self::$config['username'], self::$config['password']);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            throw new \RuntimeException('Erreur de connexion à la base de données : ' . $e->getMessage());
+            throw new RuntimeException('Erreur de connexion à la base de données : ' . $e->getMessage());
         }
     }
 
+
+    /**
+     * Charge la configuration de la base de données
+     * @param string $file
+     * @return void
+     */
     public static function setConfig(string $file): void
     {
         if (!file_exists($file)) {
@@ -42,10 +53,15 @@ class NRVRepository
 
         self::$config = parse_ini_file($file);
         if (self::$config === false) {
-            throw new \RuntimeException("Error parsing configuration file : $file");
+            throw new RuntimeException("Error parsing configuration file : $file");
         }
     }
 
+
+    /**
+     * Récupère l'instance de NRVRepository
+     * @return NRVRepository
+     */
     public static function getInstance(): NRVRepository
     {
         if (self::$instance === null) {
@@ -55,6 +71,12 @@ class NRVRepository
         return self::$instance;
     }
 
+
+    /**
+     * Récupère la liste des spectacles
+     * @return array|null
+     * @throws DateMalformedStringException
+     */
     public function getSpectacles(): ?array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM SPECTACLE');
@@ -65,11 +87,16 @@ class NRVRepository
             return null;
         }
 
-        $listeSpectacles = array_map(fn($spectacle) => $this->mapToSpectacle($spectacle), $spectaclesData);
-
-        return $listeSpectacles;
+        return array_map(fn($spectacle) => $this->mapToSpectacle($spectacle), $spectaclesData);
     }
 
+
+    /**
+     * Récupère un spectacle
+     * @param int $idSpectacle l'ID du spectacle
+     * @return Spectacle
+     * @throws DateMalformedStringException
+     */
     public function getSpectacle(int $idSpectacle): Spectacle
     {
         $stmt = $this->pdo->prepare('SELECT * FROM SPECTACLE WHERE id = :id');
@@ -83,6 +110,12 @@ class NRVRepository
         return $this->mapToSpectacle($spectacleData);
     }
 
+
+    /**
+     * Récupère la liste des soirées
+     * @return array|null
+     * @throws DateMalformedStringException
+     */
     public function getSoirees(): ?array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM SOIREE');
@@ -96,7 +129,10 @@ class NRVRepository
         return array_map(fn($soiree) => $this->mapToSoiree($soiree), $soireesData);
     }
 
+
     /**
+     * Récupère une soirée
+     * @param int $idSoiree l'ID de la soirée
      * @throws DateMalformedStringException
      */
     public function getSoiree(int $idSoiree): Soiree
@@ -112,6 +148,12 @@ class NRVRepository
         return $this->mapToSoiree($soireeData);
     }
 
+
+    /**
+     * Récupère la liste des lieux
+     * @param int $lieuId
+     * @return Lieu
+     */
     private function fetchLieu(int $lieuId): Lieu
     {
         $stmt = $this->pdo->prepare('SELECT * FROM LIEU WHERE id = :id');
@@ -121,6 +163,12 @@ class NRVRepository
         return new Lieu($lieuData['id'], $lieuData['nom'], $lieuData['adresse'], $lieuData['nbpldeb'], $lieuData['nbplass']);
     }
 
+
+    /**
+     * Récupère la liste des artistes d'un spectacle
+     * @param int $spectacleId
+     * @return array
+     */
     private function fetchArtistes(int $spectacleId): array
     {
         $stmt = $this->pdo->prepare('
@@ -135,6 +183,13 @@ class NRVRepository
         return array_map(fn($artiste) => $artiste['nomArtiste'], $artistesData);
     }
 
+
+    /**
+     * Transforme un tableau de données en objet Spectacle
+     * @param array $spectacleData
+     * @return Spectacle
+     * @throws DateMalformedStringException
+     */
     private function mapToSpectacle(array $spectacleData): Spectacle
     {
         $lieu = $this->fetchLieu($spectacleData['lieu']);
@@ -143,7 +198,7 @@ class NRVRepository
         return new Spectacle(
             $spectacleData['id'],
             $spectacleData['nom'],
-            new \DateTime($spectacleData['date']),
+            new DateTime($spectacleData['date']),
             $spectacleData['duree'],
             $artistes,
             $lieu,
@@ -153,6 +208,13 @@ class NRVRepository
         );
     }
 
+
+    /**
+     * Récupère la liste des spectacles d'une soirée
+     * @param int $soireeId
+     * @return array
+     * @throws DateMalformedStringException
+     */
     private function fetchSpectaclesForSoiree(int $soireeId): array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM SPECTACLE WHERE soiree = :soireeId');
@@ -162,7 +224,11 @@ class NRVRepository
         return array_map(fn($spectacle) => $this->mapToSpectacle($spectacle), $spectaclesData);
     }
 
+
     /**
+     * Transforme un tableau de données en objet Soiree
+     * @param array $soireeData
+     * @return Soiree
      * @throws DateMalformedStringException
      */
     private function mapToSoiree(array $soireeData): Soiree
@@ -174,9 +240,10 @@ class NRVRepository
             $soireeData['id'],
             $soireeData['nom'],
             $soireeData['theme'],
-            new \DateTime($soireeData['date']),
+            new DateTime($soireeData['date']),
             $lieu,
             $spectacles
         );
     }
+
 }
