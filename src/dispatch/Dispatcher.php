@@ -70,7 +70,6 @@ class Dispatcher
                 <li><a href='?action=liste-soirees'>Liste des soirées</a></li>
             </ul>
        </nav>
-       <hr/>
     </div>
     $html
     </body>
