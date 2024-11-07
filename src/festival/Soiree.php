@@ -19,7 +19,7 @@ class Soiree
     private int $id;
     private string $nom;
     private string $theme;
-    private \DateTime $date;
+    private DateTime $date;
     private string $heureDebut;
     private Lieu $lieu;
     private array $spectacles;
@@ -74,7 +74,7 @@ class Soiree
      * getter de l'attribut date
      * @return string
      */
-    public function getDate(): string
+    public function getDate(): DateTime
     {
         return $this->date;
     }

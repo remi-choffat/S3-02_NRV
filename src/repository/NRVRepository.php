@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use iutnc\nrv\festival\Lieu;
 use iutnc\nrv\festival\Spectacle;
 use iutnc\nrv\festival\Soiree;
+use DateTime;
 use PDO;
 use PDOException;
 
@@ -69,7 +70,6 @@ class NRVRepository
 
         return $listeSpectacles;
     }
-
     public function getSpectacle(int $idSpectacle): Spectacle
     {
         $stmt = $this->pdo->prepare('SELECT * FROM SPECTACLE WHERE id = :id');
@@ -174,7 +174,7 @@ class NRVRepository
             $soireeData['id'],
             $soireeData['nom'],
             $soireeData['theme'],
-            new \DateTime($soireeData['date']),
+            new DateTime($soireeData['date']),
             $lieu,
             $spectacles
         );
