@@ -5,6 +5,7 @@ namespace iutnc\nrv\festival;
 class Lieu
 {
 
+    private int $id;
     private string $nom;
     private string $adresse;
     private array $image;
@@ -12,6 +13,7 @@ class Lieu
     private int $nb_places_debout;
 
     /**
+     * @param int $id
      * @param string $nom
      * @param string $adresse
      * @param int $nb_places_assises
@@ -19,13 +21,22 @@ class Lieu
      * Crée un Lieu
      */
 
-    public function __construct(string $nom, string $adresse, int $nb_places_assises, int $nb_places_debout)
+    public function __construct(int $id, string $nom, string $adresse, int $nb_places_assises, int $nb_places_debout)
     {
+        $this->id = $id;
         $this->image = [];
         $this->nom = $nom;
         $this->adresse = $adresse;
         $this->nb_places_debout = $nb_places_debout;
         $this->nb_places_assises = $nb_places_assises;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
     }
 
     /**
@@ -77,15 +88,15 @@ class Lieu
         return $this->image;
     }
 
-//    /**
-//     * @param Lieu $l
-//     * @return bool vrai si les deux Lieux sont identiques
-//     */
-//    public function equals(Lieu $l): bool
-//    {
-//        return $this->nom === $l->getNom() && $this->addresse === $l->getAddresse();
-//
-//    }
+    /**
+     * @param Lieu $l
+     * @return bool vrai si les deux Lieux sont identiques
+     */
+    public function equals(Lieu $l): bool
+    {
+        return $this->nom === $l->getNom() && $this->adresse === $l->getAdresse();
+
+    }
 
     /**
      * toString

@@ -8,7 +8,7 @@ class ListeSpectaclesAction extends Action
 {
     /**
      * fonction execute qui permet de lister les spectacles de la soirée
-     * @return string
+     * @return string affichage des spectacles favoris
      */
     public function execute(): string
     {
