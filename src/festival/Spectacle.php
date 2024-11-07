@@ -1,24 +1,33 @@
 <?php
-declare(strict_types= 1);
+declare(strict_types=1);
+
 namespace iutnc\nrv\festival;
+
+use DateTime;
 
 class Spectacle
 {
+    private int $id;
     private string $titre;
     private array $artistes;
     private array $images;
     private string $url;
+    private DateTime $date;
     private string $horaire;
-    private Lieu $lieu;
+    private int $duree;
+    private string $description;
+    private int $nb_places;
 
-    public function __construct(string $titre, array $artistes, string $horaire, Lieu $lieu)
+    public function __construct(int $id, string $titre, DateTime $date, string $horaire, int $duree, array $artistes, int $nb_places, string $description)
     {
-        $this->images = [];
-        $this->artistes = $artistes;
+        $this->id = $id;
         $this->titre = $titre;
-        $this->url = "";
+        $this->artistes = $artistes;
+        $this->date = $date;
         $this->horaire = $horaire;
-        $this->lieu = $lieu;
+        $this->duree = $duree;
+        $this->description = $description;
+        $this->nb_places = $nb_places;
     }
 
     /**
@@ -75,36 +84,52 @@ class Spectacle
     {
         return $this->url;
     }
-    /**
-     * @return Lieu
-     */
-    public function getLieu(): Lieu
-    {
-        return $this->lieu;
-    }
+
     /**
      * Helper method to implode artistes array
      * @return string
      */
     private function implodeArtistes(): string
     {
-        return implode(", ", $this->artistes);
+        if (empty($this->artistes)) {
+            return "<i>Inconnu</i>";
+        } else {
+            return implode(", ", $this->artistes);
+        }
     }
-    
-    /**rendu html de l'objet
+
+    /**
+     * Rendu HTML de l'objet
      * @return string
      */
-    public function renduHtml(): string
+    public function afficherResume(): string
     {
-                return <<<HTML
-                <ul>
-                    <li>Titre: {$this->titre}</li>
-                    <li>Artistes: "  {$this->implodeArtistes()}  "</li>
-                    <li>Horaire: {$this->horaire}</li>
-                    <li>Lieu: {$this->lieu->getNom()}</li>
-                    <li>Adresse: {$this->lieu->getAddresse()}</li>
-                    <li>URL: {$this->url}</li>
-                </ul>
+        return <<<HTML
+                <div class="box">
+                    <h3 class="title is-4"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>
+                    <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
+                    <p><b>Date :</b> {$this->date->format('d/m/Y')}</p>
+                    <p><b>Heure :</b> $this->horaire</p>
+                </div>
+        HTML;
+    }
+
+    /**
+     * Rendu HTML détaillé de l'objet
+     * @return string
+     */
+    public function afficherDetails(): string
+    {
+        return <<<HTML
+                <div class="box">
+                    <h3 class="title is-3">{$this->titre}</h3>
+                    <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
+                    <p><b>Date :</b> {$this->date->format('d/m/Y')}</p>
+                    <p><b>Heure :</b> $this->horaire</p>
+                    <p><b>Durée :</b> $this->duree minutes</p>
+                    <p><b>Nombre de places :</b> $this->nb_places</p>
+                    <p><b>Description :</b> $this->description</p>
+                </div>
         HTML;
     }
 

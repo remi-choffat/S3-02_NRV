@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace iutnc\nrv\dispatch;
 
 use iutnc\nrv\action\DefaultAction;
+use iutnc\nrv\action\DetailsSoireeAction;
 use iutnc\nrv\action\DetailsSpectacleAction;
+use iutnc\nrv\action\ListeSoireesAction;
 use iutnc\nrv\action\ListeSpectaclesAction;
 
 class Dispatcher
@@ -28,6 +30,8 @@ class Dispatcher
             default => new DefaultAction(),
             'liste-spectacles' => new ListeSpectaclesAction(),
             'details-spectacle' => new DetailsSpectacleAction(),
+            'liste-soirees' => new ListeSoireesAction(),
+            'details-soiree' => new DetailsSoireeAction(),
         };
         $html = $action->execute();
         $this->renderPage($html);
@@ -57,7 +61,7 @@ class Dispatcher
             <ul>
                 <li><a href='?action=default'>Accueil</a></li>
                 <li><a href='?action=liste-spectacles'>Liste des spectacles</a></li>
-                <li><a href='?action=#'>Action inexistante...</a></li>
+                <li><a href='?action=liste-soirees'>Liste des soirées</a></li>
             </ul>
         </nav>
     </div>

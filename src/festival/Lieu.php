@@ -6,24 +6,24 @@ class Lieu
 {
 
     private string $nom;
-    private string $addresse;
+    private string $adresse;
     private array $image;
     private int $nb_places_assises;
     private int $nb_places_debout;
 
     /**
      * @param string $nom
-     * @param string $addresse
+     * @param string $adresse
      * @param int $nb_places_assises
      * @param int $nb_places_debout
-     *crée un Lieu
+     * Crée un Lieu
      */
 
-    public function __construct(string $nom, string $addresse, int $nb_places_assises, int $nb_places_debout)
+    public function __construct(string $nom, string $adresse, int $nb_places_assises, int $nb_places_debout)
     {
         $this->image = [];
         $this->nom = $nom;
-        $this->addresse = $addresse;
+        $this->adresse = $adresse;
         $this->nb_places_debout = $nb_places_debout;
         $this->nb_places_assises = $nb_places_assises;
     }
@@ -48,9 +48,9 @@ class Lieu
     /**
      * @return string
      */
-    public function getAddresse(): string
+    public function getAdresse(): string
     {
-        return $this->addresse;
+        return $this->adresse;
     }
 
     /**
@@ -77,13 +77,22 @@ class Lieu
         return $this->image;
     }
 
-    /**
-     * @param Lieu $l
-     * @return bool vrai si les deux Lieux sont identiques
-     */
-    public function equals(Lieu $l): bool
-    {
-        return $this->nom === $l->getNom() && $this->addresse === $l->getAddresse();
+//    /**
+//     * @param Lieu $l
+//     * @return bool vrai si les deux Lieux sont identiques
+//     */
+//    public function equals(Lieu $l): bool
+//    {
+//        return $this->nom === $l->getNom() && $this->addresse === $l->getAddresse();
+//
+//    }
 
+    /**
+     * toString
+     */
+    public function __toString(): string
+    {
+        return $this->nom;
     }
+
 }

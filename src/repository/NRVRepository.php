@@ -2,6 +2,9 @@
 
 namespace iutnc\nrv\repository;
 
+use iutnc\nrv\festival\Lieu;
+use iutnc\nrv\festival\Soiree;
+use iutnc\nrv\festival\Spectacle;
 use PDO;
 use PDOException;
 
@@ -51,22 +54,108 @@ class NRVRepository
     }
 
 
-    // Méthodes d'accès à la base de données...
-
+    // Tableau de spectacles fictifs pour tester, en attendant la base de données
     private array $spectacles = [
-        ['id' => 1, 'titre' => 'Spectacle 1', 'date' => '2021-10-01', 'horaire' => '20h00', 'lieu' => 'Chez la mère à Mathis', 'artiste' => 'Artiste 1', 'nb_places' => 100, 'description' => 'Description du spectacle 1'],
-        ['id' => 2, 'titre' => 'Spectacle 2', 'date' => '2021-10-02', 'horaire' => '20h00', 'lieu' => 'Chez la mère à Mathis', 'artiste' => 'Artiste 2', 'nb_places' => 100, 'description' => 'Description du spectacle 2'],
-        ['id' => 3, 'titre' => 'Spectacle 3', 'date' => '2021-10-03', 'horaire' => '20h00', 'lieu' => 'Chez la mère à Mathis', 'artiste' => 'Artiste 3', 'nb_places' => 100, 'description' => 'Description du spectacle 3'],
+        ['id' => 1, 'titre' => 'Un super strip-tease', 'date' => '2024-11-07', 'horaire' => '20h00', 'duree' => 120, 'artistes' => ['Mathis', 'La mère à Mathis'], 'nb_places' => 69, 'description' => '🔞🐖'],
+        ['id' => 2, 'titre' => 'Un autre spectacle', 'date' => '2024-11-08', 'horaire' => '19h00', 'duree' => 5, 'artistes' => [], 'nb_places' => 0, 'description' => '🤷‍♂️'],
     ];
+
+    private array $soirees = [
+        ['id' => 1, 'nom' => 'Un soirée interdite aux moins de 18 ans', 'theme' => '🤫', 'date' => '2024-11-07', 'lieu' => 'Un endroit secret', 'heureDebut' => '19h00'],
+    ];
+
+    public function getSoirees(): array
+    {
+        $listeSoirees = [];
+        foreach ($this->soirees as $soiree) {
+
+            $soireeAAjouter = new Soiree(
+                $soiree['id'],
+                $soiree['nom'],
+                $soiree['theme'],
+                $soiree['date'],
+                new Lieu($soiree['lieu'], 'adresse fictive', 10, 10),
+                $soiree['heureDebut']
+            );
+
+            $listeSoirees[] = $soireeAAjouter;
+
+        }
+
+        return $listeSoirees;
+    }
+
+    public function getSoiree(int $idSoiree): Soiree
+    {
+        $soiree = null;
+        foreach ($this->soirees as $s) {
+            if ($s['id'] === $idSoiree) {
+                $soiree = $s;
+                break;
+            }
+        }
+
+        if ($soiree === null) {
+            throw new \InvalidArgumentException("Soirée non trouvée");
+        }
+
+        $soireeAAjouter = new Soiree(
+            $soiree['id'],
+            $soiree['nom'],
+            $soiree['theme'],
+            $soiree['date'],
+            new Lieu($soiree['lieu'], 'adresse fictive', 10, 10),
+            $soiree['heureDebut']
+        );
+
+        $soireeAAjouter->ajouterSpectacle($this->getSpectacle(1));
+
+        return $soireeAAjouter;
+    }
 
     public function getSpectacles(): array
     {
-        return $this->spectacles;
+        $listeSpectacles = [];
+        foreach ($this->spectacles as $spectacle) {
+            $listeSpectacles[] = new Spectacle(
+                $spectacle['id'],
+                $spectacle['titre'],
+                new \DateTime($spectacle['date']),
+                $spectacle['horaire'],
+                $spectacle['duree'],
+                $spectacle['artistes'],
+                $spectacle['nb_places'],
+                $spectacle['description']
+            );
+        }
+
+        return $listeSpectacles;
     }
 
-    public function getSpectacle(int $idSpectacle): array
+    public function getSpectacle(int $idSpectacle): Spectacle
     {
-        return $this->spectacles[$idSpectacle - 1];
+        $spectacle = null;
+        foreach ($this->spectacles as $s) {
+            if ($s['id'] === $idSpectacle) {
+                $spectacle = $s;
+                break;
+            }
+        }
+
+        if ($spectacle === null) {
+            throw new \InvalidArgumentException("Spectacle non trouvé");
+        }
+
+        return new Spectacle(
+            $spectacle['id'],
+            $spectacle['titre'],
+            new \DateTime($spectacle['date']),
+            $spectacle['horaire'],
+            $spectacle['duree'],
+            $spectacle['artistes'],
+            $spectacle['nb_places'],
+            $spectacle['description']
+        );
     }
 
 }
