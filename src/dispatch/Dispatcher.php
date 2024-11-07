@@ -69,9 +69,9 @@ class Dispatcher
                 <li><a href='?action=liste-spectacles'>Liste des spectacles</a></li>
                 <li><a href='?action=liste-soirees'>Liste des soirées</a></li>
             </ul>
-        </nav>
+       </nav>
+       <hr/>
     </div>
-    <hr/>
     $html
     </body>
     </html>
