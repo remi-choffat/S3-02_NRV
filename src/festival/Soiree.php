@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace iutnc\nrv\festival;
 
+use DateTime;
 use iutnc\nrv\festival\Spectacle;
 use iutnc\nrv\festival\Lieu;
 use iutnc\nrv\exception\LieuIncompatibleException;
@@ -18,7 +19,7 @@ class Soiree
     private int $id;
     private string $nom;
     private string $theme;
-    private string $date;
+    private \DateTime $date;
     private string $heureDebut;
     private Lieu $lieu;
     private array $spectacles;
@@ -28,19 +29,18 @@ class Soiree
      * @param int $id
      * @param string $nom
      * @param string $theme
-     * @param string $date
+     * @param DateTime $date
      * @param Lieu $lieu
-     * @param string $heureDebut
      */
-    public function __construct(int $id, string $nom, string $theme, string $date, Lieu $lieu, string $heureDebut)
+    public function __construct(int $id, string $nom, string $theme, DateTime $date, Lieu $lieu, $spectacles = [])
     {
         $this->id = $id;
         $this->nom = $nom;
         $this->theme = $theme;
         $this->date = $date;
         $this->lieu = $lieu;
-        $this->spectacles = [];
-        $this->heureDebut = $heureDebut;
+        $this->spectacles = $spectacles;
+        $this->heureDebut = $date->format('H:i');
     }
 
     /**
@@ -114,11 +114,11 @@ class Soiree
     public function ajouterSpectacle(Spectacle $spectacle): void
     {
         if (!in_array($spectacle, $this->spectacles)) {
-//            if ($spectacle->getLieu()->equals($this->lieu)) {
+            if ($spectacle->getLieu()->equals($this->lieu)) {
             $this->spectacles[] = $spectacle;
-//            } else {
-//                throw new LieuIncompatibleException();
-//            }
+            } else {
+                throw new LieuIncompatibleException();
+            }
         }
     }
     /**
@@ -132,7 +132,7 @@ class Soiree
         <div class="box soiree">
             <h3 class="title is-4"><a href="?action=details-soiree&id={$this->getId()}">{$this->nom}</a></h3>
             <p><b>Thème : </b>{$this->theme}</p>
-            <p><b>Date : </b>{$this->date}</p>
+            <p><b>Date : </b>{$this->date->format('d/m/Y')}</p>
             <p><b>Débute à : </b>{$this->heureDebut}</p>
             <p><b>Lieu : </b>{$this->lieu->getNom()}</p>
         </div>
@@ -148,7 +148,7 @@ HTML;
         $sortie = "<div class='box list-spectacle'>
         <h3 class='title is-3'>{$this->nom}</h3>
         <p><b>Thème : </b>{$this->theme}</p>
-        <p><b>Date : </b>{$this->date}</p>
+        <p><b>Date : </b>{$this->date->format('d/m/Y')}</p>
         <p><b>Débute à : </b>{$this->heureDebut}</p>
         <p><b>Lieu : </b>{$this->lieu->getNom()}</p>
         <br/>
