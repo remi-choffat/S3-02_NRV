@@ -1,5 +1,6 @@
 <?php
-declare(strict_types= 1);
+declare(strict_types=1);
+
 namespace iutnc\nrv\festival;
 
 use iutnc\nrv\festival\Spectacle;
@@ -14,6 +15,7 @@ class Soiree
     /**
      * attribut de la classe
      */
+    private int $id;
     private string $nom;
     private string $theme;
     private string $date;
@@ -23,19 +25,31 @@ class Soiree
 
     /**
      * Constructeur de la classe
+     * @param int $id
      * @param string $nom
      * @param string $theme
      * @param string $date
      * @param Lieu $lieu
+     * @param string $heureDebut
      */
-    public function __construct(string $nom, string $theme, string $date, Lieu $lieu, string $heureDebut)
+    public function __construct(int $id, string $nom, string $theme, string $date, Lieu $lieu, string $heureDebut)
     {
+        $this->id = $id;
         $this->nom = $nom;
         $this->theme = $theme;
         $this->date = $date;
         $this->lieu = $lieu;
         $this->spectacles = [];
         $this->heureDebut = $heureDebut;
+    }
+
+    /**
+     * getter de l'attribut id
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
     }
 
     /**
@@ -95,35 +109,54 @@ class Soiree
     /**
      * Ajoute un spectacle
      * Vérifie si le spectacle n'est pas déjà dans la liste
-     * et si le lieu est le même que celui de la soirée
      * @param Spectacle $spectacle
-     * @throws LieuIncompatibleException
      */
-    public function ajouteSpectacle(Spectacle $spectacle): void
+    public function ajouterSpectacle(Spectacle $spectacle): void
     {
         if (!in_array($spectacle, $this->spectacles)) {
-            if ($spectacle->getLieu()->equals($this->lieu)) {
-                $this->spectacles[] = $spectacle;
-            } else {
-                throw new LieuIncompatibleException();
-            }
+//            if ($spectacle->getLieu()->equals($this->lieu)) {
+            $this->spectacles[] = $spectacle;
+//            } else {
+//                throw new LieuIncompatibleException();
+//            }
         }
     }
-
-    public function renduHtmlSimple():string
+    /**
+     * 
+     * affiche le résumé de la soirée en html
+     * @return string
+     */
+    public function afficherResume(): string
     {
-        $affichage = "<h3>" . $this->nom . "</h3>" . "<br/>" . "<p>" . $this->theme . "</p>" . " - " . "<p>" . $this->date . "</p>" . " - " . "<p>" . $this->lieu . "</p>";
-        return $affichage;
+        return <<<HTML
+        <div class="box soiree">
+            <h3 class="title is-4"><a href="?action=details-soiree&id={$this->getId()}">{$this->nom}</a></h3>
+            <p><b>Thème : </b>{$this->theme}</p>
+            <p><b>Date : </b>{$this->date}</p>
+            <p><b>Débute à : </b>{$this->heureDebut}</p>
+            <p><b>Lieu : </b>{$this->lieu->getNom()}</p>
+        </div>
+HTML;
+
     }
-
-    public function renduHtmlDetaille():string
+    /**
+     * affiche les détails de la soirée en html
+     * @return string
+     */
+    public function afficherDetails(): string
     {
-        $sortie = "<div class='list-spectacle'>";
-        foreach ($this->spectacles as $spectacle){
-            $sortie .= $spectacle->renduHtmlDetaille;
+        $sortie = "<div class='box list-spectacle'>
+        <h3 class='title is-3'>{$this->nom}</h3>
+        <p><b>Thème : </b>{$this->theme}</p>
+        <p><b>Date : </b>{$this->date}</p>
+        <p><b>Débute à : </b>{$this->heureDebut}</p>
+        <p><b>Lieu : </b>{$this->lieu->getNom()}</p>
+        <br/>
+        <h4 class='title is-4'>Spectacles :</h4>";
+        foreach ($this->spectacles as $spectacle) {
+            $sortie .= $spectacle->afficherResume();
         }
         $sortie .= "</div>";
-        $affichage = "<h3>" . $this->nom . "</h3>" . "<br/>" . "<p><b>" . "Theme : " . "</b>" . $this->theme . "</p>" . "<br/>" . "<p><b>" . "Date : " . "</b>" . $this->date . "</p>" . "<br/>" . "<p><b>" . "Débute à : " . "</b>". $this->heureDebut . "</p>" . "<br/>" . "<p><b>" . "Lieu : " . "</b>". $this->lieu->getNom() . "</p>" . "<br/>" . "<p>" . "Liste des spectacles :" . "<br/>" . $sortie . "</p>";
-        return $affichage;
+        return $sortie;
     }
 }

@@ -14,7 +14,10 @@ abstract class Action {
         $this->hostname = $_SERVER['HTTP_HOST'];
         $this->script_name = $_SERVER['SCRIPT_NAME'];
     }
-
+    /**
+     * fonction abastrait qui serait implémentée par les classes filles
+     * @return string
+     */
     abstract public function execute() : string;
 
 }
