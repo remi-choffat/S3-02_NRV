@@ -303,42 +303,68 @@ class NRVRepository
             $spectacles
         );
     }
+
+
     /**
-     * getUtilisateur
+     * Récupère un utilisateur
      * @param string $email
      * @return Utilisateur
      * @throws AuthnException
      */
-    public function getUtilisateur(string $email): Utilisateur{
+    public function getUtilisateur(string $email): Utilisateur
+    {
         $stmt = $this->pdo->prepare('SELECT * FROM UTILISATEUR WHERE email = :email');
         $stmt->execute(['email' => $email]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if(!$row){
+        if (!$row) {
             throw new AuthnException('Utilisateur non trouvé');
-        }else{
+        } else {
             return new Utilisateur($row['nom'], $row['email'], $row['password'], $row['role'], $row['id']);
         }
     }
+
+
     /**
-     * addUtilisateur
-     * @param Utilisateur $utilisateur
-     * @throws InscriptionException
+     * Récupère les spectacles similaires à un spectacle donné
+     * @param int $spectacleId l'ID du spectacle
+     * @param string $style le style du spectacle
+     * @param int $lieuId l'ID du lieu
+     * @param DateTime $date la date du spectacle
+     * @return array la liste des spectacles similaires
+     * @throws DateMalformedStringException si la date n'est pas au format attendu
      */
-    public function addUtilisateur (Utilisateur $utilisateur) :void{
+    public function getSimilarSpectacles(int $spectacleId, string $style, int $lieuId, DateTime $date): array
+    {
+        $query = 'SELECT * FROM SPECTACLE WHERE id != ? AND (style = ? OR lieu = ? OR DATE(date) = ?)';
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([$spectacleId, $style, $lieuId, $date->format('Y-m-d')]);
+        $spectaclesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(fn($spectacle) => $this->mapToSpectacle($spectacle), $spectaclesData);
+    }
+
+
+    /**
+     * Ajoute uun utilisateur
+     * @param Utilisateur $utilisateur l'utilisateur à ajouter
+     * @throws InscriptionException si l'utilisateur existe déjà
+     */
+    public function addUtilisateur(Utilisateur $utilisateur): void
+    {
         //verification si l'utilisateur existe déjà
         $stmt = $this->pdo->prepare('SELECT id FROM UTILISATEUR WHERE email = :email');
         $stmt->execute(['email' => $utilisateur->getEmail()]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if($row){
+        if ($row) {
             throw new InscriptionException('Un utilisateur avec cet email existe déjà');
-        }else{
+        } else {
             $stmt = $this->pdo->prepare('INSERT INTO UTILISATEUR (nom, email, password, role) VALUES (:nom, :email, :password, :role)');
             $stmt->execute([
-                'nom'=> $utilisateur->getNom(),
-                'email'=> $utilisateur->getEmail(),
-                'password'=> password_hash($utilisateur->getPassword(), PASSWORD_BCRYPT),
-                'role'=> $utilisateur->getRole()
+                'nom' => $utilisateur->getNom(),
+                'email' => $utilisateur->getEmail(),
+                'password' => password_hash($utilisateur->getPassword(), PASSWORD_BCRYPT),
+                'role' => $utilisateur->getRole()
             ]);
         }
     }
+
 }
