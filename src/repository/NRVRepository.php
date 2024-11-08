@@ -201,6 +201,7 @@ class NRVRepository
             new DateTime($spectacleData['date']),
             $spectacleData['duree'],
             $artistes,
+            $spectacleData['style'],
             $lieu,
             $spectacleData['description'],
             $spectacleData['annule'] === 1,

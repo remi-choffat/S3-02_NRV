@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace iutnc\nrv\festival;
 
+use DateMalformedStringException;
 use DateTime;
 
 /**
@@ -22,8 +23,23 @@ class Spectacle
     private Lieu $lieu;
     private bool $annule;
     private int $soireeId;
+    private string $style;
 
-    public function __construct(int $id, string $titre, DateTime $date, int $duree, array $artistes, Lieu $lieu, string $description, bool $annule = false, int $soireeId = null)
+
+    /**
+     * Constructeur de la classe Spectacle
+     * @param int $id
+     * @param string $titre
+     * @param DateTime $date
+     * @param int $duree
+     * @param array $artistes
+     * @param string $style
+     * @param Lieu $lieu
+     * @param string $description
+     * @param bool $annule
+     * @param int|null $soireeId
+     */
+    public function __construct(int $id, string $titre, DateTime $date, int $duree, array $artistes, string $style, Lieu $lieu, string $description, bool $annule = false, int $soireeId = null)
     {
         $this->id = $id;
         $this->titre = $titre;
@@ -35,6 +51,7 @@ class Spectacle
         $this->lieu = $lieu;
         $this->annule = $annule;
         $this->soireeId = $soireeId;
+        $this->style = $style;
     }
 
 
@@ -63,6 +80,8 @@ class Spectacle
     {
         return $this->horaire;
     }
+
+
     /**
      * @return DateTime
      */
@@ -70,12 +89,24 @@ class Spectacle
     {
         return $this->date;
     }
+
+
     /**
      * @return array
      */
     public function getImages(): array
     {
         return $this->images;
+    }
+
+
+    /**
+     * Renvoie le style du spectacle
+     * @return string
+     */
+    public function getStyle(): string
+    {
+        return $this->style;
     }
 
 
@@ -141,7 +172,7 @@ class Spectacle
 
 
     /**
-     * Rendu HTML de l'objet
+     * Rendu HTML de l'objet (résumé)
      * @return string
      */
     public function afficherResume(): string
@@ -160,7 +191,7 @@ class Spectacle
     /**
      * Rendu HTML détaillé de l'objet
      * @return string
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function afficherDetails(): string
     {
@@ -183,12 +214,12 @@ class Spectacle
             $statut = "<span class='tag is-info'>Demain</span>";
         }
 
-
         return <<<HTML
                 <div class="box">
                     <h3 class="title is-3">{$this->titre}</h3>
                     <p>$statut</p><br/>
                     <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
+                    <p><b>Style :</b> $this->style</p>
                     <p><b>Date :</b> {$this->date->format('d/m/Y')}</p>
                     <p><b>Heure :</b> $this->horaire</p>
                     <p><b>Durée :</b> $this->duree minutes</p>
