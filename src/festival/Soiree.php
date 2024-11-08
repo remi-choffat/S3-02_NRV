@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace iutnc\nrv\festival;
 
-use \DateTime;
+use DateTime;
 use iutnc\nrv\exception\LieuIncompatibleException;
 
 /**

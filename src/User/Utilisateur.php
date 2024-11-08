@@ -7,6 +7,10 @@ class Utilisateur
 private int $rank;
 private string $name;
 
+    /**
+     * @param int $r rang de l'utilisateur pour savoir s'il est staff ou admin
+     * @param string $n nom de l'utilisateur
+     */
 public function __construct(int $r,string $n)
 {
     $this->name = $n;
