@@ -5,6 +5,8 @@ namespace iutnc\nrv\festival;
 
 use DateMalformedStringException;
 use DateTime;
+use iutnc\nrv\exception\DateIncompatibleException;
+use iutnc\nrv\exception\LieuIncompatibleException;
 use iutnc\nrv\repository\NRVRepository;
 
 
@@ -40,9 +42,26 @@ class Spectacle
      * @param string $description
      * @param bool $annule
      * @param int|null $soireeId
+     * @throws DateMalformedStringException
+     * @throws LieuIncompatibleException si le lieu du spectacle n'est pas le même que le lieu de la soirée
+     * @throws DateIncompatibleException si la date du spectacle n'est pas la même que la date de la soirée
      */
     public function __construct(int $id, string $titre, DateTime $date, int $duree, array $artistes, string $style, Lieu $lieu, string $description, bool $annule = false, int $soireeId = null)
     {
+
+        // Vérifie la cohérence entre la date et le lieu du spectacle et la date et le lieu de la soirée,
+        // si le spectacle appartient à une soirée
+        if ($soireeId !== null) {
+            $soiree = NRVRepository::getInstance()->getSoiree($soireeId);
+            if ($soiree->getDate() > $date) {
+                throw new DateIncompatibleException();
+            }
+            if ($soiree->getLieu()->getId() !== $lieu->getId()) {
+                var_dump($soiree->getLieu(), $lieu);
+                throw new LieuIncompatibleException();
+            }
+        }
+
         $this->id = $id;
         $this->titre = $titre;
         $this->artistes = $artistes;
@@ -120,11 +139,11 @@ class Spectacle
 
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getUrl(): string
+    public function getUrl(): ?string
     {
-        return $this->url;
+        return $this->url ?? null;
     }
 
 
@@ -179,21 +198,26 @@ class Spectacle
         return $d->add(\DateInterval::createFromDateString("$temps minutes"));
     }
 
+
     /**
-     * @return bool
+     * Indique si le spectacle est annulé
+     * @return bool true si le spectacle est annulé, false sinon
      */
-    public function getAnnule(): bool
+    public function isAnnule(): bool
     {
         return $this->annule;
     }
 
+
     /**
+     * Renvoie la description du spectacle
      * @return string
      */
     public function getDescription(): string
     {
         return $this->description;
     }
+
 
     /**
      * Affiche la durée du spectacle en heures et minutes
@@ -211,6 +235,11 @@ class Spectacle
     }
 
 
+    /**
+     * Renvoie la date formatée en français
+     * @param bool $afficherHeure true pour afficher l'heure, false sinon
+     * @return string
+     */
     public function getFormattedDate(bool $afficherHeure = true): string
     {
         $months = [
@@ -251,7 +280,6 @@ class Spectacle
      */
     public function afficherResumeCompact(string $type): string
     {
-
         return <<<HTML
                 <div class="box is-one-third">
                     <h3 class="title is-5"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>

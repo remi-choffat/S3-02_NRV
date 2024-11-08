@@ -12,6 +12,6 @@ class DateIncompatibleException extends \Exception
      */
     public function __construct()
     {
-        parent::__construct("La date du spectacle doit être la même que celle de la soirée");
+        parent::__construct("La date du spectacle doit être la même que celle de la soirée, et doit être postérieure à la date de début de la soirée");
     }
 }

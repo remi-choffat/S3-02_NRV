@@ -367,71 +367,70 @@ class NRVRepository
         }
     }
 
+
     /**
      * Ajoute un spectacle
-     * @param Spectacle $spectacle
+     * @param Spectacle $spectacle le spectacle à ajouter
      */
-    public function addSpectacle(Spectacle $spectacle):void
+    public function addSpectacle(Spectacle $spectacle): void
     {
-        $stmt = $this->pdo->prepare('INSERT INTO SPECTACLE (titre, artistes, images, url, date, horaire, duree, description, lieu, annule, soireeId, style)
-        VALUES (:titre, :artistes, :images, :url, :date, :horaire, :duree, :description, :lieu, :annule, :soireeId, :style)');
+        $stmt = $this->pdo->prepare('INSERT INTO SPECTACLE (nom, style, url, date, duree, annule, description, lieu, soiree) VALUES (:nom, :style, :url, :date, :duree, :annule, :description, :lieu, :soiree)');
         $stmt->execute([
-            'titre' => $spectacle->getTitre(),
-            'artistes' => $spectacle->getArtistes(),
-            'images' => $spectacle->getImages(),
+            'nom' => $spectacle->getTitre(),
+            'style' => $spectacle->getStyle(),
             'url' => $spectacle->getUrl(),
-            'date' => $spectacle->getDate(),
-            'horaire' => $spectacle->getHoraire(),
+            'date' => $spectacle->getDate()->format('Y-m-d H:i:s'),
             'duree' => $spectacle->getDuree(),
+            'annule' => 0,
             'description' => $spectacle->getDescription(),
-            'lieu' => $spectacle->getLieu(),
-            'annule' => $spectacle->getAnnule(),
-            'soireeId' => $spectacle->getSoireeId(),
-            'style' => $spectacle->getStyle()
+            'lieu' => $spectacle->getLieu()->getId(),
+            'soiree' => $spectacle->getSoireeId()
         ]);
     }
+
 
     /**
      * Ajoute une soirée
-     * @param Soiree $soiree
+     * @param Soiree $soiree la soirée à ajouter
      */
-    public function addSoiree(Soiree $soiree):void
+    public function addSoiree(Soiree $soiree): void
     {
-        $stmt = $this->pdo->prepare('INSERT INTO SOIREE (nom, theme, date, heureDebut, lieu, spectacles) VALUES (:nom, :theme, :date, :heureDebut, :lieu, :spectacles)');
+        $stmt = $this->pdo->prepare('INSERT INTO SOIREE (nom, theme, date, lieu) VALUES (:nom, :theme, :date, :lieu)');
         $stmt->execute([
             'nom' => $soiree->getNom(),
             'theme' => $soiree->getTheme(),
-            'date' => $soiree->getDate(),
-            'heureDebut' => $soiree->getHeureDebut(),
-            'lieu' => $soiree->getLieu(),
-            'spectacles' => $soiree->getSpectacles(),
+            'date' => $soiree->getDate()->format('Y-m-d H:i:s'),
+            'lieu' => $soiree->getLieu()->getId()
         ]);
     }
 
+
     /**
      * Ajoute un artiste
-     * @param string $artiste
+     * @param string $artiste nom de l'artiste à ajouter
      */
-    public function addArtiste(string $artiste):void
+    public function addArtiste(string $artiste): void
     {
         $stmt = $this->pdo->prepare('INSERT INTO ARTISTE (nomArtiste) VALUES (:nomArtiste)');
         $stmt->execute([
             'nomArtiste' => $artiste
         ]);
+
     }
+
 
     /**
      * Ajoute un lieu
-     * @param Lieu $lieu
+     * @param Lieu $lieu le lieu à ajouter
      */
-    public function addLieu(Lieu $lieu):void
+    public function addLieu(Lieu $lieu): void
     {
         $stmt = $this->pdo->prepare('INSERT INTO LIEU (nom, adresse, nbpldeb, nbplass) VALUES (:nom, :adresse, :nbpldeb, :nbplass)');
         $stmt->execute([
             'nom' => $lieu->getNom(),
             'adresse' => $lieu->getAdresse(),
-            'nbpldeb' => $lieu->getNbPlacesAssises(),
-            'nbplass' => $lieu->getNbPlacesDebout()
+            'nbpldeb' => $lieu->getNbPlacesDebout(),
+            'nbplass' => $lieu->getNbPlacesAssises()
         ]);
     }
 }
