@@ -65,3 +65,50 @@ nav ul li a {
 nav ul li a:hover {
     color: #4A1378;
 }
+
+/* Style pour le formulaire de filtres */
+#filter-form {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+}
+
+#filter-form h4 {
+    margin-top: 0;
+}
+
+#filter-form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#filter-form button {
+    margin-top: 10px;
+}
+
+.fa-filter {
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.filter-column {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.filter-column:last-child {
+    margin-right: 0;
+}
+
+.filter-icon {
+    display: inline-block;
+    margin-left: 20px;
+    cursor: pointer;
+    font-size: 18px;
+}

@@ -53,8 +53,9 @@ class Dispatcher
     {
         $page = <<<HTML
 <!DOCTYPE html><html lang='fr'><head><meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css'>
-<!--    <link rel='icon' type='image/png' href='resources/logo.png'>-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel='stylesheet' type='text/css' href='resources/style.css'>
     <link rel="icon" type="image/png" href="resources/logo.png">
     <title>Nancy Rock Vibration 🎶</title>

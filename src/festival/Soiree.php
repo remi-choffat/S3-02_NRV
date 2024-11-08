@@ -181,6 +181,7 @@ HTML;
     public function getFin(): DateTime
     {
         return $this->getSpectacles()[sizeof($this->getSpectacles()) - 1]->getFin();
+        // TODO - Erreur, la date de fin est la date du dernier spectacle de la liste, et non du spectacle qui se finit en dernier
     }
 
 }

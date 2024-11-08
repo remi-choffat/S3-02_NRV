@@ -49,7 +49,7 @@ class Spectacle
         $this->description = $description;
         $this->lieu = $lieu;
         $this->annule = $annule;
-        $this->soireeId = $soireeId;
+        $this->soireeId = $soireeId ?? -1;
         $this->style = $style;
     }
 

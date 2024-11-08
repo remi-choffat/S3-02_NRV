@@ -2,11 +2,12 @@
 
 namespace iutnc\nrv\repository;
 
+use DateMalformedStringException;
 use DateTime;
 use InvalidArgumentException;
 use iutnc\nrv\festival\Lieu;
-use iutnc\nrv\festival\Soiree;
 use iutnc\nrv\festival\Spectacle;
+use iutnc\nrv\festival\Soiree;
 use PDO;
 use PDOException;
 use RuntimeException;
@@ -74,6 +75,7 @@ class NRVRepository
     /**
      * Récupère la liste des spectacles
      * @return array|null
+     * @throws DateMalformedStringException
      */
     public function getSpectacles(): ?array
     {
@@ -93,6 +95,7 @@ class NRVRepository
      * Récupère un spectacle
      * @param int $idSpectacle l'ID du spectacle
      * @return Spectacle
+     * @throws DateMalformedStringException
      */
     public function getSpectacle(int $idSpectacle): Spectacle
     {
@@ -111,6 +114,7 @@ class NRVRepository
     /**
      * Récupère la liste des soirées
      * @return array|null
+     * @throws DateMalformedStringException
      */
     public function getSoirees(): ?array
     {
@@ -129,6 +133,7 @@ class NRVRepository
     /**
      * Récupère une soirée
      * @param int $idSoiree l'ID de la soirée
+     * @throws DateMalformedStringException
      */
     public function getSoiree(int $idSoiree): Soiree
     {
@@ -183,6 +188,7 @@ class NRVRepository
      * Transforme un tableau de données en objet Spectacle
      * @param array $spectacleData
      * @return Spectacle
+     * @throws DateMalformedStringException
      */
     private function mapToSpectacle(array $spectacleData): Spectacle
     {
@@ -208,6 +214,7 @@ class NRVRepository
      * Récupère la liste des spectacles d'une soirée
      * @param int $soireeId
      * @return array
+     * @throws DateMalformedStringException
      */
     private function fetchSpectaclesForSoiree(int $soireeId): array
     {
@@ -223,6 +230,7 @@ class NRVRepository
      * Transforme un tableau de données en objet Soiree
      * @param array $soireeData
      * @return Soiree
+     * @throws DateMalformedStringException
      */
     private function mapToSoiree(array $soireeData): Soiree
     {
@@ -237,28 +245,6 @@ class NRVRepository
             $lieu,
             $spectacles
         );
-    }
-
-    /**
-     * utilise la fonction prepare de l'objet PDO stocké dans la classe
-     * @param $query
-     * @param $options
-     * @return false|PDO
-     */
-
-    public function prepare($query, $options = []): false|\PDO
-    {
-        return $this->pdo->prepare($query, $options);
-    }
-
-    /**
-     * @return int rank de l'utilisateur
-     */
-    public function getUserRank($email): int
-    {
-        $stmt = $this->pdo->prepare('SELECT role FROM utilisateur WHERE email = :email');
-        $stmt->execute(['email' => $email]);
-        return (int)$stmt->fetch();
     }
 
 }
