@@ -61,7 +61,13 @@ class Spectacle
     {
         return $this->horaire;
     }
-
+    /**
+     * @return DateTime
+     */
+    public function getDate(): DateTime
+    {
+        return $this->date;
+    }
     /**
      * @return array
      */
