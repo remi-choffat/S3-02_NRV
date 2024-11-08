@@ -2,18 +2,18 @@
 
 namespace iutnc\nrv\auth;
 
-use iutnc\nrv\exception\AuthnException;
+use iutnc\nrv\exception\AccessControlException;
 
 class Authz
 {
     /**
-     * @throws AuthnException
+     * @throws AccessControlException 
      */
     public static function checkRole(int $expectedRole): void
     {
         $utilisateur = AuthProvider::getSignedInUser();
         if ($utilisateur->getRole() < $expectedRole) {
-            throw new AuthnException("Accès refusé : privilèges insuffisants.");
+            throw new AccessControlException ("Accès refusé : privilèges insuffisants.");
         }
     }
 }
