@@ -5,9 +5,12 @@ namespace iutnc\nrv\repository;
 use DateMalformedStringException;
 use DateTime;
 use InvalidArgumentException;
+use iutnc\nrv\exception\InscriptionException;
+use iutnc\nrv\exception\AuthnException;
 use iutnc\nrv\festival\Lieu;
 use iutnc\nrv\festival\Spectacle;
 use iutnc\nrv\festival\Soiree;
+use iutnc\nrv\User\Utilisateur;
 use PDO;
 use PDOException;
 use RuntimeException;
@@ -300,39 +303,42 @@ class NRVRepository
             $spectacles
         );
     }
-
-
     /**
-     * Utilise la fonction prepare de l'objet PDO stocké dans la classe
-     * @param $query
-     * @param array $options
-     * @return false|PDO
+     * getUtilisateur
+     * @param string $email
+     * @return Utilisateur
+     * @throws AuthnException
      */
-    public function prepare($query, array $options = []): false|PDO
-    {
-        return $this->pdo->prepare($query, $options);
-    }
-
-
-    /**
-     * @return int rank de l'utilisateur
-     */
-    public function getUserRank($email): int
-    {
-        $stmt = $this->pdo->prepare('SELECT role FROM UTILISATEUR WHERE email = :email');
+    public function getUtilisateur(string $email): Utilisateur{
+        $stmt = $this->pdo->prepare('SELECT * FROM UTILISATEUR WHERE email = :email');
         $stmt->execute(['email' => $email]);
-        return (int)$stmt->fetch();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if(!$row){
+            throw new AuthnException('Utilisateur non trouvé');
+        }else{
+            return new Utilisateur($row['nom'], $row['email'], $row['password'], $row['role'], $row['id']);
+        }
     }
-
-
-    public function getSimilarSpectacles(int $spectacleId, string $style, int $lieuId, DateTime $date): array
-    {
-        $query = 'SELECT * FROM SPECTACLE WHERE id != ? AND (style = ? OR lieu = ? OR DATE(date) = ?)';
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute([$spectacleId, $style, $lieuId, $date->format('Y-m-d')]);
-        $spectaclesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return array_map(fn($spectacle) => $this->mapToSpectacle($spectacle), $spectaclesData);
+    /**
+     * addUtilisateur
+     * @param Utilisateur $utilisateur
+     * @throws InscriptionException
+     */
+    public function addUtilisateur (Utilisateur $utilisateur) :void{
+        //verification si l'utilisateur existe déjà
+        $stmt = $this->pdo->prepare('SELECT id FROM UTILISATEUR WHERE email = :email');
+        $stmt->execute(['email' => $utilisateur->getEmail()]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if($row){
+            throw new InscriptionException('Un utilisateur avec cet email existe déjà');
+        }else{
+            $stmt = $this->pdo->prepare('INSERT INTO UTILISATEUR (nom, email, password, role) VALUES (:nom, :email, :password, :role)');
+            $stmt->execute([
+                'nom'=> $utilisateur->getNom(),
+                'email'=> $utilisateur->getEmail(),
+                'password'=> password_hash($utilisateur->getPassword(), PASSWORD_BCRYPT),
+                'role'=> $utilisateur->getRole()
+            ]);
+        }
     }
-
 }
