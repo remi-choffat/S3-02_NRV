@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace iutnc\nrv\dispatch;
 
+use DateMalformedStringException;
 use iutnc\nrv\action\AjouterSpectaclePrefAction;
 use iutnc\nrv\action\DefaultAction;
 use iutnc\nrv\action\DetailsSoireeAction;
@@ -26,6 +27,7 @@ class Dispatcher
 
     /**
      * Exécute l'action demandée
+     * @throws DateMalformedStringException
      */
     public function run(): void
     {
@@ -35,7 +37,7 @@ class Dispatcher
             'liste-soirees' => new ListeSoireesAction(),
             'details-soiree' => new DetailsSoireeAction(),
             'ajouter-pref' => new AjouterSpectaclePrefAction(),
-            'supprimer-pref'=> new SupprimerSpectaclePrefAction(),
+            'supprimer-pref' => new SupprimerSpectaclePrefAction(),
             'liste-favoris' => new ListeSpectaclePrefAction(),
             default => new DefaultAction()
         };
@@ -60,12 +62,11 @@ class Dispatcher
     <body>
     <div class='header'>
        <h1 class="title">
-            <img src='resources/logo.png' style='height: 40px;' alt='NRV'/>
+            <a href='?action=default'><img src='resources/logo.png' style='height: 50px;' alt='NRV'/></a>
             Nancy Rock Vibration 🎶
        </h1>
        <nav>
             <ul>
-                <li><a href='?action=default'>Accueil</a></li>
                 <li><a href='?action=liste-spectacles'>Liste des spectacles</a></li>
                 <li><a href='?action=liste-soirees'>Liste des soirées</a></li>
             </ul>

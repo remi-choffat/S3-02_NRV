@@ -46,13 +46,15 @@ class Spectacle
         return $this->titre;
     }
 
+
     /**
      * @return array
      */
-    public function getartistes(): array
+    public function getArtistes(): array
     {
         return $this->artistes;
     }
+
 
     /**
      * @return string
@@ -76,6 +78,7 @@ class Spectacle
         return $this->images;
     }
 
+
     /**
      * @return string
      */
@@ -83,6 +86,7 @@ class Spectacle
     {
         return $this->url;
     }
+
 
     /**
      * @return int l'ID de la soirée
@@ -115,6 +119,27 @@ class Spectacle
         }
     }
 
+
+    /**
+     * @return int
+     */
+    public function getDuree(): int
+    {
+        return $this->duree;
+    }
+
+
+    /**
+     * @return DateTime retourne la date avec l'heure de fin dans une chaîne sous la forme yyyy-mm-dd hh:ii:ss
+     */
+    public function getFin(): DateTime
+    {
+        $d = $this->date;
+        $temps = $this->getDuree();
+        return $d->add(\DateInterval::createFromDateString("$temps minutes"));
+    }
+
+
     /**
      * Rendu HTML de l'objet
      * @return string
@@ -131,9 +156,11 @@ class Spectacle
         HTML;
     }
 
+
     /**
      * Rendu HTML détaillé de l'objet
      * @return string
+     * @throws \DateMalformedStringException
      */
     public function afficherDetails(): string
     {
