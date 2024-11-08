@@ -42,25 +42,22 @@ class Spectacle
      * @param string $description
      * @param bool $annule
      * @param int|null $soireeId
-     * @throws DateMalformedStringException
-     * @throws LieuIncompatibleException si le lieu du spectacle n'est pas le même que le lieu de la soirée
-     * @throws DateIncompatibleException si la date du spectacle n'est pas la même que la date de la soirée
      */
     public function __construct(int $id, string $titre, DateTime $date, int $duree, array $artistes, string $style, Lieu $lieu, string $description, bool $annule = false, int $soireeId = null)
     {
 
         // Vérifie la cohérence entre la date et le lieu du spectacle et la date et le lieu de la soirée,
         // si le spectacle appartient à une soirée
-        if ($soireeId !== null) {
-            $soiree = NRVRepository::getInstance()->getSoiree($soireeId);
-            if ($soiree->getDate() > $date) {
-                throw new DateIncompatibleException();
-            }
-            if ($soiree->getLieu()->getId() !== $lieu->getId()) {
-                var_dump($soiree->getLieu(), $lieu);
-                throw new LieuIncompatibleException();
-            }
-        }
+//        if ($soireeId !== null) {
+//            $soiree = NRVRepository::getInstance()->getSoiree($soireeId);
+//            if ($soiree->getDate() > $date || $soiree->getDate()->format('Y-m-d') !== $date->format('Y-m-d')) {
+//                throw new DateIncompatibleException();
+//            }
+//            if ($soiree->getLieu()->getId() !== $lieu->getId()) {
+//                var_dump($soiree->getLieu(), $lieu);
+//                throw new LieuIncompatibleException();
+//            }
+//        }
 
         $this->id = $id;
         $this->titre = $titre;
@@ -75,6 +72,7 @@ class Spectacle
         $this->style = $style;
     }
 
+
     /**
      * @return int
      */
@@ -82,6 +80,7 @@ class Spectacle
     {
         return $this->id;
     }
+
 
     /**
      * @return string
