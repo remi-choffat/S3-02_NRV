@@ -4,9 +4,12 @@ namespace iutnc\nrv\auth;
 
 use iutnc\nrv\exception\AuthnException;
 
-class Aythz
+class Authz
 {
-    public static function checkRole(int $expectedRole)
+    /**
+     * @throws AuthnException
+     */
+    public static function checkRole(int $expectedRole): void
     {
         $user = AuthProvider::getSignedInUser();
         if ($user->getRank() < $expectedRole) {

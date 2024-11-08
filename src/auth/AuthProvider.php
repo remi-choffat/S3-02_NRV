@@ -11,7 +11,7 @@ use PDOException;
 class AuthProvider
 {
 
-    public static function signin($email, $password)
+    public static function signin($email, $password): void
     {
         try {
             $db = NRVRepository::getInstance();
@@ -32,7 +32,10 @@ class AuthProvider
         }
     }
 
-    public static function register($email, $password)
+    /**
+     * @throws AuthnException
+     */
+    public static function register($email, $password): void
     {
         if (preg_match('/@[A-z]+\.[A-z]+$/', $email) === 0) {
             throw new AuthnException("l'email saisi est invalide");
@@ -81,6 +84,9 @@ class AuthProvider
 
     }
 
+    /**
+     * @throws AuthnException
+     */
     public static function getSignedInUser(): Utilisateur
     {
         if (!isset($_SESSION['user'])) {

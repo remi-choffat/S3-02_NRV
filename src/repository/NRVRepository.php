@@ -73,14 +73,66 @@ class NRVRepository
 
 
     /**
-     * Récupère la liste des spectacles
-     * @return array|null
-     * @throws DateMalformedStringException
+     * Récupère la liste de tous les styles existants
+     * @return array
      */
-    public function getSpectacles(): ?array
+    public function getStyles(): array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM SPECTACLE');
-        $stmt->execute();
+        $stmt = $this->pdo->query('SELECT DISTINCT style FROM SPECTACLE');
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+
+    /**
+     * Récupère la liste de tous les lieux existants
+     * @return array
+     */
+    public function getLieux(): array
+    {
+        $stmt = $this->pdo->query('SELECT * FROM LIEU');
+        $lieuxData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(fn($lieu) => new Lieu($lieu['id'], $lieu['nom'], $lieu['adresse'], $lieu['nbpldeb'], $lieu['nbplass']), $lieuxData);
+    }
+
+
+    /**
+     * Récupère la liste des spectacles correspondant aux critères
+     * @param array $styles la liste des styles
+     * @param array $lieux la liste des lieux
+     * @param string|null $dateStart la date de début de la plage de recherche
+     * @param string|null $dateEnd la date de fin de la plage de recherche
+     * @return array|null la liste des spectacles ou null si aucun spectacle n'est trouvé
+     * @throws DateMalformedStringException si la date n'est pas au format attendu
+     */
+    public function getSpectacles(array $styles = [], array $lieux = [], ?string $dateStart = null, ?string $dateEnd = null): ?array
+    {
+        $query = 'SELECT * FROM SPECTACLE WHERE 1=1';
+        $params = [];
+
+        if (!empty($styles)) {
+            $placeholders = implode(',', array_fill(0, count($styles), '?'));
+            $query .= " AND style IN ($placeholders)";
+            $params = array_merge($params, $styles);
+        }
+
+        if (!empty($lieux)) {
+            $placeholders = implode(',', array_fill(0, count($lieux), '?'));
+            $query .= " AND lieu IN ($placeholders)";
+            $params = array_merge($params, $lieux);
+        }
+
+        if ($dateStart) {
+            $query .= ' AND date >= ?';
+            $params[] = (new DateTime($dateStart))->format('Y-m-d H:i:s');
+        }
+
+        if ($dateEnd) {
+            $query .= ' AND date <= ?';
+            $params[] = (new DateTime($dateEnd))->format('Y-m-d H:i:s');
+        }
+
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute($params);
         $spectaclesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (!$spectaclesData) {
@@ -160,7 +212,7 @@ class NRVRepository
         $stmt->execute(['id' => $lieuId]);
         $lieuData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return new Lieu($lieuData['id'], $lieuData['nom'], $lieuData['adresse'], $lieuData['nbpldeb'], $lieuData['nbplass']);
+        return new Lieu($lieuData['id'], $lieuData['nom'], $lieuData['adresse'], $lieuData['nbplass'], $lieuData['nbpldeb']);
     }
 
 
@@ -245,6 +297,29 @@ class NRVRepository
             $lieu,
             $spectacles
         );
+    }
+
+
+    /**
+     * Utilise la fonction prepare de l'objet PDO stocké dans la classe
+     * @param $query
+     * @param array $options
+     * @return false|PDO
+     */
+    public function prepare($query, array $options = []): false|\PDO
+    {
+        return $this->pdo->prepare($query, $options);
+    }
+
+
+    /**
+     * @return int rank de l'utilisateur
+     */
+    public function getUserRank($email): int
+    {
+        $stmt = $this->pdo->prepare('SELECT role FROM UTILISATEUR WHERE email = :email');
+        $stmt->execute(['email' => $email]);
+        return (int)$stmt->fetch();
     }
 
 }
