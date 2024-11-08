@@ -179,6 +179,21 @@ class Spectacle
         return $d->add(\DateInterval::createFromDateString("$temps minutes"));
     }
 
+    /**
+     * @return bool
+     */
+    public function getAnnule(): bool
+    {
+        return $this->annule;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
 
     /**
      * Affiche la durée du spectacle en heures et minutes
