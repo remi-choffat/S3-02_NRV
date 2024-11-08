@@ -66,7 +66,7 @@ class ListeSpectaclesAction extends Action
               </label>
           </div>
           </div>
-          <button type='submit'>Filtrer</button>
+          <button class='button' type='submit'>Filtrer</button>
         </form>
         <script>
 function toggleFilterForm() {

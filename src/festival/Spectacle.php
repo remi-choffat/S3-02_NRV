@@ -133,7 +133,7 @@ class Spectacle
      */
     public function getSoireeId(): int
     {
-        return $this->soireeId;
+        return $this->soireeId ?? -1;
     }
 
 
