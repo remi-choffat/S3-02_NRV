@@ -1,35 +1,66 @@
 <?php
 
 namespace iutnc\nrv\User;
-
+/**
+ * Classe représentant un utilisateur
+ */
 class Utilisateur
 {
-private int $rank;
-private string $name;
-
     /**
-     * @param int $r rang de l'utilisateur pour savoir s'il est staff ou admin
-     * @param string $n nom de l'utilisateur
+     * attributs de la classe
      */
-public function __construct(int $r,string $n)
-{
-    $this->name = $n;
-    $this->rank = $r;
-}
-
+    private int $id;
+    private string $nom;
+    private string $email;
+    private string $password;
+    private int $role;
     /**
-     * @return string
+     * Constructeur de la classe
+     * @param string $nom
+     * @param string $email
+     * @param string $password
+     * @param int $role
      */
-    public function getName(): string
-    {
-        return $this->name;
+    public function __construct(string $nom, string $email, string $password, int $role, ?int $id){
+        $this->nom = $nom;
+        $this->email = $email;
+        $this->password = $password;
+        $this->role = $role;
+        $this->id = $id;
     }
-
     /**
      * @return int
      */
-    public function getRank(): int
+    public function getId(): int
     {
-        return $this->rank;
+        return $this->id;
+    }
+    /**
+     * @return string 
+     */
+    public function getNom(): string
+    {
+        return $this->nom;
+    }
+    /**
+     * @return string
+     */
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+    /**
+     * @return string
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+    /**
+     * @return string
+     */
+    public function getRole(): string
+    {
+        return $this->role;
     }
 }

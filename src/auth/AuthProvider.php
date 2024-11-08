@@ -13,33 +13,25 @@ class AuthProvider
 
     public static function signin($email, $password): void
     {
-        try {
-            $db = NRVRepository::getInstance();
-            $query = "SELECT password FROM UTILISATEUR WHERE email = :email";
-            $stmt = $db->prepare($query);
-            $stmt->bindParam(':email', $email);
-            $stmt->execute();
+        $repo = NRVRepository::getInstance();
+        $user = $repo->getUtilisateur($email);
 
-            $user = $stmt->fetch();
-
-            if (!$user || !password_verify($password, $user['passwd'])) {
-                throw new PDOException("Identifiants invalides.");
-            }
-            // L'authentification a réussi
-            $_SESSION["user"] = new Utilisateur($db->getUserRank($email), $email);
-        } catch (PDOException $e) {
-            throw new AuthnException("Erreur lors de la connexion à la base de données : " . $e->getMessage());
+        if (!$user || !password_verify($password, $user->getPassword())) {
+            throw new PDOException("Identifiants invalides.");
         }
+        // L'authentification a réussi
+        $_SESSION["utilisateur"] = serialize($user);
     }
 
     /**
      * @throws AuthnException
      */
-    public static function register($email, $password): void
+    public static function register(Utilisateur $utilisateur): void
     {
-        if (preg_match('/@[A-z]+\.[A-z]+$/', $email) === 0) {
+        if (preg_match('/@[A-z]+\.[A-z]+$/', $utilisateur->getEmail()) === 0) {
             throw new AuthnException("l'email saisi est invalide");
         }
+        $password = $utilisateur->getPassword();
         $error = "Le mot de passe ne comporte pas: ";
         if (strlen($password) < 12) {
             $error .= "au moins 12 caractères.<br>";
@@ -55,33 +47,10 @@ class AuthProvider
         }
         if (str_contains($error, "au moins")) {
             throw new AuthnException($error);
+        }else {
+            $repo = NRVRepository::getInstance();
+            $repo->addUtilisateur($utilisateur);
         }
-
-        $db = NRVRepository::getInstance();
-
-        // Vérification si l'utilisateur existe déjà
-        $query = "SELECT id FROM UTILISATEUR WHERE email = :email";
-        $stmt = $db->prepare($query);
-        try {
-            $stmt->bindParam(':email', $email);
-            $stmt->execute();
-            if ($stmt->fetch()) {
-                throw new AuthnException("Un utilisateur avec cet email existe déjà.");
-            }
-
-            // Hachage du mot de passe
-            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-            // Insertion de l'utilisateur dans la base de données
-            $insertQuery = "INSERT INTO UTILISATEUR (email, password, role) VALUES (:email, :passwd, 1)";
-            $stmt = $db->prepare($insertQuery);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':passwd', $hashedPassword);
-            $stmt->execute();
-
-        } catch (Exception $e) {
-            throw new PDOException("DataBase access error, création de compte impossible impossible");
-        }
-
     }
 
     /**
@@ -89,9 +58,9 @@ class AuthProvider
      */
     public static function getSignedInUser(): Utilisateur
     {
-        if (!isset($_SESSION['user'])) {
+        if (!isset($_SESSION['utilisateur'])) {
             throw new AuthnException("Aucun utilisateur authentifié.");
         }
-        return $_SESSION['user'];
+        return $_SESSION['utilisateur'];
     }
 }

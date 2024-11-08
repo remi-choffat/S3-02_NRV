@@ -11,8 +11,8 @@ class Authz
      */
     public static function checkRole(int $expectedRole): void
     {
-        $user = AuthProvider::getSignedInUser();
-        if ($user->getRank() < $expectedRole) {
+        $utilisateur = AuthProvider::getSignedInUser();
+        if ($utilisateur->getRole() < $expectedRole) {
             throw new AuthnException("Accès refusé : privilèges insuffisants.");
         }
     }
