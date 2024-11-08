@@ -131,6 +131,8 @@ class NRVRepository
             $params[] = (new DateTime($dateEnd))->format('Y-m-d H:i:s');
         }
 
+        $query .= ' ORDER BY date';
+
         $stmt = $this->pdo->prepare($query);
         $stmt->execute($params);
         $spectaclesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -170,7 +172,7 @@ class NRVRepository
      */
     public function getSoirees(): ?array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM SOIREE');
+        $stmt = $this->pdo->prepare('SELECT * FROM SOIREE ORDER BY date');
         $stmt->execute();
         $soireesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -270,7 +272,7 @@ class NRVRepository
      */
     private function fetchSpectaclesForSoiree(int $soireeId): array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM SPECTACLE WHERE soiree = :soireeId');
+        $stmt = $this->pdo->prepare('SELECT * FROM SPECTACLE WHERE soiree = :soireeId ORDER BY date');
         $stmt->execute(['soireeId' => $soireeId]);
         $spectaclesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

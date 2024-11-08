@@ -174,6 +174,7 @@ HTML;
         return $sortie;
     }
 
+
     /**
      * Renvoie la date (et l'heure) de fin de la soirée (fin du dernier spectacle)
      * @return DateTime retourne la date avec l'heure de fin
@@ -181,7 +182,6 @@ HTML;
     public function getFin(): DateTime
     {
         return $this->getSpectacles()[sizeof($this->getSpectacles()) - 1]->getFin();
-        // TODO - Erreur, la date de fin est la date du dernier spectacle de la liste, et non du spectacle qui se finit en dernier
     }
 
 }
