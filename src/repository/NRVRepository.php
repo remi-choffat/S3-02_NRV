@@ -182,7 +182,6 @@ class NRVRepository
         if (!$soireesData) {
             return null;
         }
-
         return array_map(fn($soiree) => $this->mapToSoiree($soiree), $soireesData);
     }
 
@@ -215,6 +214,7 @@ class NRVRepository
     {
         $stmt = $this->pdo->prepare('SELECT * FROM LIEU WHERE id = :id');
         $stmt->execute(['id' => $lieuId]);
+
         $lieuData = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return new Lieu($lieuData['id'], $lieuData['nom'], $lieuData['adresse'], $lieuData['nbplass'], $lieuData['nbpldeb']);

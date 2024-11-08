@@ -14,5 +14,3 @@ NRVRepository::setConfig('config.db.ini');
 $action = $_GET['action'] ?? 'null';
 $dispatcher = new Dispatcher($action);
 $dispatcher->run();
-
-var_dump(NRVRepository::getInstance()->getSpectacles());
