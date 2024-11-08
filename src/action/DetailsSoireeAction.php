@@ -2,13 +2,15 @@
 
 namespace iutnc\nrv\action;
 
+use DateMalformedStringException;
 use iutnc\nrv\repository\NRVRepository;
 
 class DetailsSoireeAction extends Action
 {
     /**
-     * fonction execute qui permet d'afficher les détails d'une soirée
+     * Affiche les détails d'une soirée
      * @return string
+     * @throws DateMalformedStringException
      */
     public function execute(): string
     {
