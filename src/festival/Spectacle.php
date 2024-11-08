@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace iutnc\nrv\festival;
 
 use DateTime;
+use iutnc\nrv\repository\NRVRepository;
+
 
 /**
  * Représente un spectacle
@@ -53,6 +55,13 @@ class Spectacle
         $this->style = $style;
     }
 
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
 
     /**
      * @return string
@@ -212,6 +221,61 @@ class Spectacle
             $statut = "<span class='tag is-info'>Demain</span>";
         }
 
+        $i = 0;
+        $j = 0;
+        $g = 0;
+        $style = "<h2 class='subtitle'>Quelque spectacles du même style</h2>" . "<div class='box'>";
+        $spectacles = NRVRepository::getInstance()->getSpectacles();
+        foreach ($spectacles as $spectacle) {
+            if ($spectacle->getStyle() == $this->style){
+                if ($spectacle->getID() != $this->id){
+                    $style .= $spectacle->afficherResume();
+                    $i .= 1;
+                }
+            }
+        }
+        if ($i == 0){
+            $style = '';
+        }
+        else{
+            $style .= "</div>";
+        }
+
+
+        $lieu = "<h2 class='subtitle'>Quelque spectacles à voir au même endroit</h2>" . "<div class='box'>";
+        $spectacles = NRVRepository::getInstance()->getSpectacles();
+        foreach ($spectacles as $spectacle) {
+            if ($spectacle->getLieu() == $this->lieu){
+                if ($spectacle->getID() != $this->id){
+                    $lieu .= $spectacle->afficherResume();
+                    $j .= 1;
+                }
+            }
+        }
+        if ($j == 0){
+            $lieu = '';
+        }
+        else{
+            $lieu .= "</div>";
+        }
+
+        $date = "<h2 class='subtitle'>Quelque spectacles se déroulant à la même date</h2>" . "<div class='box'>";
+        $spectacles = NRVRepository::getInstance()->getSpectacles();
+        foreach ($spectacles as $spectacle) {
+            if ($spectacle->getDate() == $this->date){
+                if ($spectacle->getID() != $this->id){
+                    $date .= $spectacle->afficherResume();
+                    $g .= 1;
+                }
+            }
+        }
+        if ($g == 0){
+            $date = '';
+        }
+        else{
+            $date .= "</div>";
+        }
+
         return <<<HTML
                 <div class="box">
                     <h3 class="title is-3">{$this->titre}</h3>
@@ -225,6 +289,9 @@ class Spectacle
                     <p><b>Nombre de places :</b> {$this->lieu->getNbPlacesAssises()} assises, {$this->lieu->getNbPlacesDebout()} debout</p>
                     <p><b>Description :</b> $this->description</p>
                 </div>
+                $style
+                $lieu
+                $date
         HTML;
     }
 
