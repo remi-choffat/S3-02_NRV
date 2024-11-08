@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace iutnc\nrv\festival;
 
-use DateMalformedStringException;
 use DateTime;
 
 /**
@@ -22,7 +21,7 @@ class Spectacle
     private string $description;
     private Lieu $lieu;
     private bool $annule;
-    private int $soireeId;
+    private ?int $soireeId;
     private string $style;
 
 
@@ -191,7 +190,6 @@ class Spectacle
     /**
      * Rendu HTML détaillé de l'objet
      * @return string
-     * @throws DateMalformedStringException
      */
     public function afficherDetails(): string
     {
