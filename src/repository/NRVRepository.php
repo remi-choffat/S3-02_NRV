@@ -308,7 +308,7 @@ class NRVRepository
      * @param array $options
      * @return false|PDO
      */
-    public function prepare($query, array $options = []): false|\PDO
+    public function prepare($query, array $options = []): false|PDO
     {
         return $this->pdo->prepare($query, $options);
     }
@@ -322,6 +322,17 @@ class NRVRepository
         $stmt = $this->pdo->prepare('SELECT role FROM UTILISATEUR WHERE email = :email');
         $stmt->execute(['email' => $email]);
         return (int)$stmt->fetch();
+    }
+
+
+    public function getSimilarSpectacles(int $spectacleId, string $style, int $lieuId, DateTime $date): array
+    {
+        $query = 'SELECT * FROM SPECTACLE WHERE id != ? AND (style = ? OR lieu = ? OR DATE(date) = ?)';
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([$spectacleId, $style, $lieuId, $date->format('Y-m-d')]);
+        $spectaclesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(fn($spectacle) => $this->mapToSpectacle($spectacle), $spectaclesData);
     }
 
 }

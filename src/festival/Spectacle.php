@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace iutnc\nrv\festival;
 
+use DateMalformedStringException;
 use DateTime;
 use iutnc\nrv\repository\NRVRepository;
 
@@ -180,6 +181,39 @@ class Spectacle
 
 
     /**
+     * Affiche la durée du spectacle en heures et minutes
+     * @return string
+     */
+    public function afficherDuree(): string
+    {
+        if ($this->duree < 60) {
+            return $this->duree . " minutes";
+        } elseif ($this->duree % 60 == 0) {
+            return ($this->duree / 60) . " heure" . ($this->duree / 60 > 1 ? "s" : "");
+        } else {
+            return floor($this->duree / 60) . " heure" . (floor($this->duree / 60) > 1 ? "s" : "") . " et " . ($this->duree % 60) . " minutes";
+        }
+    }
+
+
+    public function getFormattedDate(bool $afficherHeure = true): string
+    {
+        $months = [
+            'January' => 'janvier', 'February' => 'février', 'March' => 'mars', 'April' => 'avril',
+            'May' => 'mai', 'June' => 'juin', 'July' => 'juillet', 'August' => 'août',
+            'September' => 'septembre', 'October' => 'octobre', 'November' => 'novembre', 'December' => 'décembre'
+        ];
+
+        if ($afficherHeure) {
+            $formattedDate = $this->date->format('d F Y à H\hi');
+        } else {
+            $formattedDate = $this->date->format('d F Y');
+        }
+        return str_replace(array_keys($months), array_values($months), $formattedDate);
+    }
+
+
+    /**
      * Rendu HTML de l'objet (résumé)
      * @return string
      */
@@ -189,8 +223,25 @@ class Spectacle
                 <div class="box">
                     <h3 class="title is-4"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>
                     <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
-                    <p><b>Date :</b> {$this->date->format('d/m/Y')}</p>
-                    <p><b>Heure :</b> $this->horaire</p>
+                    <p><b>Date :</b> {$this->getFormattedDate(true)}</p>
+                </div>
+        HTML;
+    }
+
+
+    /**
+     * Rendu HTML de l'objet (résumé compact)
+     * @param string $type Type de résumé compact
+     * @return string
+     */
+    public function afficherResumeCompact(string $type): string
+    {
+
+        return <<<HTML
+                <div class="box is-one-third">
+                    <h3 class="title is-5"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>
+                    <p><b><span class="fa fa-arrow-circle-o-right"></span> $type</b></p>
+                    <p>{$this->getFormattedDate(true)}</p>
                 </div>
         HTML;
     }
@@ -199,11 +250,12 @@ class Spectacle
     /**
      * Rendu HTML détaillé de l'objet
      * @return string
+     * @throws DateMalformedStringException
      */
     public function afficherDetails(): string
     {
 
-        // Vérifie si un spectacle est en cours (débuté mais pas terminé)
+        // Vérifie si un spectacle est en cours (débuté, mais pas terminé)
         $debut = new DateTime($this->date->format('Y-m-d') . ' ' . $this->horaire);
         $fin = (clone $debut)->modify("+{$this->duree} minutes");
         $enCours = $debut < new DateTime() && $fin > new DateTime();
@@ -221,77 +273,19 @@ class Spectacle
             $statut = "<span class='tag is-info'>Demain</span>";
         }
 
-        $i = 0;
-        $j = 0;
-        $g = 0;
-        $style = "<h2 class='subtitle'>Quelque spectacles du même style</h2>" . "<div class='box'>";
-        $spectacles = NRVRepository::getInstance()->getSpectacles();
-        foreach ($spectacles as $spectacle) {
-            if ($spectacle->getStyle() == $this->style){
-                if ($spectacle->getID() != $this->id){
-                    $style .= $spectacle->afficherResume();
-                    $i .= 1;
-                }
-            }
-        }
-        if ($i == 0){
-            $style = '';
-        }
-        else{
-            $style .= "</div>";
-        }
-
-
-        $lieu = "<h2 class='subtitle'>Quelque spectacles à voir au même endroit</h2>" . "<div class='box'>";
-        $spectacles = NRVRepository::getInstance()->getSpectacles();
-        foreach ($spectacles as $spectacle) {
-            if ($spectacle->getLieu() == $this->lieu){
-                if ($spectacle->getID() != $this->id){
-                    $lieu .= $spectacle->afficherResume();
-                    $j .= 1;
-                }
-            }
-        }
-        if ($j == 0){
-            $lieu = '';
-        }
-        else{
-            $lieu .= "</div>";
-        }
-
-        $date = "<h2 class='subtitle'>Quelque spectacles se déroulant à la même date</h2>" . "<div class='box'>";
-        $spectacles = NRVRepository::getInstance()->getSpectacles();
-        foreach ($spectacles as $spectacle) {
-            if ($spectacle->getDate() == $this->date){
-                if ($spectacle->getID() != $this->id){
-                    $date .= $spectacle->afficherResume();
-                    $g .= 1;
-                }
-            }
-        }
-        if ($g == 0){
-            $date = '';
-        }
-        else{
-            $date .= "</div>";
-        }
-
         return <<<HTML
                 <div class="box">
                     <h3 class="title is-3">{$this->titre}</h3>
                     <p>$statut</p><br/>
                     <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
                     <p><b>Style :</b> $this->style</p>
-                    <p><b>Date :</b> {$this->date->format('d/m/Y')}</p>
+                    <p><b>Date :</b> {$this->getFormattedDate(false)}</p>
                     <p><b>Heure :</b> $this->horaire</p>
-                    <p><b>Durée :</b> $this->duree minutes</p>
+                    <p><b>Durée :</b> {$this->afficherDuree()}</p>
                     <p><b>Lieu :</b> {$this->lieu->getNom()} ({$this->lieu->getAdresse()})</p>
                     <p><b>Nombre de places :</b> {$this->lieu->getNbPlacesAssises()} assises, {$this->lieu->getNbPlacesDebout()} debout</p>
                     <p><b>Description :</b> $this->description</p>
                 </div>
-                $style
-                $lieu
-                $date
         HTML;
     }
 

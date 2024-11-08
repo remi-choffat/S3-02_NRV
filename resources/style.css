@@ -112,3 +112,26 @@ nav ul li a:hover {
     cursor: pointer;
     font-size: 18px;
 }
+
+.similar-spectacles {
+    display: flex;
+    justify-content: space-between;
+}
+
+.similar-spectacles .box {
+    flex: 1;
+    margin: 10px;
+}
+
+.similar-spectacles .box:first-child {
+    margin-left: 20px;
+}
+
+.similar-spectacles .box:last-child {
+    margin-right: 20px;
+}
+
+.titre-similaires {
+    margin-bottom: 5px !important;
+    margin-top: 30px !important;
+}
