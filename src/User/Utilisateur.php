@@ -9,7 +9,7 @@ class Utilisateur
     /**
      * attributs de la classe
      */
-    private int $id;
+    private ?int $id;
     private string $nom;
     private string $email;
     private string $password;
