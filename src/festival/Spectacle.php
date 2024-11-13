@@ -272,6 +272,7 @@ class Spectacle
      */
     public function afficherResume(): string
     {
+        // Affiche le menu de modification et d'annulation si l'utilisateur est connecté
         if (isset($_SESSION['utilisateur'])) {
             $disableCancelClass = $this->isAnnule() ? 'disabled-link' : '';
             $menu = <<<HTML
@@ -324,7 +325,6 @@ class Spectacle
      */
     public function afficherDetails(): string
     {
-
         // Vérifie si un spectacle est en cours (débuté, mais pas terminé)
         $debut = new DateTime($this->date->format('Y-m-d') . ' ' . $this->horaire);
         $fin = (clone $debut)->modify("+{$this->duree} minutes");

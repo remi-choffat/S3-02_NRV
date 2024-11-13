@@ -17,6 +17,7 @@ use iutnc\nrv\action\DetailsSpectacleAction;
 use iutnc\nrv\action\ListeSoireesAction;
 use iutnc\nrv\action\ListeSpectaclePrefAction;
 use iutnc\nrv\action\ListeSpectaclesAction;
+use iutnc\nrv\action\ModifierSoireeAction;
 use iutnc\nrv\action\ModifierSpectacleAction;
 use iutnc\nrv\action\SupprimerSpectaclePrefAction;
 use iutnc\nrv\action\Inscription;
@@ -63,6 +64,7 @@ class Dispatcher
             'ajouter-lieu' => new AjouterLieuAction(),
             'ajouter-artiste' => new AjouterArtisteAction(),
             'modifier-spectacle' => new ModifierSpectacleAction(),
+            'modifier-soiree' => new ModifierSoireeAction(),
             default => new UnknownAction(),
         };
         $html = $action->execute();

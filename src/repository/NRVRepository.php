@@ -540,5 +540,26 @@ class NRVRepository
         $stmt = $this->pdo->prepare('DELETE FROM JOUE WHERE idsp = :idSpectacle');
         $stmt->execute(['idSpectacle' => $idSpectacle]);
     }
-    
+
+
+    /**
+     * Met à jour une soirée existante
+     * @param Soiree $soiree la soirée à modifier
+     * @return bool true si la mise à jour a réussi, false sinon
+     */
+    public function updateSoiree(Soiree $soiree): bool
+    {
+        $stmt = $this->pdo->prepare("UPDATE SOIREE 
+                SET nom = :nom, theme = :theme, date = :date, lieu = :lieu_id
+                WHERE id = :id");
+        $stmt->execute([
+            'id' => $soiree->getId(),
+            'nom' => $soiree->getNom(),
+            'theme' => $soiree->getTheme(),
+            'date' => $soiree->getDate()->format('Y-m-d H:i:s'),
+            'lieu_id' => $soiree->getLieu()->getId()
+        ]);
+        return $stmt->rowCount() > 0;
+    }
+
 }
