@@ -76,17 +76,18 @@ class Dispatcher
         // Affiche le lien d'ajout d'un utilisateur aux ADMIN
         try {
             Authz::checkRole(0);
-            $lien = "<a href='?action=inscription'>Inscription</a>";
+            $boutonsAdmin = "<li><a href='?action=inscription'>Inscrire un utilisateur</a></li>";
         } catch (Exception $e) {
-            $lien = "";
+            $boutonsAdmin = "";
         }
 
         // Vérifie si un utilisateur est connecté
         try {
             $user = AuthProvider::getSignedInUser();
-            $name = $user->getNom();
-            $deconnexion = "<a href='?action=deconnexion'>Déconnexion</a>";
+            $name = "<span id='username' title='{$user->getEmail()}'>{$user->getNom()}</span>";
+            $deconnexion = "(<a href='?action=deconnexion'>Déconnexion</a>)";
             $boutonsStaffAdmin = <<<HTML
+<li>
 <div class="dropdown">
     <button class="dropbtn">Ajouter &#9662;</button>
     <div class="dropdown-content">
@@ -96,6 +97,7 @@ class Dispatcher
         <a href="?action=ajouter-artiste">Ajouter un artiste</a>
     </div>
 </div>
+</li>
 HTML;
         } catch (Exception $e) {
             $name = "";
@@ -125,6 +127,7 @@ HTML;
                     <li><a href='?action=liste-spectacles'>Liste des spectacles</a></li>
                     <li><a href='?action=liste-soirees'>Liste des soirées</a></li>
                     $boutonsStaffAdmin
+                    $boutonsAdmin
                 </ul>
             </nav>
             <br/>
@@ -137,9 +140,7 @@ HTML;
                 <p>
                     <strong>Nancy Rock Vibration</strong> by Les Détraqués
                 </p>
-                $deconnexion
-                $lien
-                <p>$name</p>
+                <p>$name $deconnexion</p>
             </div>
         </footer>
     </div>

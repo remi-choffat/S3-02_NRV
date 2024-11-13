@@ -96,7 +96,6 @@ HTML;
         $password = filter_var($_POST['password'], FILTER_SANITIZE_SPECIAL_CHARS);
         $confirm_password = filter_var($_POST['confirm_password'], FILTER_SANITIZE_SPECIAL_CHARS);
         $role = (int)filter_var($_POST['role'], FILTER_SANITIZE_NUMBER_INT);
-        $retour = "";
 
         if ($password !== $confirm_password) {
             return "<section class='section'><strong>Les mots de passe ne correspondent pas.</strong></section>";
