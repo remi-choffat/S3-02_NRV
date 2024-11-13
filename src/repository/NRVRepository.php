@@ -441,22 +441,24 @@ class NRVRepository
     /**
      * Ajoute un artiste
      * @param string $artiste nom de l'artiste à ajouter
+     * @return int l'ID de l'artiste ajouté
      */
-    public function addArtiste(string $artiste): void
+    public function addArtiste(string $artiste): int
     {
         $stmt = $this->pdo->prepare('INSERT INTO ARTISTE (nomArtiste) VALUES (:nomArtiste)');
         $stmt->execute([
             'nomArtiste' => $artiste
         ]);
-
+        return $this->pdo->lastInsertId();
     }
 
 
     /**
      * Ajoute un lieu
      * @param Lieu $lieu le lieu à ajouter
+     * @return int l'ID du lieu ajouté
      */
-    public function addLieu(Lieu $lieu): void
+    public function addLieu(Lieu $lieu): int
     {
         $stmt = $this->pdo->prepare('INSERT INTO LIEU (nom, adresse, nbpldeb, nbplass) VALUES (:nom, :adresse, :nbpldeb, :nbplass)');
         $stmt->execute([
@@ -465,6 +467,7 @@ class NRVRepository
             'nbpldeb' => $lieu->getNbPlacesDebout(),
             'nbplass' => $lieu->getNbPlacesAssises()
         ]);
+        return $this->pdo->lastInsertId();
     }
 
 
