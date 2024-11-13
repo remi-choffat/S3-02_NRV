@@ -38,9 +38,8 @@ class Inscription extends Action
     {
         return <<<HTML
     <section class="section">
-    <div class="container">
-        <h1 class="title">Inscription</h1>
-        <form action="index.php?action=inscription" method="post">
+        <h1 class="title">Inscrire un utilisateur</h1>
+        <form action="index.php?action=inscription" method="POST">
             <div class="field">
                 <label class="label required" for="nom">Nom</label>
                 <div class="control">
@@ -81,7 +80,6 @@ class Inscription extends Action
                 </div>
             </div>
         </form>
-    </div>
 </section>
 HTML;
     }
@@ -98,7 +96,6 @@ HTML;
         $password = filter_var($_POST['password'], FILTER_SANITIZE_SPECIAL_CHARS);
         $confirm_password = filter_var($_POST['confirm_password'], FILTER_SANITIZE_SPECIAL_CHARS);
         $role = (int)filter_var($_POST['role'], FILTER_SANITIZE_NUMBER_INT);
-        $retour = "";
 
         if ($password !== $confirm_password) {
             return "<section class='section'><strong>Les mots de passe ne correspondent pas.</strong></section>";
@@ -109,7 +106,7 @@ HTML;
             AuthProvider::register($utilisateur);
             $retour = "<section class='section'><strong>Utilisateur enregistré ✅</strong></section>";
         } catch (Exception $e) {
-            $retour = $e->getMessage();
+            $retour = "<section class='section'><strong>{$e->getMessage()}</strong></section>";
         }
 
         return $retour;

@@ -37,9 +37,8 @@ class Connexion extends Action
     {
         return <<<HTML
     <section class="section">
-    <div class="container">
         <h1 class="title">Connexion</h1>
-        <form action="index.php?action=connexion" method="post">
+        <form action="index.php?action=connexion" method="POST">
             <div class="field">
                 <label class="label required" for="email">Email</label>
                 <div class="control">
@@ -55,11 +54,10 @@ class Connexion extends Action
             <br/>
             <div class="field">
                 <div class="control">
-                    <button class="button is-link">connexion</button>
+                    <button class="button is-link">Connexion</button>
                 </div>
             </div>
         </form>
-    </div>
 </section>
 HTML;
     }
@@ -73,15 +71,14 @@ HTML;
     {
         $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
         $password = filter_var($_POST['password'], FILTER_SANITIZE_SPECIAL_CHARS);
-        $retour = "";
         try {
             AuthProvider::signin($email, $password);
             $utilisateur = AuthProvider::getSignedInUser();
-            $retour = "Bienvenue " . $utilisateur->getNom();
+            // Renvoie l'utilisateur vers la page d'accueil
+            header("Location: index.php");
         } catch (Exception $e) {
-            $retour = $e->getMessage();
+            return "<div class='notification is-danger'>{$e->getMessage()}</div>";
         }
-        return $retour;
+        return "";
     }
-
 }

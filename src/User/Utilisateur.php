@@ -14,28 +14,25 @@ class Utilisateur
     private ?int $id;
     private string $nom;
     private string $email;
-    private string $password;
     private int $role;
 
     /**
      * Constructeur de la classe
+     * @param int|null $id
      * @param string $nom
      * @param string $email
-     * @param string $password
      * @param int $role
-     * @param int|null $id
      */
-    public function __construct(string $nom, string $email, string $password, int $role, ?int $id)
+    public function __construct(?int $id, string $nom, string $email, int $role)
     {
         $this->nom = $nom;
         $this->email = $email;
-        $this->password = $password;
         $this->role = $role;
         $this->id = $id;
     }
 
     /**
-     * Renvoie l'identifiant de l'utilisateur
+     * Renvoie l'ID de l'utilisateur
      * @return int
      */
     public function getId(): int
@@ -59,16 +56,6 @@ class Utilisateur
     public function getEmail(): string
     {
         return $this->email;
-    }
-
-    /**
-     * Renvoie le mot de passe de l'utilisateur
-     * @return string
-     */
-    // TODO - Doit-on vraiment stocker le mot de passe ?
-    public function getPassword(): string
-    {
-        return $this->password;
     }
 
     /**

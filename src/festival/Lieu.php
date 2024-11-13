@@ -9,7 +9,7 @@ namespace iutnc\nrv\festival;
 class Lieu
 {
 
-    private int $id;
+    private ?int $id;
     private string $nom;
     private string $adresse;
     private array $image;
@@ -17,16 +17,16 @@ class Lieu
     private int $nb_places_debout;
 
     /**
-     * @param int $id
+     * @param ?int $id
      * @param string $nom
      * @param string $adresse
      * @param int $nb_places_assises
      * @param int $nb_places_debout
      * Crée un Lieu
      */
-    public function __construct(int $id, string $nom, string $adresse, int $nb_places_assises, int $nb_places_debout)
+    public function __construct(?int $id, string $nom, string $adresse, int $nb_places_assises, int $nb_places_debout)
     {
-        $this->id = $id;
+        $this->id = $id ?? -1;
         $this->image = [];
         $this->nom = $nom;
         $this->adresse = $adresse;
@@ -106,7 +106,17 @@ class Lieu
      */
     public function __toString(): string
     {
-        return $this->nom;
+        return $this->nom . " (" . $this->adresse . ") - " . $this->nb_places_assises . " places assises, " . $this->nb_places_debout . " places debout";
+    }
+
+
+    /**
+     * @param int $id
+     * @return void
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
 }

@@ -10,6 +10,7 @@ use iutnc\nrv\exception\AuthnException;
 use iutnc\nrv\festival\Lieu;
 use iutnc\nrv\festival\Spectacle;
 use iutnc\nrv\festival\Soiree;
+use iutnc\nrv\festival\Artiste;
 use iutnc\nrv\User\Utilisateur;
 use PDO;
 use PDOException;
@@ -206,6 +207,23 @@ class NRVRepository
 
 
     /**
+     * Récupère la liste des artistes
+     * @return array|null
+     */
+    public function getArtistes(): ?array
+    {
+        $stmt = $this->pdo->query('SELECT * FROM ARTISTE');
+        $artistesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!$artistesData) {
+            return null;
+        }
+
+        return array_map(fn($artiste) => $this->mapToArtiste($artiste), $artistesData);
+    }
+
+
+    /**
      * Récupère la liste des lieux
      * @param int $lieuId
      * @return Lieu
@@ -222,10 +240,10 @@ class NRVRepository
 
     /**
      * Récupère la liste des artistes d'un spectacle
-     * @param int $spectacleId
-     * @return array
+     * @param int $spectacleId l'ID du spectacle
+     * @return array la liste des artistes
      */
-    private function fetchArtistes(int $spectacleId): array
+    public function fetchArtistes(int $spectacleId): array
     {
         $stmt = $this->pdo->prepare('
             SELECT nomArtiste
@@ -306,6 +324,17 @@ class NRVRepository
 
 
     /**
+     * Transforme un tableau de données en objet Artiste
+     * @param array $artisteData
+     * @return Artiste
+     */
+    private function mapToArtiste(array $artisteData): Artiste
+    {
+        return new Artiste($artisteData['id'], $artisteData['nomArtiste']);
+    }
+
+
+    /**
      * Récupère un utilisateur
      * @param string $email
      * @return Utilisateur
@@ -371,8 +400,9 @@ class NRVRepository
     /**
      * Ajoute un spectacle
      * @param Spectacle $spectacle le spectacle à ajouter
+     * @return int l'ID du spectacle ajouté
      */
-    public function addSpectacle(Spectacle $spectacle): void
+    public function addSpectacle(Spectacle $spectacle): int
     {
         $stmt = $this->pdo->prepare('INSERT INTO SPECTACLE (nom, style, url, date, duree, annule, description, lieu, soiree) VALUES (:nom, :style, :url, :date, :duree, :annule, :description, :lieu, :soiree)');
         $stmt->execute([
@@ -386,14 +416,16 @@ class NRVRepository
             'lieu' => $spectacle->getLieu()->getId(),
             'soiree' => $spectacle->getSoireeId()
         ]);
+        return $this->pdo->lastInsertId();
     }
 
 
     /**
      * Ajoute une soirée
      * @param Soiree $soiree la soirée à ajouter
+     * @return int l'ID de la soirée ajoutée
      */
-    public function addSoiree(Soiree $soiree): void
+    public function addSoiree(Soiree $soiree): int
     {
         $stmt = $this->pdo->prepare('INSERT INTO SOIREE (nom, theme, date, lieu) VALUES (:nom, :theme, :date, :lieu)');
         $stmt->execute([
@@ -402,28 +434,31 @@ class NRVRepository
             'date' => $soiree->getDate()->format('Y-m-d H:i:s'),
             'lieu' => $soiree->getLieu()->getId()
         ]);
+        return $this->pdo->lastInsertId();
     }
 
 
     /**
      * Ajoute un artiste
      * @param string $artiste nom de l'artiste à ajouter
+     * @return int l'ID de l'artiste ajouté
      */
-    public function addArtiste(string $artiste): void
+    public function addArtiste(string $artiste): int
     {
         $stmt = $this->pdo->prepare('INSERT INTO ARTISTE (nomArtiste) VALUES (:nomArtiste)');
         $stmt->execute([
             'nomArtiste' => $artiste
         ]);
-
+        return $this->pdo->lastInsertId();
     }
 
 
     /**
      * Ajoute un lieu
      * @param Lieu $lieu le lieu à ajouter
+     * @return int l'ID du lieu ajouté
      */
-    public function addLieu(Lieu $lieu): void
+    public function addLieu(Lieu $lieu): int
     {
         $stmt = $this->pdo->prepare('INSERT INTO LIEU (nom, adresse, nbpldeb, nbplass) VALUES (:nom, :adresse, :nbpldeb, :nbplass)');
         $stmt->execute([
@@ -432,5 +467,24 @@ class NRVRepository
             'nbpldeb' => $lieu->getNbPlacesDebout(),
             'nbplass' => $lieu->getNbPlacesAssises()
         ]);
+        return $this->pdo->lastInsertId();
+    }
+
+
+    /**
+     * Associe des artistes à un spectacle
+     * @param int $id l'ID du spectacle
+     * @param array $artistes la liste des artistes à associer
+     * @return void
+     */
+    public function addArtistesToSpectacle(int $id, array $artistes): void
+    {
+        $stmt = $this->pdo->prepare('INSERT INTO JOUE (idsp, ida) VALUES (:idsp, :ida)');
+        foreach ($artistes as $artiste) {
+            $stmt->execute([
+                'idsp' => $id,
+                'ida' => $artiste
+            ]);
+        }
     }
 }
