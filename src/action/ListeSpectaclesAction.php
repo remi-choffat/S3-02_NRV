@@ -82,7 +82,7 @@ function toggleFilterForm() {
             $html .= "<div class='notification is-warning' style='margin: 20px;'>Aucun spectacle ne correspond à vos critères de recherche</div>";
         } else {
             foreach ($spectacles as $spectacle) {
-                $html .= $spectacle->afficherResume()
+                $html .= $spectacle->afficherResume();
             }
         }
 
