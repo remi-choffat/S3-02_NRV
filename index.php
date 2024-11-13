@@ -13,4 +13,8 @@ NRVRepository::setConfig('config.db.ini');
 // Crée un dispatcheur et exécute l'action
 $action = $_GET['action'] ?? 'null';
 $dispatcher = new Dispatcher($action);
-$dispatcher->run();
+try {
+    $dispatcher->run();
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
