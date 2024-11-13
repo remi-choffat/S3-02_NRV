@@ -15,8 +15,10 @@ use iutnc\nrv\action\ListeSpectaclesAction;
 use iutnc\nrv\action\SupprimerSpectaclePrefAction;
 use iutnc\nrv\action\Inscription;
 use iutnc\nrv\action\Connexion;
+use iutnc\nrv\action\Deconnexion;
 use iutnc\nrv\auth\Authz;
 use Exception;
+use iutnc\nrv\auth\AuthProvider;
 
 class Dispatcher
 {
@@ -45,6 +47,7 @@ class Dispatcher
             'liste-favoris' => new ListeSpectaclePrefAction(),
             'inscription' => new Inscription(),
             'connexion' => new Connexion(),
+            'deconnexion' => new Deconnexion(),
             default => new DefaultAction()
         };
         $html = $action->execute();
@@ -62,6 +65,14 @@ class Dispatcher
             $lien = "<a href='?action=inscription'>Inscription</a>";
         }catch(Exception $e){
             $lien = "";
+        }
+        try{
+            $user = AuthProvider::getSignedInUser();
+            $name = $user->getNom();
+            $deconnexion = "<a href='?action=deconnexion'>Déconnexion</a>";
+        }catch(Exception $e){
+            $name = "";
+            $deconnexion = "<a href='?action=connexion'>Connexion</a>";
         }
         $page = <<<HTML
 <!DOCTYPE html><html lang='fr'><head><meta charset='UTF-8'>
@@ -96,8 +107,9 @@ class Dispatcher
                 <p>
                     <strong>Nancy Rock Vibration</strong> by Les Détraqués
                 </p>
-                <a href='?action=connexion'>Connexion</a>
+                $deconnexion
                 $lien
+                <p>$name</p>
             </div>
         </footer>
     </div>

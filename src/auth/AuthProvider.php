@@ -63,4 +63,16 @@ class AuthProvider
         }
         return unserialize($_SESSION['utilisateur']);
     }
+    /**
+     * Déconnecte l'utilisateur
+     */
+    public static function SignedOutUser(): bool
+    {
+        $result = false;   
+        if (isset($_SESSION['utilisateur'])) {
+            unset($_SESSION['utilisateur']);
+            $result = true;
+        }
+        return $result;
+    }   
 }
