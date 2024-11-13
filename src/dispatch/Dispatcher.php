@@ -15,6 +15,8 @@ use iutnc\nrv\action\ListeSpectaclesAction;
 use iutnc\nrv\action\SupprimerSpectaclePrefAction;
 use iutnc\nrv\action\Inscription;
 use iutnc\nrv\action\Connexion;
+use iutnc\nrv\auth\Authz;
+use Exception;
 
 class Dispatcher
 {
@@ -55,6 +57,12 @@ class Dispatcher
      */
     private function renderPage($html): void
     {
+        try{
+            Authz::checkRole(0);
+            $lien = "<a href='?action=inscription'>Inscription</a>";
+        }catch(Exception $e){
+            $lien = "";
+        }
         $page = <<<HTML
 <!DOCTYPE html><html lang='fr'><head><meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
@@ -88,8 +96,8 @@ class Dispatcher
                 <p>
                     <strong>Nancy Rock Vibration</strong> by Les Détraqués
                 </p>
-                <a href='?action=inscription'>Inscription</a>
                 <a href='?action=connexion'>Connexion</a>
+                $lien
             </div>
         </footer>
     </div>
