@@ -14,6 +14,7 @@ use iutnc\nrv\action\ListeSpectaclePrefAction;
 use iutnc\nrv\action\ListeSpectaclesAction;
 use iutnc\nrv\action\SupprimerSpectaclePrefAction;
 use iutnc\nrv\action\Inscription;
+use iutnc\nrv\action\Connexion;
 
 class Dispatcher
 {
@@ -41,6 +42,7 @@ class Dispatcher
             'supprimer-pref' => new SupprimerSpectaclePrefAction(),
             'liste-favoris' => new ListeSpectaclePrefAction(),
             'inscription' => new Inscription(),
+            'connexion' => new Connexion(),
             default => new DefaultAction()
         };
         $html = $action->execute();
@@ -87,6 +89,7 @@ class Dispatcher
                     <strong>Nancy Rock Vibration</strong> by Les Détraqués
                 </p>
                 <a href='?action=inscription'>Inscription</a>
+                <a href='?action=connexion'>Connexion</a>
             </div>
         </footer>
     </div>
