@@ -272,13 +272,31 @@ class Spectacle
      */
     public function afficherResume(): string
     {
-        return <<<HTML
-                <div class="box">
-                    <h3 class="title is-4"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>
-                    <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
-                    <p><b>Date :</b> {$this->getFormattedDate(true)}</p>
+        if (isset($_SESSION['utilisateur'])) {
+            $disableCancelClass = $this->isAnnule() ? 'disabled-link' : '';
+            $menu = <<<HTML
+            <div class="menu">
+                <button class="menu-btn">⋮</button>
+                <div class="menu-content">
+                    <a href="index.php?action=modifier-spectacle&id={$this->id}">Modifier</a>
+                    <a href="index.php?action=annuler-spectacle&id={$this->id}" class="$disableCancelClass">Annuler</a>
                 </div>
+            </div>
         HTML;
+        } else {
+            $menu = "";
+        }
+
+        return <<<HTML
+        <div class="box">
+            <div class="spectacle-header">
+                <h3 class="title is-4"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>
+                $menu
+            </div>
+            <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
+            <p><b>Date :</b> {$this->getFormattedDate(true)}</p>
+        </div>
+    HTML;
     }
 
 
