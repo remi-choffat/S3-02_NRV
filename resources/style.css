@@ -63,6 +63,10 @@ nav ul li a:hover {
     color: #4A1378;
 }
 
+nav ul li div button {
+    color: black;
+}
+
 /* Style pour le formulaire de filtres */
 #filter-form {
     border: 1px solid #ccc;

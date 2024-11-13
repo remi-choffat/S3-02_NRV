@@ -502,4 +502,43 @@ class NRVRepository
             ]);
         }
     }
+
+
+    /**
+     * Met à jour un spectacle existant
+     * @param Spectacle $spectacle le spectacle à modifier
+     * @return bool true si la mise à jour a réussi, false sinon
+     */
+    public function updateSpectacle(Spectacle $spectacle): bool
+    {
+        $stmt = $this->pdo->prepare("UPDATE SPECTACLE 
+                SET nom = :titre, style = :style, url = :url, date = :date, duree = :duree, annule = :annule, description = :description, lieu = :lieu_id, soiree = :soiree
+                WHERE id = :id");
+        $stmt->execute([
+            'id' => $spectacle->getId(),
+            'titre' => $spectacle->getTitre(),
+            'style' => $spectacle->getStyle(),
+            'url' => $spectacle->getUrl(),
+            'date' => $spectacle->getDate()->format('Y-m-d H:i:s'),
+            'duree' => $spectacle->getDuree(),
+            'annule' => $spectacle->isAnnule() ? 1 : 0,
+            'description' => $spectacle->getDescription(),
+            'lieu_id' => $spectacle->getLieu()->getId(),
+            'soiree' => $spectacle->getSoireeId()
+        ]);
+        return $stmt->rowCount() > 0;
+    }
+
+
+    /**
+     * Supprime les artistes associés à un spectacle
+     * @param int $idSpectacle l'ID du spectacle
+     * @return void
+     */
+    public function removeArtistesFromSpectacle(int $idSpectacle): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM JOUE WHERE idsp = :idSpectacle');
+        $stmt->execute(['idSpectacle' => $idSpectacle]);
+    }
+    
 }
