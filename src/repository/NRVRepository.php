@@ -337,19 +337,33 @@ class NRVRepository
     /**
      * Récupère un utilisateur
      * @param string $email
-     * @return Utilisateur
+     * @return array
      * @throws AuthnException
      */
-    public function getUtilisateur(string $email): Utilisateur
+    public function getIdPasswd(string $email): array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM UTILISATEUR WHERE email = :email');
+        $stmt = $this->pdo->prepare('SELECT id, password FROM UTILISATEUR WHERE email = :email');
         $stmt->execute(['email' => $email]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$row) {
             throw new AuthnException('Utilisateur non trouvé');
         } else {
-            return new Utilisateur($row['id'], $row['nom'], $row['email'], $row['password'], $row['role']);
+            return $row;
         }
+    }
+    /**
+     * getUtilisateur
+     * @param id
+     * @return Utilisateur
+     */
+    public function getUtilisateur(int $id): Utilisateur{
+        $stmt = $this->pdo->prepare('SELECT * FROM UTILISATEUR WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        $utilisateurData = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$utilisateurData) {
+            throw new InvalidArgumentException("Utilisateur non trouvé");
+        }
+        return new Utilisateur($utilisateurData['nom'], $utilisateurData['email'], $utilisateurData['role']);
     }
 
 
@@ -378,7 +392,7 @@ class NRVRepository
      * @return int l'ID de l'utilisateur ajouté
      * @throws InscriptionException si l'utilisateur existe déjà
      */
-    public function addUtilisateur(Utilisateur $utilisateur): int
+    public function addUtilisateur(Utilisateur $utilisateur, String $passwordhash): void
     {
         //verification si l'utilisateur existe déjà
         $stmt = $this->pdo->prepare('SELECT id FROM UTILISATEUR WHERE email = :email');
@@ -391,11 +405,10 @@ class NRVRepository
             $stmt->execute([
                 'nom' => $utilisateur->getNom(),
                 'email' => $utilisateur->getEmail(),
-                'password' => password_hash($utilisateur->getPassword(), PASSWORD_BCRYPT),
+                'password' => $passwordhash,
                 'role' => $utilisateur->getRole()
             ]);
         }
-        return $this->pdo->lastInsertId();
     }
 
 

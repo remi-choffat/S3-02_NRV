@@ -102,8 +102,8 @@ HTML;
         }
 
         try {
-            $utilisateur = new Utilisateur(null, $nom, $email, $password, $role);
-            AuthProvider::register($utilisateur);
+            $utilisateur = new Utilisateur($nom, $email, $role);
+            AuthProvider::register($utilisateur, $password);
             $retour = "<section class='section'><strong>Utilisateur enregistré ✅</strong></section>";
         } catch (Exception $e) {
             $retour = "<section class='section'><strong>{$e->getMessage()}</strong></section>";
