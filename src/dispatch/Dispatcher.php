@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace iutnc\nrv\dispatch;
 
 use DateMalformedStringException;
+use iutnc\nrv\action\AjouterSoireeAction;
 use iutnc\nrv\action\AjouterSpectacleAction;
 use iutnc\nrv\action\AjouterSpectaclePrefAction;
 use iutnc\nrv\action\Deconnexion;
@@ -53,6 +54,7 @@ class Dispatcher
             'connexion' => new Connexion(),
             'deconnexion' => new Deconnexion(),
             'ajouter-spectacle' => new AjouterSpectacleAction(),
+            'ajouter-soiree' => new AjouterSoireeAction(),
             default => new DefaultAction()
         };
         $html = $action->execute();
@@ -78,7 +80,7 @@ class Dispatcher
             $user = AuthProvider::getSignedInUser();
             $name = $user->getNom();
             $deconnexion = "<a href='?action=deconnexion'>Déconnexion</a>";
-            $boutonsStaffAdmin = "<li><a href='?action=ajouter-spectacle'>Ajouter un spectacle</a></li>";
+            $boutonsStaffAdmin = "<li><a href='?action=ajouter-spectacle'>Ajouter un spectacle</a></li><li><a href='?action=ajouter-soiree'>Ajouter une soirée</a></li>";
         } catch (Exception $e) {
             $name = "";
             $deconnexion = "<a href='?action=connexion'>Connexion</a>";

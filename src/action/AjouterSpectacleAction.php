@@ -9,6 +9,9 @@ use iutnc\nrv\festival\Lieu;
 use iutnc\nrv\festival\Spectacle;
 use iutnc\nrv\repository\NRVRepository;
 
+/**
+ * Action d'ajout d'un spectacle
+ */
 class AjouterSpectacleAction extends Action
 {
 
@@ -41,7 +44,6 @@ class AjouterSpectacleAction extends Action
 
         return <<<HTML
     <section class="section">
-    <div class="container">
         <h1 class="title">Ajouter un Spectacle</h1>
         <form action="index.php?action=ajouter-spectacle" method="post">
             <div class="field">
@@ -105,7 +107,6 @@ class AjouterSpectacleAction extends Action
                 </div>
             </div>
         </form>
-    </div>
 </section>
 HTML;
     }

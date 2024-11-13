@@ -15,9 +15,9 @@ class Soiree
     /**
      * Attributs de la classe
      */
-    private int $id;
+    private ?int $id;
     private string $nom;
-    private string $theme;
+    private ?string $theme;
     private DateTime $date;
     private string $heureDebut;
     private Lieu $lieu;
@@ -26,16 +26,16 @@ class Soiree
 
     /**
      * Constructeur de la classe
-     * @param int $id
+     * @param int|null $id
      * @param string $nom
-     * @param string $theme
+     * @param string|null $theme
      * @param DateTime $date
      * @param Lieu $lieu
      * @param array $spectacles
      */
-    public function __construct(int $id, string $nom, string $theme, DateTime $date, Lieu $lieu, array $spectacles = [])
+    public function __construct(?int $id, string $nom, ?string $theme, DateTime $date, Lieu $lieu, array $spectacles = [])
     {
-        $this->id = $id;
+        $this->id = $id ?? -1;
         $this->nom = $nom;
         $this->theme = $theme;
         $this->date = $date;
@@ -139,12 +139,13 @@ class Soiree
      */
     public function afficherResume(): string
     {
+        $theme = $this->theme ? "<p><b>Thème : </b>$this->theme</p>" : "";
         return <<<HTML
         <div class="box soiree">
             <h3 class="title is-4"><a href="?action=details-soiree&id={$this->getId()}">{$this->nom}</a></h3>
-            <p><b>Thème : </b>{$this->theme}</p>
+            $theme
             <p><b>Date : </b>{$this->date->format('d/m/Y')}</p>
-            <p><b>Débute à : </b>{$this->heureDebut}</p>
+            <p><b>Débute à : </b>$this->heureDebut</p>
             <p><b>Lieu : </b>{$this->lieu->getNom()}</p>
         </div>
 HTML;
@@ -158,15 +159,20 @@ HTML;
      */
     public function afficherDetails(): string
     {
+        $theme = $this->theme ? "<p><b>Thème : </b>$this->theme</p>" : "";
         $sortie = "<div class='box list-spectacle'>
         <h3 class='title is-3'>{$this->nom}</h3>
-        <p><b>Thème : </b>{$this->theme}</p>
+        $theme
         <p><b>Date : </b>{$this->date->format('d/m/Y')}</p>
         <p><b>Débute à : </b>{$this->heureDebut}</p>
         <p><b>Finit à : </b>{$this->getFin()->format("H:i")}</p>
         <p><b>Lieu : </b>{$this->lieu->getNom()}</p>
         <br/>
         <h4 class='title is-4'>Spectacles :</h4>";
+
+        if (sizeof($this->spectacles) == 0) {
+            $sortie .= "<p><strong>Aucun spectacle</strong></p>";
+        }
         foreach ($this->spectacles as $spectacle) {
             $sortie .= $spectacle->afficherResume();
         }
@@ -181,7 +187,23 @@ HTML;
      */
     public function getFin(): DateTime
     {
+        // Si la liste des spectacles est vide, on renvoie la date de début de la soirée
+        if (sizeof($this->getSpectacles()) == 0) {
+            return $this->date;
+        }
+
+        // Sinon, on renvoie la date de fin du dernier spectacle
         return $this->getSpectacles()[sizeof($this->getSpectacles()) - 1]->getFin();
+    }
+
+
+    /**
+     * @param int $id
+     * @return void
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
 }
