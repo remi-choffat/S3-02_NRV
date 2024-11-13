@@ -22,13 +22,13 @@ class AuthProvider
     public static function signin($email, $password): void
     {
         $repo = NRVRepository::getInstance();
-        $user = $repo->getUtilisateur($email);
+        $idPassd = $repo->getIdPasswd($email);
 
-        if (!password_verify($password, $user->getPassword())) {
+        if (!password_verify($password, $idPassd['password'])) {
             throw new PDOException("Identifiants invalides.");
         }
         // L'authentification a réussi
-        $_SESSION["utilisateur"] = serialize($user);
+        $_SESSION["utilisateur"] = serialize($repo->getUtilisateur($idPassd['id']));
     }
 
 
@@ -36,12 +36,11 @@ class AuthProvider
      * Enregistre un utilisateur
      * @throws AuthnException|InscriptionException
      */
-    public static function register(Utilisateur $utilisateur): void
+    public static function register(Utilisateur $utilisateur, string $password): void
     {
         if (preg_match('/@[A-z]+\.[A-z]+$/', $utilisateur->getEmail()) === 0) {
             throw new AuthnException("L'email saisi est invalide");
         }
-        $password = $utilisateur->getPassword();
         $error = "Le mot de passe ne comporte pas : <br/>";
         if (strlen($password) < 12) {
             $error .= "- au moins 12 caractères<br>";
@@ -59,7 +58,7 @@ class AuthProvider
             throw new AuthnException($error);
         } else {
             $repo = NRVRepository::getInstance();
-            $utilisateur->setId($repo->addUtilisateur($utilisateur));
+            $repo->addUtilisateur($utilisateur, password_hash($password, PASSWORD_BCRYPT));
         }
     }
 

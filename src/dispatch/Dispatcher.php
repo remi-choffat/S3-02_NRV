@@ -17,6 +17,8 @@ use iutnc\nrv\action\DetailsSpectacleAction;
 use iutnc\nrv\action\ListeSoireesAction;
 use iutnc\nrv\action\ListeSpectaclePrefAction;
 use iutnc\nrv\action\ListeSpectaclesAction;
+use iutnc\nrv\action\ModifierSoireeAction;
+use iutnc\nrv\action\ModifierSpectacleAction;
 use iutnc\nrv\action\SupprimerSpectaclePrefAction;
 use iutnc\nrv\action\Inscription;
 use iutnc\nrv\action\Connexion;
@@ -63,6 +65,8 @@ class Dispatcher
                 'ajouter-soiree' => new AjouterSoireeAction(1),
                 'ajouter-lieu' => new AjouterLieuAction(1),
                 'ajouter-artiste' => new AjouterArtisteAction(1),
+                'modifier-spectacle' => new ModifierSpectacleAction(1),
+                'modifier-soiree' => new ModifierSoireeAction(1),
                 default => new UnknownAction(),
             };
             $html = $action->execute();
@@ -70,8 +74,6 @@ class Dispatcher
         catch (UnauthorizedActionException $e){
             $html=$e->getMessage();
         }
-
-
         $this->renderPage($html);
     }
 

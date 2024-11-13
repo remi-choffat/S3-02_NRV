@@ -76,15 +76,13 @@ class DetailsSpectacleAction extends Action
             }
 
             $html .= "</div>";
+        }
 
-
-            // Si le spectacle appartient à une soirée, on affiche la soirée
-            if ($spectacle->getSoireeId() !== null) {
-                $soiree = $repository->getSoiree($spectacle->getSoireeId());
-                $html .= "<h2 class='subtitle'>Soirée</h2>";
-                $html .= $soiree->afficherResume();
-            }
-
+        // Si le spectacle appartient à une soirée, on affiche la soirée
+        if ($spectacle->getSoireeId() !== null) {
+            $soiree = $repository->getSoiree($spectacle->getSoireeId());
+            $html .= "<h2 class='subtitle'>Soirée</h2>";
+            $html .= $soiree->afficherResume();
         }
 
         return $html;

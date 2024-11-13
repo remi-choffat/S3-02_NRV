@@ -139,10 +139,27 @@ class Soiree
      */
     public function afficherResume(): string
     {
+        // Affiche le menu de modification et d'annulation si l'utilisateur est connecté
+        if (isset($_SESSION['utilisateur'])) {
+            $menu = <<<HTML
+            <div class="menu">
+                <button class="menu-btn">⋮</button>
+                <div class="menu-content">
+                    <a href="index.php?action=modifier-soiree&id={$this->id}">Modifier</a>
+                </div>
+            </div>
+        HTML;
+        } else {
+            $menu = "";
+        }
+
         $theme = $this->theme ? "<p><b>Thème : </b>$this->theme</p>" : "";
         return <<<HTML
         <div class="box soiree">
+        <div class="spectacle-header">
             <h3 class="title is-4"><a href="?action=details-soiree&id={$this->getId()}">{$this->nom}</a></h3>
+            $menu            
+        </div>
             $theme
             <p><b>Date : </b>{$this->date->format('d/m/Y')}</p>
             <p><b>Débute à : </b>$this->heureDebut</p>
