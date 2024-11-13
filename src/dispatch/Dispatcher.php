@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace iutnc\nrv\dispatch;
 
 use DateMalformedStringException;
+use iutnc\nrv\action\AjouterArtisteAction;
 use iutnc\nrv\action\AjouterLieuAction;
 use iutnc\nrv\action\AjouterSoireeAction;
 use iutnc\nrv\action\AjouterSpectacleAction;
@@ -59,6 +60,7 @@ class Dispatcher
             'ajouter-spectacle' => new AjouterSpectacleAction(),
             'ajouter-soiree' => new AjouterSoireeAction(),
             'ajouter-lieu' => new AjouterLieuAction(),
+            'ajouter-artiste' => new AjouterArtisteAction(),
             default => new UnknownAction(),
         };
         $html = $action->execute();

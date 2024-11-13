@@ -2,16 +2,24 @@
 
 namespace iutnc\nrv\festival;
 
+/**
+ * Représente un artiste
+ */
 class Artiste
 {
 
-    private int $id;
+    private ?int $id;
     private string $nomArtiste;
 
-    public function __construct(int $id, string $nomArtiste)
+    public function __construct(?int $id, string $nomArtiste)
+    {
+        $this->id = $id ?? -1;
+        $this->nomArtiste = $nomArtiste;
+    }
+
+    public function setId(int $id): void
     {
         $this->id = $id;
-        $this->nomArtiste = $nomArtiste;
     }
 
     public function getId(): int
