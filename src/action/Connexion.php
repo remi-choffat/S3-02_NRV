@@ -74,10 +74,11 @@ HTML;
         try {
             AuthProvider::signin($email, $password);
             $utilisateur = AuthProvider::getSignedInUser();
-            $retour = "<div class='notification is-success'>Bienvenue {$utilisateur->getNom()}</div>";
+            // Renvoie l'utilisateur vers la page d'accueil
+            header("Location: index.php");
         } catch (Exception $e) {
-            $retour = "<div class='notification is-danger'>{$e->getMessage()}</div>";
+            return "<div class='notification is-danger'>{$e->getMessage()}</div>";
         }
-        return $retour;
+        return "";
     }
 }
