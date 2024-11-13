@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace iutnc\nrv\dispatch;
 
 use DateMalformedStringException;
+use iutnc\nrv\action\AjouterSpectacleAction;
 use iutnc\nrv\action\AjouterSpectaclePrefAction;
 use iutnc\nrv\action\DefaultAction;
 use iutnc\nrv\action\DetailsSoireeAction;
@@ -45,6 +46,7 @@ class Dispatcher
             'liste-favoris' => new ListeSpectaclePrefAction(),
             'inscription' => new Inscription(),
             'connexion' => new Connexion(),
+            'ajouter-spectacle' => new AjouterSpectacleAction(),
             default => new DefaultAction()
         };
         $html = $action->execute();
@@ -84,6 +86,7 @@ class Dispatcher
                     <li><a href='?action=default'>Accueil</a></li>
                     <li><a href='?action=liste-spectacles'>Liste des spectacles</a></li>
                     <li><a href='?action=liste-soirees'>Liste des soirées</a></li>
+                    <li><a href='?action=ajouter-spectacle'>Ajouter un spectacle</a></li>
                 </ul>
             </nav>
             <br/>

@@ -79,7 +79,7 @@ class DetailsSpectacleAction extends Action
 
 
             // Si le spectacle appartient à une soirée, on affiche la soirée
-            if ($spectacle->getSoireeId() !== -1) {
+            if ($spectacle->getSoireeId() !== null) {
                 $soiree = $repository->getSoiree($spectacle->getSoireeId());
                 $html .= "<h2 class='subtitle'>Soirée</h2>";
                 $html .= $soiree->afficherResume();

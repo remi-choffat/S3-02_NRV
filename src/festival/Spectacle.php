@@ -32,7 +32,7 @@ class Spectacle
 
     /**
      * Constructeur de la classe Spectacle
-     * @param int $id
+     * @param int|null $id
      * @param string $titre
      * @param DateTime $date
      * @param int $duree
@@ -43,7 +43,7 @@ class Spectacle
      * @param bool $annule
      * @param int|null $soireeId
      */
-    public function __construct(int $id, string $titre, DateTime $date, int $duree, array $artistes, string $style, Lieu $lieu, string $description, bool $annule = false, int $soireeId = null)
+    public function __construct(?int $id, string $titre, DateTime $date, int $duree, array $artistes, string $style, Lieu $lieu, string $description, bool $annule = false, int $soireeId = null)
     {
 
         // Vérifie la cohérence entre la date et le lieu du spectacle et la date et le lieu de la soirée,
@@ -59,7 +59,7 @@ class Spectacle
 //            }
 //        }
 
-        $this->id = $id;
+        $this->id = $id ?? -1;
         $this->titre = $titre;
         $this->artistes = $artistes;
         $this->date = $date;
@@ -68,8 +68,18 @@ class Spectacle
         $this->description = $description;
         $this->lieu = $lieu;
         $this->annule = $annule;
-        $this->soireeId = $soireeId ?? -1;
+        $this->soireeId = $soireeId;
         $this->style = $style;
+    }
+
+
+    /**
+     * @param int $id l'ID du spectacle
+     * @return void
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
 
@@ -147,11 +157,11 @@ class Spectacle
 
 
     /**
-     * @return int l'ID de la soirée
+     * @return int|null l'ID de la soirée, null si le spectacle n'appartient pas à une soirée
      */
-    public function getSoireeId(): int
+    public function getSoireeId(): ?int
     {
-        return $this->soireeId ?? -1;
+        return $this->soireeId;
     }
 
 

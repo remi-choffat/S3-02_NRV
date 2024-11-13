@@ -106,7 +106,7 @@ class Lieu
      */
     public function __toString(): string
     {
-        return $this->nom;
+        return $this->nom . " (" . $this->adresse . ") - " . $this->nb_places_assises . " places assises, " . $this->nb_places_debout . " places debout";
     }
 
 }
