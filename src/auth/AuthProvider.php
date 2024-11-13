@@ -16,6 +16,7 @@ class AuthProvider
 {
 
     /**
+     * Authentifie un utilisateur
      * @throws AuthnException
      */
     public static function signin($email, $password): void
@@ -23,7 +24,7 @@ class AuthProvider
         $repo = NRVRepository::getInstance();
         $user = $repo->getUtilisateur($email);
 
-        if (!$user || !password_verify($password, $user->getPassword())) {
+        if (!password_verify($password, $user->getPassword())) {
             throw new PDOException("Identifiants invalides.");
         }
         // L'authentification a réussi
@@ -32,26 +33,27 @@ class AuthProvider
 
 
     /**
+     * Enregistre un utilisateur
      * @throws AuthnException|InscriptionException
      */
     public static function register(Utilisateur $utilisateur): void
     {
         if (preg_match('/@[A-z]+\.[A-z]+$/', $utilisateur->getEmail()) === 0) {
-            throw new AuthnException("l'email saisi est invalide");
+            throw new AuthnException("L'email saisi est invalide");
         }
         $password = $utilisateur->getPassword();
-        $error = "Le mot de passe ne comporte pas: ";
+        $error = "Le mot de passe ne comporte pas : ";
         if (strlen($password) < 12) {
-            $error .= "au moins 12 caractères.<br>";
+            $error .= "- au moins 12 caractères<br>";
         }
         if (!preg_match("/\d/", $password)) {
-            $error .= "au moins 1 chiffre.<br>";
+            $error .= "- au moins 1 chiffre<br>";
         }
         if (!preg_match("/[\W_]/", $password)) {
-            $error .= "au moins 1 caractère spéciale.<br>";
+            $error .= "- au moins 1 caractère spécial<br>";
         }
         if (!preg_match('/[A-Z]/', $password)) {
-            $error .= "au moins une majuscule.<br>";
+            $error .= "- au moins une majuscule<br>";
         }
         if (str_contains($error, "au moins")) {
             throw new AuthnException($error);
@@ -63,6 +65,7 @@ class AuthProvider
 
 
     /**
+     * Récupère l'utilisateur authentifié
      * @throws AuthnException
      */
     public static function getSignedInUser(): Utilisateur
@@ -76,6 +79,7 @@ class AuthProvider
 
     /**
      * Déconnecte l'utilisateur
+     * @return bool true si l'utilisateur était connecté, false sinon
      */
     public static function SignedOutUser(): bool
     {

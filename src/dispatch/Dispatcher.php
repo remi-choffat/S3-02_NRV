@@ -65,19 +65,24 @@ class Dispatcher
      */
     private function renderPage($html): void
     {
+        // Affiche le lien d'ajout d'un utilisateur aux ADMIN
         try {
             Authz::checkRole(0);
             $lien = "<a href='?action=inscription'>Inscription</a>";
         } catch (Exception $e) {
             $lien = "";
         }
+
+        // Vérifie si un utilisateur est connecté
         try {
             $user = AuthProvider::getSignedInUser();
             $name = $user->getNom();
             $deconnexion = "<a href='?action=deconnexion'>Déconnexion</a>";
+            $boutonsStaffAdmin = "<li><a href='?action=ajouter-spectacle'>Ajouter un spectacle</a></li>";
         } catch (Exception $e) {
             $name = "";
             $deconnexion = "<a href='?action=connexion'>Connexion</a>";
+            $boutonsStaffAdmin = "";
         }
 
         $page = <<<HTML
@@ -101,6 +106,7 @@ class Dispatcher
                     <li><a href='?action=default'>Accueil</a></li>
                     <li><a href='?action=liste-spectacles'>Liste des spectacles</a></li>
                     <li><a href='?action=liste-soirees'>Liste des soirées</a></li>
+                    $boutonsStaffAdmin
                 </ul>
             </nav>
             <br/>

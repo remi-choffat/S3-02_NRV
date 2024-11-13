@@ -107,7 +107,7 @@ HTML;
             AuthProvider::register($utilisateur);
             $retour = "<section class='section'><strong>Utilisateur enregistré ✅</strong></section>";
         } catch (Exception $e) {
-            $retour = $e->getMessage();
+            $retour = "<section class='section'><strong>{$e->getMessage()}</strong></section>";
         }
 
         return $retour;
