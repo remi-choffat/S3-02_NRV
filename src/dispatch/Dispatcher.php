@@ -24,6 +24,7 @@ use iutnc\nrv\action\UnknownAction;
 use iutnc\nrv\auth\AuthProvider;
 use iutnc\nrv\auth\Authz;
 use Exception;
+use iutnc\nrv\exception\UnauthorizedActionException;
 
 /**
  * Dispatche les actions
@@ -45,25 +46,32 @@ class Dispatcher
      */
     public function run(): void
     {
-        $action = match ($this->action) {
-            "null", 'default' => new DefaultAction(),
-            'liste-spectacles' => new ListeSpectaclesAction(),
-            'details-spectacle' => new DetailsSpectacleAction(),
-            'liste-soirees' => new ListeSoireesAction(),
-            'details-soiree' => new DetailsSoireeAction(),
-            'ajouter-pref' => new AjouterSpectaclePrefAction(),
-            'supprimer-pref' => new SupprimerSpectaclePrefAction(),
-            'liste-favoris' => new ListeSpectaclePrefAction(),
-            'inscription' => new Inscription(),
-            'connexion' => new Connexion(),
-            'deconnexion' => new Deconnexion(),
-            'ajouter-spectacle' => new AjouterSpectacleAction(),
-            'ajouter-soiree' => new AjouterSoireeAction(),
-            'ajouter-lieu' => new AjouterLieuAction(),
-            'ajouter-artiste' => new AjouterArtisteAction(),
-            default => new UnknownAction(),
-        };
-        $html = $action->execute();
+        try {
+            $action = match ($this->action) {
+                "null", 'default' => new DefaultAction(),
+                'liste-spectacles' => new ListeSpectaclesAction(),
+                'details-spectacle' => new DetailsSpectacleAction(),
+                'liste-soirees' => new ListeSoireesAction(),
+                'details-soiree' => new DetailsSoireeAction(),
+                'ajouter-pref' => new AjouterSpectaclePrefAction(),
+                'supprimer-pref' => new SupprimerSpectaclePrefAction(),
+                'liste-favoris' => new ListeSpectaclePrefAction(),
+                'inscription' => new Inscription(0),
+                'connexion' => new Connexion(),
+                'deconnexion' => new Deconnexion(1),
+                'ajouter-spectacle' => new AjouterSpectacleAction(1),
+                'ajouter-soiree' => new AjouterSoireeAction(1),
+                'ajouter-lieu' => new AjouterLieuAction(1),
+                'ajouter-artiste' => new AjouterArtisteAction(1),
+                default => new UnknownAction(),
+            };
+            $html = $action->execute();
+        }
+        catch (UnauthorizedActionException $e){
+            $html=$e->getMessage();
+        }
+
+
         $this->renderPage($html);
     }
 

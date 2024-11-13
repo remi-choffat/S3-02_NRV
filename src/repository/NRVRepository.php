@@ -171,17 +171,17 @@ class NRVRepository
 
     /**
      * Récupère la liste des soirées
-     * @return array|null
+     * @return array
      * @throws DateMalformedStringException
      */
-    public function getSoirees(): ?array
+    public function getSoirees(): array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM SOIREE ORDER BY date');
         $stmt->execute();
         $soireesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (!$soireesData) {
-            return null;
+            return [];
         }
         return array_map(fn($soiree) => $this->mapToSoiree($soiree), $soireesData);
     }
