@@ -42,7 +42,7 @@ class AuthProvider
             throw new AuthnException("L'email saisi est invalide");
         }
         $password = $utilisateur->getPassword();
-        $error = "Le mot de passe ne comporte pas : ";
+        $error = "Le mot de passe ne comporte pas : <br/>";
         if (strlen($password) < 12) {
             $error .= "- au moins 12 caractères<br>";
         }
@@ -59,7 +59,7 @@ class AuthProvider
             throw new AuthnException($error);
         } else {
             $repo = NRVRepository::getInstance();
-            $repo->addUtilisateur($utilisateur);
+            $utilisateur->setId($repo->addUtilisateur($utilisateur));
         }
     }
 

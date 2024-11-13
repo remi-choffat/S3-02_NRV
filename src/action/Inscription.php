@@ -102,7 +102,7 @@ HTML;
         }
 
         try {
-            $utilisateur = new Utilisateur($nom, $email, $password, $role, null);
+            $utilisateur = new Utilisateur(null, $nom, $email, $password, $role);
             AuthProvider::register($utilisateur);
             $retour = "<section class='section'><strong>Utilisateur enregistré ✅</strong></section>";
         } catch (Exception $e) {

@@ -348,7 +348,7 @@ class NRVRepository
         if (!$row) {
             throw new AuthnException('Utilisateur non trouvé');
         } else {
-            return new Utilisateur($row['nom'], $row['email'], $row['password'], $row['role'], $row['id']);
+            return new Utilisateur($row['id'], $row['nom'], $row['email'], $row['password'], $row['role']);
         }
     }
 
@@ -375,9 +375,10 @@ class NRVRepository
     /**
      * Ajoute un utilisateur
      * @param Utilisateur $utilisateur l'utilisateur à ajouter
+     * @return int l'ID de l'utilisateur ajouté
      * @throws InscriptionException si l'utilisateur existe déjà
      */
-    public function addUtilisateur(Utilisateur $utilisateur): void
+    public function addUtilisateur(Utilisateur $utilisateur): int
     {
         //verification si l'utilisateur existe déjà
         $stmt = $this->pdo->prepare('SELECT id FROM UTILISATEUR WHERE email = :email');
@@ -394,6 +395,7 @@ class NRVRepository
                 'role' => $utilisateur->getRole()
             ]);
         }
+        return $this->pdo->lastInsertId();
     }
 
 
