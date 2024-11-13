@@ -7,6 +7,7 @@ namespace iutnc\nrv\dispatch;
 use DateMalformedStringException;
 use iutnc\nrv\action\AjouterSpectacleAction;
 use iutnc\nrv\action\AjouterSpectaclePrefAction;
+use iutnc\nrv\action\Deconnexion;
 use iutnc\nrv\action\DefaultAction;
 use iutnc\nrv\action\DetailsSoireeAction;
 use iutnc\nrv\action\DetailsSpectacleAction;
@@ -16,9 +17,13 @@ use iutnc\nrv\action\ListeSpectaclesAction;
 use iutnc\nrv\action\SupprimerSpectaclePrefAction;
 use iutnc\nrv\action\Inscription;
 use iutnc\nrv\action\Connexion;
+use iutnc\nrv\auth\AuthProvider;
 use iutnc\nrv\auth\Authz;
 use Exception;
 
+/**
+ * Dispatche les actions
+ */
 class Dispatcher
 {
 
@@ -46,6 +51,7 @@ class Dispatcher
             'liste-favoris' => new ListeSpectaclePrefAction(),
             'inscription' => new Inscription(),
             'connexion' => new Connexion(),
+            'deconnexion' => new Deconnexion(),
             'ajouter-spectacle' => new AjouterSpectacleAction(),
             default => new DefaultAction()
         };
@@ -59,12 +65,21 @@ class Dispatcher
      */
     private function renderPage($html): void
     {
-        try{
+        try {
             Authz::checkRole(0);
             $lien = "<a href='?action=inscription'>Inscription</a>";
-        }catch(Exception $e){
+        } catch (Exception $e) {
             $lien = "";
         }
+        try {
+            $user = AuthProvider::getSignedInUser();
+            $name = $user->getNom();
+            $deconnexion = "<a href='?action=deconnexion'>Déconnexion</a>";
+        } catch (Exception $e) {
+            $name = "";
+            $deconnexion = "<a href='?action=connexion'>Connexion</a>";
+        }
+
         $page = <<<HTML
 <!DOCTYPE html><html lang='fr'><head><meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
@@ -86,7 +101,6 @@ class Dispatcher
                     <li><a href='?action=default'>Accueil</a></li>
                     <li><a href='?action=liste-spectacles'>Liste des spectacles</a></li>
                     <li><a href='?action=liste-soirees'>Liste des soirées</a></li>
-                    <li><a href='?action=ajouter-spectacle'>Ajouter un spectacle</a></li>
                 </ul>
             </nav>
             <br/>
@@ -99,8 +113,9 @@ class Dispatcher
                 <p>
                     <strong>Nancy Rock Vibration</strong> by Les Détraqués
                 </p>
-                <a href='?action=connexion'>Connexion</a>
+                $deconnexion
                 $lien
+                <p>$name</p>
             </div>
         </footer>
     </div>

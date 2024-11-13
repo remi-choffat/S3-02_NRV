@@ -4,13 +4,20 @@ namespace iutnc\nrv\auth;
 
 use Exception;
 use iutnc\nrv\exception\AuthnException;
+use iutnc\nrv\exception\InscriptionException;
 use iutnc\nrv\repository\NRVRepository;
 use iutnc\nrv\User\Utilisateur;
 use PDOException;
 
+/**
+ * Gère l'authentification
+ */
 class AuthProvider
 {
 
+    /**
+     * @throws AuthnException
+     */
     public static function signin($email, $password): void
     {
         $repo = NRVRepository::getInstance();
@@ -23,8 +30,9 @@ class AuthProvider
         $_SESSION["utilisateur"] = serialize($user);
     }
 
+
     /**
-     * @throws AuthnException
+     * @throws AuthnException|InscriptionException
      */
     public static function register(Utilisateur $utilisateur): void
     {
@@ -47,11 +55,12 @@ class AuthProvider
         }
         if (str_contains($error, "au moins")) {
             throw new AuthnException($error);
-        }else {
+        } else {
             $repo = NRVRepository::getInstance();
             $repo->addUtilisateur($utilisateur);
         }
     }
+
 
     /**
      * @throws AuthnException
@@ -62,5 +71,19 @@ class AuthProvider
             throw new AuthnException("Aucun utilisateur authentifié.");
         }
         return unserialize($_SESSION['utilisateur']);
+    }
+
+
+    /**
+     * Déconnecte l'utilisateur
+     */
+    public static function SignedOutUser(): bool
+    {
+        $result = false;
+        if (isset($_SESSION['utilisateur'])) {
+            unset($_SESSION['utilisateur']);
+            $result = true;
+        }
+        return $result;
     }
 }
