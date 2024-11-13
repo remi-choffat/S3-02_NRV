@@ -13,19 +13,6 @@ class ListeSpectaclesAction extends Action
     public function execute(): string
     {
 
-        $modifButton = "";
-        if(isset($_SESSION['utilisateur'])){
-            $modifButton = <<<HTML5
-            <nav>
-                <ul class="interaction">...
-                    <li>Modifier Spectacle</li>
-                    <li>Supprimer Spectacle</li>
-                </ul>
-            </nav>
-            HTML5;;
-
-        }
-
         $repository = NRVRepository::getInstance();
         $styles = $repository->getStyles();
         $lieux = $repository->getLieux();
@@ -95,14 +82,7 @@ function toggleFilterForm() {
             $html .= "<div class='notification is-warning' style='margin: 20px;'>Aucun spectacle ne correspond à vos critères de recherche</div>";
         } else {
             foreach ($spectacles as $spectacle) {
-                $html .= $spectacle->afficherResume().<<<HTML5
-            <div class="interaction">...
-                <ul>
-                    <li>Modifier Spectacle</li>
-                    <li>Supprimer Spectacle</li>
-                </ul>
-            </div>
-            HTML5;;;
+                $html .= $spectacle->afficherResume()
             }
         }
 
