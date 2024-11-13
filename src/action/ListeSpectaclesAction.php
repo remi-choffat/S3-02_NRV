@@ -2,7 +2,6 @@
 
 namespace iutnc\nrv\action;
 
-use DateMalformedStringException;
 use iutnc\nrv\repository\NRVRepository;
 
 class ListeSpectaclesAction extends Action
@@ -10,10 +9,23 @@ class ListeSpectaclesAction extends Action
     /**
      * Liste les spectacles du festival
      * @return string affichage des spectacles
-     * @throws DateMalformedStringException
      */
     public function execute(): string
     {
+
+        $modifButton = "";
+        if(isset($_SESSION['utilisateur'])){
+            $modifButton = <<<HTML5
+            <nav>
+                <ul class="interaction">...
+                    <li>Modifier Spectacle</li>
+                    <li>Supprimer Spectacle</li>
+                </ul>
+            </nav>
+            HTML5;;
+
+        }
+
         $repository = NRVRepository::getInstance();
         $styles = $repository->getStyles();
         $lieux = $repository->getLieux();
@@ -83,7 +95,14 @@ function toggleFilterForm() {
             $html .= "<div class='notification is-warning' style='margin: 20px;'>Aucun spectacle ne correspond à vos critères de recherche</div>";
         } else {
             foreach ($spectacles as $spectacle) {
-                $html .= $spectacle->afficherResume();
+                $html .= $spectacle->afficherResume().<<<HTML5
+            <div class="interaction">...
+                <ul>
+                    <li>Modifier Spectacle</li>
+                    <li>Supprimer Spectacle</li>
+                </ul>
+            </div>
+            HTML5;;;
             }
         }
 

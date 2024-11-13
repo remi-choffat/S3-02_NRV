@@ -61,6 +61,6 @@ class AuthProvider
         if (!isset($_SESSION['utilisateur'])) {
             throw new AuthnException("Aucun utilisateur authentifié.");
         }
-        return $_SESSION['utilisateur'];
+        return unserialize($_SESSION['utilisateur']);
     }
 }
