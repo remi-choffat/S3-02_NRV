@@ -1,33 +1,42 @@
 <?php
+
 namespace iutnc\nrv\action;
-use iutnc\nrv\action\Action;
+
 use iutnc\nrv\repository\NRVRepository;
 use Exception;
+
 /**
- * classe AjouterImages dans la base de données
+ * Action d'ajout d'une image
  */
-class AjouterImageAction extends Action {
+class AjouterImageAction extends Action
+{
+
     /**
-     * Retourne le formulaire d'ajout d'un lieu
-     * @return string Formulaire d'ajout d'un lieu
+     * Retourne le formulaire d'ajout d'une image
+     * @return string Formulaire d'ajout d'une image
      */
     private function getAddImages(): string
     {
         return <<<HTML
     <section class="section">
-        <form action="index.php?action=ajouter-image" method="POST" enctype="multipart/form-data">
         <h1 class="title">Ajouter une Image</h1>
-            <br/>
+        <form action="index.php?action=ajouter-image" method="POST" enctype="multipart/form-data">
             <div class="field">
+               <label class="label required" for="fileName">Nom de l'image</label>
                 <div class="control">
-                    <label for="fileName">Nom de la photo</label>
-                    <input type="text" id="fileName" name="file_name" value="FileName" required>
+                    <input class="input" type="text" id="fileName" name="file_name" required>
                 </div>
-                <div class="control">
-                    <input type="hidden" name="MAX_FILE_SIZE" value="50000000">
-                    <label for="image">photo</label>
-                    <input type="file" id="image" name="image" accept="image/*" required>
-                </div>
+            </div>
+            <div class="file">
+              <label class="file-label required" for="image">
+                <input id="image" class="file-input" type="file" name="image" onchange="updateFileName()" />
+                <span class="file-cta">
+                  <span class="file-icon">
+                    <i class="fa fa-upload"></i>
+                  </span>
+                  <span class="file-label" id="file-label"> Choisir un fichier… </span>
+                </span>
+              </label>
             </div>
             <br/>
             <div class="field">
@@ -36,13 +45,22 @@ class AjouterImageAction extends Action {
                 </div>
             </div>
         </form>
+        <script>
+            function updateFileName() {
+                const input = document.getElementById('image');
+                const label = document.getElementById('file-label');
+                label.textContent = input.files[0].name;
+            }
+        </script>
     </section>
     HTML;
     }
+
+
     /**
-     * Ajoute un lieu à la base de données
-     * @throws Exception Si le lieu n'a pas pu être ajouté
+     * Stocke l'image sur le serveur, et ajoute un lien vers l'image dans la base de données
      * @return string Message de succès ou d'erreur
+     * @throws Exception Si l'image n'est pas valide
      */
     private function postAddImage(): string
     {
@@ -51,34 +69,43 @@ class AjouterImageAction extends Action {
         }
         //filtre les données
         $filename = filter_var($_POST['file_name'], FILTER_SANITIZE_SPECIAL_CHARS);
-        //validation du fichier: vérifie si le fichier est une image et si son extension est valide
-        if (in_array($_FILES['image']['type'], ['image/jpeg', 'image/png', 'image/gif']) &&
+        //validation du fichier : vérifie si le fichier est une image et si son extension est valide
+        if (in_array($_FILES['image']['type'], ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']) &&
             preg_match('/\.(gif|png|jpg)$/i', $_FILES['image']['name'])) {
-                // si fichier valide alors upload
-                $uploaddir = 'images/';
-                $uploadfile = $uploaddir . $filename . '.' . pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-                move_uploaded_file($_FILES['image']['tmp_name'], $uploadfile);
-                // ajoute le nom de l'image dans la base de données
-                try {
-                    // verifie si l'image n'est pas déjà dans la base de données
-                    $repo = NRVRepository::getInstance();
-                    $images = $repo->getImages();
-                    if(in_array($uploadfile, $images)){
-                        return "<div class='notification is-danger'>Ce nom a déjà utilisé</div>";
-                    }
-                    // Ajoute le nom de l'image dans la base de données
-                    $repo->UploadImage($uploadfile);
-                    // Renvoie un message de succès
-                    return "<div class='notification is-success'>Image ajouté avec succès</div>";
-                } catch (Exception $e) {
-                    // Renvoie un message d'erreur
-                    return "<div class='notification is-danger'>Erreur lors de l'ajout de l'image : {$e->getMessage()}</div>";
-                }
+
+            // Si fichier valide alors upload
+            $uploaddir = 'images/';
+
+            // Si le dossier n'existe pas, le crée
+            if (!file_exists($uploaddir)) {
+                mkdir($uploaddir);
             }
-        else{
-            return " <div class='notification is-danger'>potentielle attaque lors de l'upload de l'image</div>";
+
+            $uploadfile = $uploaddir . $filename . '.' . pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+            move_uploaded_file($_FILES['image']['tmp_name'], $uploadfile);
+
+            // Ajoute le nom de l'image dans la base de données
+            try {
+                // verifie si l'image n'est pas déjà dans la base de données
+                $repo = NRVRepository::getInstance();
+                $images = $repo->getImages();
+                if (in_array($uploadfile, $images)) {
+                    return "<div class='notification is-warning'>Ce nom a déjà utilisé</div>";
+                }
+                // Ajoute le nom de l'image dans la base de données
+                $repo->UploadImage($uploadfile);
+                // Renvoie un message de succès
+                return "<div class='notification is-success'>Image ajoutée avec succès</div>";
+            } catch (Exception $e) {
+                // Renvoie un message d'erreur
+                return "<div class='notification is-danger'>Erreur lors de l'ajout de l'image : {$e->getMessage()}</div>";
+            }
+        } else {
+            return "<div class='notification is-danger'>La validité de l'image importée n'a pas été vérifiée</div>";
         }
     }
+
+
     /**
      * Exécute l'action en fonction de la méthode HTTP
      * @throws Exception
@@ -86,7 +113,7 @@ class AjouterImageAction extends Action {
     public function execute(): string
     {
         if (!isset($_SESSION['utilisateur'])) {
-            return "Vous devez être connecté pour ajouter un lieu.";
+            return "Vous devez être connecté pour ajouter une image.";
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return $this->postAddImage();
