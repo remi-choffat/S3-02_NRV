@@ -19,7 +19,7 @@ class AnnulerSpectacleAction extends Action
 
             $spectacle->setAnnule(true);
 
-            $repository->updateSpectacle($spectacle);
+            $repository->modifierAnnulationSpectacle($spectacle->getId(), true);
 
             return <<<HTML
                 <section class='section'>

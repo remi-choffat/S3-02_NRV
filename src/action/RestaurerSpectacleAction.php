@@ -19,7 +19,7 @@ class RestaurerSpectacleAction extends Action
 
             $spectacle->setAnnule(false);
 
-            $repository->updateSpectacle($spectacle);
+            $repository->modifierAnnulationSpectacle($spectacle->getId(), false);
 
             return <<<HTML
                 <section class='section'>

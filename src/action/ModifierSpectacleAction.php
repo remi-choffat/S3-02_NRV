@@ -28,7 +28,7 @@ class ModifierSpectacleAction extends Action
         $lieux = $repo->getLieux();
         $artistes = $repo->getArtistes();
 
-        $soireeOptions = "<option value='' selected disabled>Sélectionner une soirée</option>";
+        $soireeOptions = "<option value=''>Aucune soirée</option>";
         foreach ($soirees as $soiree) {
             $selected = $soiree->getId() === $spectacle->getSoireeId() ? 'selected' : '';
             $soireeOptions .= "<option value='{$soiree->getId()}' $selected>{$soiree->getNom()}</option>";
@@ -111,7 +111,7 @@ class ModifierSpectacleAction extends Action
                 </div>
             </div>
         </form>
-</section>
+    </section>
 HTML;
     }
 
