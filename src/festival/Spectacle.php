@@ -6,8 +6,6 @@ namespace iutnc\nrv\festival;
 use DateMalformedStringException;
 use DateTime;
 use iutnc\nrv\exception\DateIncompatibleException;
-use iutnc\nrv\exception\LieuIncompatibleException;
-use iutnc\nrv\repository\NRVRepository;
 
 
 /**
@@ -42,32 +40,35 @@ class Spectacle
      * @param string $description
      * @param bool $annule
      * @param int|null $soireeId
+     * @throws DateIncompatibleException
      */
     public function __construct(?int $id, string $titre, DateTime $date, int $duree, array $artistes, string $style, Lieu $lieu, string $description, bool $annule, int $soireeId = null)
     {
 
         // Vérifie la cohérence entre la date et le lieu du spectacle et la date et le lieu de la soirée,
         // si le spectacle appartient à une soirée
-//        if ($soireeId !== null) {
-//            $soiree = NRVRepository::getInstance()->getSoiree($soireeId);
-//            if ($soiree->getDate() > $date || $soiree->getDate()->format('Y-m-d') !== $date->format('Y-m-d')) {
-//                throw new DateIncompatibleException();
-//            }
-//            if ($soiree->getLieu()->getId() !== $lieu->getId()) {
-//                var_dump($soiree->getLieu(), $lieu);
-//                throw new LieuIncompatibleException();
-//            }
-//        }
-
+        // if ($soireeId !== null) {
+        //      $soiree = NRVRepository::getInstance()->soireeAssignable($soireeId,$date,$lieu,$style);
+        //      if ($soiree->getDate() > $date || $soiree->getDate()->format('Y-m-d') !== $date->format('Y-m-d')) {
+        //       throw new DateIncompatibleException();
+        //    }
+        //   if ($soiree->getLieu()->getId() !== $lieu->getId()) {
+        //      throw new LieuIncompatibleException();
+        //   }
+        //   }
+        $this->date = $date;
+        $this->duree = $duree;
+        $this->annule = $annule;
         $this->id = $id ?? -1;
         $this->titre = $titre;
-        $this->artistes = $artistes;
-        $this->date = $date;
-        $this->horaire = $date->format('H:i');
-        $this->duree = $duree;
         $this->description = $description;
+        $this->horaire = $date->format('H:i');
+        if ($soireeId !== null) {
+            $this->verifierDatePourSoiree();
+
+        }
+        $this->artistes = $artistes;
         $this->lieu = $lieu;
-        $this->annule = $annule;
         $this->soireeId = $soireeId;
         $this->style = $style;
     }
@@ -184,6 +185,24 @@ class Spectacle
             return "<i>Inconnu</i>";
         } else {
             return implode(", ", $this->artistes);
+        }
+    }
+
+    /**
+     * @return void
+     * @throws DateIncompatibleException renvoie une erreur si la date du spectacle n'est pas correcte pour être dans une soiree
+     */
+    public function verifierDatePourSoiree(): void
+    {
+        if (((int)$this->date->format("H") > 5 && (int)$this->date->format("H") < 17)
+            || ((int)$this->date->format("H") < 5 && $this->date->format("H:i") != "00:00")) {
+            throw new DateIncompatibleException("L'horaire de début choisit pour le spectacle doit être entre 17h et 5h");
+        } else {
+            $datefin = $this->getFin();
+            if (((int)$datefin->format("H") > 5 && (int)$datefin->format("H") < 17)
+                || ((int)$datefin->format("H") < 5 && $datefin->format("H:i") != "00:00")) {
+                throw new DateIncompatibleException("La durée de spectacle est trop longue, le spectacle doit finir au plus tard à 5h");
+            }
         }
     }
 
