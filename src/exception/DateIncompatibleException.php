@@ -7,11 +7,5 @@ namespace iutnc\nrv\exception;
  */
 class DateIncompatibleException extends \Exception
 {
-    /**
-     * Constructeur
-     */
-    public function __construct()
-    {
-        parent::__construct("La date du spectacle doit être la même que celle de la soirée, et doit être postérieure à la date de début de la soirée");
-    }
+
 }

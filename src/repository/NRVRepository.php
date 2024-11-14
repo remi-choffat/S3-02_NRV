@@ -5,12 +5,12 @@ namespace iutnc\nrv\repository;
 use DateMalformedStringException;
 use DateTime;
 use InvalidArgumentException;
-use iutnc\nrv\exception\InscriptionException;
 use iutnc\nrv\exception\AuthnException;
-use iutnc\nrv\festival\Lieu;
-use iutnc\nrv\festival\Spectacle;
-use iutnc\nrv\festival\Soiree;
+use iutnc\nrv\exception\InscriptionException;
 use iutnc\nrv\festival\Artiste;
+use iutnc\nrv\festival\Lieu;
+use iutnc\nrv\festival\Soiree;
+use iutnc\nrv\festival\Spectacle;
 use iutnc\nrv\User\Utilisateur;
 use PDO;
 use PDOException;
@@ -561,5 +561,4 @@ class NRVRepository
         ]);
         return $stmt->rowCount() > 0;
     }
-
 }
