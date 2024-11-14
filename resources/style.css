@@ -284,3 +284,18 @@ html, body {
 .disabled-link {
     display: none !important;
 }
+
+
+.star {
+    cursor: pointer;
+    font-size: 28px;
+    color: #FFCC39;
+}
+
+.star.filled::before {
+    content: "★";
+}
+
+.star.empty::before {
+    content: "☆";
+}

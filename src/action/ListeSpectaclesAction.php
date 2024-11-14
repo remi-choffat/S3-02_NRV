@@ -2,6 +2,7 @@
 
 namespace iutnc\nrv\action;
 
+use DateMalformedStringException;
 use iutnc\nrv\repository\NRVRepository;
 
 class ListeSpectaclesAction extends Action
@@ -9,6 +10,7 @@ class ListeSpectaclesAction extends Action
     /**
      * Liste les spectacles du festival
      * @return string affichage des spectacles
+     * @throws DateMalformedStringException
      */
     public function execute(): string
     {
@@ -76,7 +78,32 @@ function toggleFilterForm() {
         form.style.display = 'none';
     }
 }
-</script>";
+</script>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.star').forEach(function(star) {
+                star.addEventListener('click', function() {
+                    this.classList.toggle('filled');
+                    this.classList.toggle('empty');
+                    let spectacleId = this.getAttribute('data-id');
+                    fetch('index.php?action=' + (this.classList.contains('filled') ? 'ajouter-pref' : 'supprimer-pref'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'spectacle=' + encodeURIComponent(spectacleId)
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+                });
+            });
+        });
+        </script>";
 
         if (empty($spectacles)) {
             $html .= "<div class='notification is-warning' style='margin: 20px;'>Aucun spectacle ne correspond à vos critères de recherche</div>";

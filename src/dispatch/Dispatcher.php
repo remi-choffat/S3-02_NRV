@@ -136,6 +136,7 @@ HTML;
                     <li><a href='?action=default'>Accueil</a></li>
                     <li><a href='?action=liste-spectacles'>Liste des spectacles</a></li>
                     <li><a href='?action=liste-soirees'>Liste des soirées</a></li>
+                    <li><a href='?action=liste-favoris'>Spectacles favoris</a></li>
                     $boutonsStaffAdmin
                     $boutonsAdmin
                 </ul>

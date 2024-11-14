@@ -288,11 +288,16 @@ class Spectacle
             $menu = "";
         }
 
+        $starClass = in_array($this->id, $_SESSION["favoris"] ?? []) ? 'filled' : 'empty';
+
         return <<<HTML
         <div class="box">
             <div class="spectacle-header">
                 <h3 class="title is-4"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>
-                $menu
+                <div class="actions-container">
+                    <span class="star $starClass" data-id="{$this->id}"></span>
+                    $menu
+                </div>
             </div>
             <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
             <p><b>Date :</b> {$this->getFormattedDate(true)}</p>

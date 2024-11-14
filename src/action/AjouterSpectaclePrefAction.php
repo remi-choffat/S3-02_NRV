@@ -2,6 +2,9 @@
 
 namespace iutnc\nrv\action;
 
+/**
+ * Action pour ajouter un spectacle aux favoris
+ */
 class AjouterSpectaclePrefAction extends Action
 {
     /**
@@ -10,6 +13,7 @@ class AjouterSpectaclePrefAction extends Action
      */
     public function execute(): string
     {
+        var_dump($_POST);
         if (isset($_POST['spectacle']) && $this->http_method === "POST") {
             if (!isset($_SESSION["favoris"])) {
                 $_SESSION["favoris"] = [];
