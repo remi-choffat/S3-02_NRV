@@ -267,13 +267,8 @@ class Spectacle
             'May' => 'mai', 'June' => 'juin', 'July' => 'juillet', 'August' => 'août',
             'September' => 'septembre', 'October' => 'octobre', 'November' => 'novembre', 'December' => 'décembre'
         ];
-
-        if ($afficherHeure) {
-            $formattedDate = $this->date->format('d F Y à H\hi');
-        } else {
-            $formattedDate = $this->date->format('d F Y');
-        }
-        return str_replace(array_keys($months), array_values($months), $formattedDate);
+        $formattedDate = $this->date->format('d F Y');
+        return str_replace(array_keys($months), array_values($months), $formattedDate) . ($afficherHeure ? " à " . $this->horaire : "");
     }
 
 
@@ -288,14 +283,14 @@ class Spectacle
             $cancelAction = $this->isAnnule() ? 'restaurer-spectacle' : 'annuler-spectacle';
             $cancelMessage = $this->isAnnule() ? 'Restaurer' : 'Annuler';
             $menu = <<<HTML
-            <div class="menu">
-                <button class="menu-btn">⋮</button>
-                <div class="menu-content">
-                    <a href="index.php?action=modifier-spectacle&id={$this->id}">Modifier</a>
-                    <a href="index.php?action={$cancelAction}&id={$this->id}">$cancelMessage</a>
-                </div>
+        <div class="menu">
+            <button class="menu-btn">⋮</button>
+            <div class="menu-content">
+                <a href="index.php?action=modifier-spectacle&id={$this->id}">Modifier</a>
+                <a href="index.php?action={$cancelAction}&id={$this->id}">$cancelMessage</a>
             </div>
-        HTML;
+        </div>
+HTML;
         } else {
             $menu = "";
         }
@@ -304,19 +299,19 @@ class Spectacle
         $starClass = in_array($this->id, $_SESSION["favoris"] ?? []) ? 'filled' : 'empty';
 
         return <<<HTML
-        <div class="box">
-            <div class="spectacle-header">
-                <h3 class="title is-4"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>
-                <div class="actions-container">
-                    <span class="star $starClass" data-id="{$this->id}"></span>
-                    $menu
-                </div>
+    <div class="box">
+        <div class="spectacle-header">
+            <h3 class="title is-4"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>
+            <div class="actions-container">
+                <span class="star $starClass" data-id="{$this->id}"></span>
+                $menu
             </div>
-            $annuleTag
-            <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
-            <p><b>Date :</b> {$this->getFormattedDate(true)}</p>
         </div>
-    HTML;
+        $annuleTag
+        <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
+        <p><b>Date :</b> {$this->getFormattedDate(true)}</p>
+    </div>
+HTML;
     }
 
 
