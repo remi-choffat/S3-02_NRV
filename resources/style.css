@@ -281,6 +281,18 @@ html, body {
     display: block;
 }
 
-.disabled-link {
-    display: none !important;
+
+/* Etoiles de favori */
+.star {
+    cursor: pointer;
+    font-size: 28px;
+    color: #FFCC39;
+}
+
+.star.filled::before {
+    content: "★";
+}
+
+.star.empty::before {
+    content: "☆";
 }

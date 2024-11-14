@@ -10,6 +10,7 @@ use iutnc\nrv\action\AjouterLieuAction;
 use iutnc\nrv\action\AjouterSoireeAction;
 use iutnc\nrv\action\AjouterSpectacleAction;
 use iutnc\nrv\action\AjouterSpectaclePrefAction;
+use iutnc\nrv\action\AnnulerSpectacleAction;
 use iutnc\nrv\action\Deconnexion;
 use iutnc\nrv\action\DefaultAction;
 use iutnc\nrv\action\DetailsSoireeAction;
@@ -19,9 +20,11 @@ use iutnc\nrv\action\ListeSpectaclePrefAction;
 use iutnc\nrv\action\ListeSpectaclesAction;
 use iutnc\nrv\action\ModifierSoireeAction;
 use iutnc\nrv\action\ModifierSpectacleAction;
+use iutnc\nrv\action\RestaurerSpectacleAction;
 use iutnc\nrv\action\SupprimerSpectaclePrefAction;
 use iutnc\nrv\action\Inscription;
 use iutnc\nrv\action\Connexion;
+use iutnc\nrv\action\AjouterImageAction;
 use iutnc\nrv\action\UnknownAction;
 use iutnc\nrv\auth\AuthProvider;
 use iutnc\nrv\auth\Authz;
@@ -67,6 +70,9 @@ class Dispatcher
                 'ajouter-artiste' => new AjouterArtisteAction(1),
                 'modifier-spectacle' => new ModifierSpectacleAction(1),
                 'modifier-soiree' => new ModifierSoireeAction(1),
+                'ajouter-image' => new AjouterImageAction(1),
+                'annuler-spectacle' => new AnnulerSpectacleAction(1),
+                'restaurer-spectacle' => new RestaurerSpectacleAction(1),
                 default => new UnknownAction(),
             };
             $html = $action->execute();
@@ -105,6 +111,7 @@ class Dispatcher
         <a href="?action=ajouter-soiree">Ajouter une soirée</a>
         <a href="?action=ajouter-lieu">Ajouter un lieu</a>
         <a href="?action=ajouter-artiste">Ajouter un artiste</a>
+        <a href="?action=ajouter-image">Ajouter une image</a>
     </div>
 </div>
 </li>
@@ -136,6 +143,7 @@ HTML;
                     <li><a href='?action=default'>Accueil</a></li>
                     <li><a href='?action=liste-spectacles'>Liste des spectacles</a></li>
                     <li><a href='?action=liste-soirees'>Liste des soirées</a></li>
+                    <li><a href='?action=liste-favoris'>Spectacles favoris</a></li>
                     $boutonsStaffAdmin
                     $boutonsAdmin
                 </ul>

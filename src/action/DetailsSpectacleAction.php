@@ -51,7 +51,7 @@ class DetailsSpectacleAction extends Action
 
             // Affiche un spectacle similaire par lieu
             foreach ($similarSpectaclesByLieu as $similarSpectacle) {
-                if (!in_array($similarSpectacle->getId(), $displayedSpectacleIds)) {
+                if (!in_array($similarSpectacle->getId(), $displayedSpectacleIds) && !$similarSpectacle->isAnnule()) {
                     $html .= $similarSpectacle->afficherResumeCompact("Même lieu");
                     $displayedSpectacleIds[] = $similarSpectacle->getId();
                     break;
@@ -60,7 +60,7 @@ class DetailsSpectacleAction extends Action
 
             // Affiche un spectacle similaire par date
             foreach ($similarSpectaclesByDate as $similarSpectacle) {
-                if (!in_array($similarSpectacle->getId(), $displayedSpectacleIds)) {
+                if (!in_array($similarSpectacle->getId(), $displayedSpectacleIds) && !$similarSpectacle->isAnnule()) {
                     $html .= $similarSpectacle->afficherResumeCompact("Même jour");
                     $displayedSpectacleIds[] = $similarSpectacle->getId();
                     break;
@@ -69,10 +69,14 @@ class DetailsSpectacleAction extends Action
 
             // Affiche un spectacle similaire par style
             foreach ($similarSpectaclesByStyle as $similarSpectacle) {
-                if (!in_array($similarSpectacle->getId(), $displayedSpectacleIds)) {
+                if (!in_array($similarSpectacle->getId(), $displayedSpectacleIds) && !$similarSpectacle->isAnnule()) {
                     $html .= $similarSpectacle->afficherResumeCompact("Même style");
                     break;
                 }
+            }
+
+            if (empty($displayedSpectacleIds)) {
+                $html .= "<div class='box'>Aucun spectacle similaire n'est maintenu dans la programmation</div>";
             }
 
             $html .= "</div>";

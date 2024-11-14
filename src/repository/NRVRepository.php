@@ -270,6 +270,11 @@ class NRVRepository
         $lieu = $this->fetchLieu($spectacleData['lieu']);
         $artistes = $this->fetchArtistes($spectacleData['id']);
 
+        // Si l'attribut 'annule' est un string, on le convertit en entier
+        if (is_string($spectacleData['annule'])) {
+            $spectacleData['annule'] = (int)$spectacleData['annule'];
+        }
+
         return new Spectacle(
             $spectacleData['id'],
             $spectacleData['nom'],
@@ -351,12 +356,14 @@ class NRVRepository
             return $row;
         }
     }
+
     /**
      * getUtilisateur
      * @param id
      * @return Utilisateur
      */
-    public function getUtilisateur(int $id): Utilisateur{
+    public function getUtilisateur(int $id): Utilisateur
+    {
         $stmt = $this->pdo->prepare('SELECT * FROM UTILISATEUR WHERE id = :id');
         $stmt->execute(['id' => $id]);
         $utilisateurData = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -392,7 +399,7 @@ class NRVRepository
      * @return int l'ID de l'utilisateur ajouté
      * @throws InscriptionException si l'utilisateur existe déjà
      */
-    public function addUtilisateur(Utilisateur $utilisateur, String $passwordhash): void
+    public function addUtilisateur(Utilisateur $utilisateur, string $passwordhash): void
     {
         //verification si l'utilisateur existe déjà
         $stmt = $this->pdo->prepare('SELECT id FROM UTILISATEUR WHERE email = :email');
@@ -512,7 +519,7 @@ class NRVRepository
     public function updateSpectacle(Spectacle $spectacle): bool
     {
         $stmt = $this->pdo->prepare("UPDATE SPECTACLE 
-                SET nom = :titre, style = :style, url = :url, date = :date, duree = :duree, annule = :annule, description = :description, lieu = :lieu_id, soiree = :soiree
+                SET nom = :titre, style = :style, url = :url, date = :date, duree = :duree, description = :description, lieu = :lieu_id, soiree = :soiree
                 WHERE id = :id");
         $stmt->execute([
             'id' => $spectacle->getId(),
@@ -521,7 +528,6 @@ class NRVRepository
             'url' => $spectacle->getUrl(),
             'date' => $spectacle->getDate()->format('Y-m-d H:i:s'),
             'duree' => $spectacle->getDuree(),
-            'annule' => $spectacle->isAnnule() ? 1 : 0,
             'description' => $spectacle->getDescription(),
             'lieu_id' => $spectacle->getLieu()->getId(),
             'soiree' => $spectacle->getSoireeId()
@@ -560,5 +566,86 @@ class NRVRepository
             'lieu_id' => $soiree->getLieu()->getId()
         ]);
         return $stmt->rowCount() > 0;
+    }
+
+    /**
+     * ajoute une image dans la base de données
+     * @param String $NameImage
+     */
+    public function UploadImage(string $NameImage): void
+    {
+        $stmt = $this->pdo->prepare('INSERT INTO IMAGE (nom) VALUES (:nom)');
+        $stmt->execute([
+            'nom' => $NameImage
+        ]);
+    }
+
+    /**
+     * ajoute une image à un spectacle
+     * @param int $idSpectacle
+     * @param int $idImage
+     */
+    public function addImageSoiree(int $idSpectacle, int $idImage): void
+    {
+        $stmt = $this->pdo->prepare('INSERT INTO IMAGESPECTACLE (idi, idsp) VALUES (:idi, :idsp)');
+        $stmt->execute([
+            'idi' => $idImage,
+            'idsp' => $idSpectacle
+        ]);
+    }
+
+    /**
+     * supprime une image d'un spectacle
+     * @param int $idSpectacle
+     * @param int $idImage
+     */
+    public function removeImageSoiree(int $idSpectacle, int $idImage): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM IMAGESPECTACLE WHERE idi = :idi AND idsp = :idsp');
+        $stmt->execute([
+            'idsp' => $idSpectacle,
+            'idi' => $idImage
+        ]);
+    }
+
+    /**
+     * getImages retourne les images d'un spectacle
+     * @param int $idSpectacle
+     * @return array
+     */
+    public function getImagesSpectacle(int $idSpectacle): array
+    {
+        $stmt = $this->pdo->prepare('SELECT nom FROM IMAGE INNER JOIN IMAGESPECTACLE ON IMAGE.id = IMAGESPECTACLE.idi WHERE idsp = :idsp');
+        $stmt->execute(['idsp' => $idSpectacle]);
+        $imagesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(fn($image) => $image['nom'], $imagesData);
+    }
+
+    /**
+     * getImages retourne les images
+     * @return array
+     */
+    public function getImages(): array
+    {
+        $stmt = $this->pdo->prepare('select nom from IMAGE');
+        $stmt->execute();
+        $imagesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(fn($image) => $image['nom'], $imagesData);
+    }
+
+
+    /**
+     * Annule ou restaure un spectacle
+     * @param int $idSpectacle l'ID du spectacle
+     * @param bool $annule true pour annuler, false pour restaurer
+     * @return void
+     */
+    public function modifierAnnulationSpectacle(int $idSpectacle, bool $annule): void
+    {
+        $stmt = $this->pdo->prepare('UPDATE SPECTACLE SET annule = :annule WHERE id = :id');
+        $stmt->execute([
+            'id' => $idSpectacle,
+            'annule' => $annule ? 1 : 0
+        ]);
     }
 }

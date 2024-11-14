@@ -42,7 +42,7 @@ class Spectacle
      * @param int|null $soireeId
      * @throws DateIncompatibleException
      */
-    public function __construct(?int $id, string $titre, DateTime $date, int $duree, array $artistes, string $style, Lieu $lieu, string $description, bool $annule = false, int $soireeId = null)
+    public function __construct(?int $id, string $titre, DateTime $date, int $duree, array $artistes, string $style, Lieu $lieu, string $description, bool $annule, int $soireeId = null)
     {
 
         // Vérifie la cohérence entre la date et le lieu du spectacle et la date et le lieu de la soirée,
@@ -238,6 +238,17 @@ class Spectacle
 
 
     /**
+     * Annule ou restaure un spectacle
+     * @param bool $annule true pour annuler le spectacle, false pour le restaurer
+     * @return void
+     */
+    public function setAnnule(bool $annule): void
+    {
+        $this->annule = $annule;
+    }
+
+
+    /**
      * Renvoie la description du spectacle
      * @return string
      */
@@ -293,13 +304,14 @@ class Spectacle
     {
         // Affiche le menu de modification et d'annulation si l'utilisateur est connecté
         if (isset($_SESSION['utilisateur'])) {
-            $disableCancelClass = $this->isAnnule() ? 'disabled-link' : '';
+            $cancelAction = $this->isAnnule() ? 'restaurer-spectacle' : 'annuler-spectacle';
+            $cancelMessage = $this->isAnnule() ? 'Restaurer' : 'Annuler';
             $menu = <<<HTML
             <div class="menu">
                 <button class="menu-btn">⋮</button>
                 <div class="menu-content">
                     <a href="index.php?action=modifier-spectacle&id={$this->id}">Modifier</a>
-                    <a href="index.php?action=annuler-spectacle&id={$this->id}" class="$disableCancelClass">Annuler</a>
+                    <a href="index.php?action={$cancelAction}&id={$this->id}">$cancelMessage</a>
                 </div>
             </div>
         HTML;
@@ -307,12 +319,19 @@ class Spectacle
             $menu = "";
         }
 
+        $annuleTag = $this->isAnnule() ? "<p><span class='tag is-danger'>Annulé</span></p>" : "";
+        $starClass = in_array($this->id, $_SESSION["favoris"] ?? []) ? 'filled' : 'empty';
+
         return <<<HTML
         <div class="box">
             <div class="spectacle-header">
                 <h3 class="title is-4"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>
-                $menu
+                <div class="actions-container">
+                    <span class="star $starClass" data-id="{$this->id}"></span>
+                    $menu
+                </div>
             </div>
+            $annuleTag
             <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
             <p><b>Date :</b> {$this->getFormattedDate(true)}</p>
         </div>
