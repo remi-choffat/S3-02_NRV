@@ -135,7 +135,11 @@ HTML;
             $soiree = filter_var($_POST['soiree'], FILTER_SANITIZE_NUMBER_INT);
             $soiree = $soiree === '' ? null : intval($soiree);
         }
+        if (!isset($_POST['artistes'])) {
+            $artistes = [];
+        } else {
         $artistes = array_map('intval', $_POST['artistes']);
+        }
 
         try {
             // Crée un objet spectacle

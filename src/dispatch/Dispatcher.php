@@ -15,6 +15,7 @@ use iutnc\nrv\action\Deconnexion;
 use iutnc\nrv\action\DefaultAction;
 use iutnc\nrv\action\DetailsSoireeAction;
 use iutnc\nrv\action\DetailsSpectacleAction;
+use iutnc\nrv\action\ErrorAction;
 use iutnc\nrv\action\ListeSoireesAction;
 use iutnc\nrv\action\ListeSpectaclePrefAction;
 use iutnc\nrv\action\ListeSpectaclesAction;
@@ -73,6 +74,7 @@ class Dispatcher
                 'ajouter-image' => new AjouterImageAction(1),
                 'annuler-spectacle' => new AnnulerSpectacleAction(1),
                 'restaurer-spectacle' => new RestaurerSpectacleAction(1),
+                'error' => new ErrorAction(),
                 default => new UnknownAction(),
             };
             $html = $action->execute();

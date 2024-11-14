@@ -6,6 +6,7 @@ use DateMalformedStringException;
 use DateTime;
 use InvalidArgumentException;
 use iutnc\nrv\exception\AuthnException;
+use iutnc\nrv\exception\DateIncompatibleException;
 use iutnc\nrv\exception\InscriptionException;
 use iutnc\nrv\festival\Artiste;
 use iutnc\nrv\festival\Lieu;
@@ -263,7 +264,7 @@ class NRVRepository
      * @param array $spectacleData
      * @return Spectacle
      * @throws DateMalformedStringException
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException|DateIncompatibleException
      */
     private function mapToSpectacle(array $spectacleData): Spectacle
     {
@@ -294,7 +295,7 @@ class NRVRepository
      * Récupère la liste des spectacles d'une soirée
      * @param int $soireeId
      * @return array
-     * @throws DateMalformedStringException
+     * @throws DateMalformedStringException|DateIncompatibleException
      */
     private function fetchSpectaclesForSoiree(int $soireeId): array
     {
@@ -310,7 +311,7 @@ class NRVRepository
      * Transforme un tableau de données en objet Soiree
      * @param array $soireeData
      * @return Soiree
-     * @throws DateMalformedStringException
+     * @throws DateMalformedStringException|DateIncompatibleException
      */
     private function mapToSoiree(array $soireeData): Soiree
     {
@@ -357,9 +358,10 @@ class NRVRepository
         }
     }
 
+
     /**
      * getUtilisateur
-     * @param id
+     * @param int $id l'ID de l'utilisateur
      * @return Utilisateur
      */
     public function getUtilisateur(int $id): Utilisateur
@@ -381,7 +383,7 @@ class NRVRepository
      * @param int $lieuId l'ID du lieu
      * @param DateTime $date la date du spectacle
      * @return array la liste des spectacles similaires
-     * @throws DateMalformedStringException si la date n'est pas au format attendu
+     * @throws DateMalformedStringException|DateIncompatibleException si la date n'est pas au format attendu
      */
     public function getSimilarSpectacles(int $spectacleId, string $style, int $lieuId, DateTime $date): array
     {
@@ -396,7 +398,8 @@ class NRVRepository
     /**
      * Ajoute un utilisateur
      * @param Utilisateur $utilisateur l'utilisateur à ajouter
-     * @return int l'ID de l'utilisateur ajouté
+     * @param string $passwordhash
+     * @return void l'ID de l'utilisateur ajouté
      * @throws InscriptionException si l'utilisateur existe déjà
      */
     public function addUtilisateur(Utilisateur $utilisateur, string $passwordhash): void
@@ -568,6 +571,7 @@ class NRVRepository
         return $stmt->rowCount() > 0;
     }
 
+
     /**
      * ajoute une image dans la base de données
      * @param String $NameImage
@@ -579,6 +583,7 @@ class NRVRepository
             'nom' => $NameImage
         ]);
     }
+
 
     /**
      * ajoute une image à un spectacle
@@ -594,6 +599,7 @@ class NRVRepository
         ]);
     }
 
+
     /**
      * supprime une image d'un spectacle
      * @param int $idSpectacle
@@ -608,6 +614,7 @@ class NRVRepository
         ]);
     }
 
+
     /**
      * getImages retourne les images d'un spectacle
      * @param int $idSpectacle
@@ -620,6 +627,7 @@ class NRVRepository
         $imagesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return array_map(fn($image) => $image['nom'], $imagesData);
     }
+
 
     /**
      * getImages retourne les images
@@ -648,4 +656,5 @@ class NRVRepository
             'annule' => $annule ? 1 : 0
         ]);
     }
+    
 }
