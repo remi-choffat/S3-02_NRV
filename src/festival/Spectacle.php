@@ -217,6 +217,16 @@ class Spectacle
         return $this->annule;
     }
 
+    public function SetAnnule(): void
+    {
+        if ($this->annule == false){
+            $this->annule = true;
+        }
+        else{
+            $this->annule = false;
+        }
+    }
+
 
     /**
      * Renvoie la description du spectacle
@@ -280,7 +290,7 @@ class Spectacle
                 <button class="menu-btn">⋮</button>
                 <div class="menu-content">
                     <a href="index.php?action=modifier-spectacle&id={$this->id}">Modifier</a>
-                    <a href="index.php?action=annuler-spectacle&id={$this->id}" class="$disableCancelClass">Annuler</a>
+                    <a href="index.php?action=annuler-spectacle&id={$this->id}">Annuler</a>
                 </div>
             </div>
         HTML;

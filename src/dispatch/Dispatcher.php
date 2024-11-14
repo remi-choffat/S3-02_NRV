@@ -10,6 +10,7 @@ use iutnc\nrv\action\AjouterLieuAction;
 use iutnc\nrv\action\AjouterSoireeAction;
 use iutnc\nrv\action\AjouterSpectacleAction;
 use iutnc\nrv\action\AjouterSpectaclePrefAction;
+use iutnc\nrv\action\AnnulerUnSpectacle;
 use iutnc\nrv\action\Deconnexion;
 use iutnc\nrv\action\DefaultAction;
 use iutnc\nrv\action\DetailsSoireeAction;
@@ -69,6 +70,7 @@ class Dispatcher
                 'modifier-spectacle' => new ModifierSpectacleAction(1),
                 'modifier-soiree' => new ModifierSoireeAction(1),
                 'ajouter-image' => new AjouterImageAction(1),
+                'annuler-spectacle' => new AnnulerUnSpectacle(1),
                 default => new UnknownAction(),
             };
             $html = $action->execute();
