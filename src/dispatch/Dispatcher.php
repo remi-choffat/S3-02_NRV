@@ -10,7 +10,7 @@ use iutnc\nrv\action\AjouterLieuAction;
 use iutnc\nrv\action\AjouterSoireeAction;
 use iutnc\nrv\action\AjouterSpectacleAction;
 use iutnc\nrv\action\AjouterSpectaclePrefAction;
-use iutnc\nrv\action\AnnulerUnSpectacle;
+use iutnc\nrv\action\AnnulerSpectacleAction;
 use iutnc\nrv\action\Deconnexion;
 use iutnc\nrv\action\DefaultAction;
 use iutnc\nrv\action\DetailsSoireeAction;
@@ -20,6 +20,7 @@ use iutnc\nrv\action\ListeSpectaclePrefAction;
 use iutnc\nrv\action\ListeSpectaclesAction;
 use iutnc\nrv\action\ModifierSoireeAction;
 use iutnc\nrv\action\ModifierSpectacleAction;
+use iutnc\nrv\action\RestaurerSpectacleAction;
 use iutnc\nrv\action\SupprimerSpectaclePrefAction;
 use iutnc\nrv\action\Inscription;
 use iutnc\nrv\action\Connexion;
@@ -70,7 +71,8 @@ class Dispatcher
                 'modifier-spectacle' => new ModifierSpectacleAction(1),
                 'modifier-soiree' => new ModifierSoireeAction(1),
                 'ajouter-image' => new AjouterImageAction(1),
-                'annuler-spectacle' => new AnnulerUnSpectacle(1),
+                'annuler-spectacle' => new AnnulerSpectacleAction(1),
+                'restaurer-spectacle' => new RestaurerSpectacleAction(1),
                 default => new UnknownAction(),
             };
             $html = $action->execute();
