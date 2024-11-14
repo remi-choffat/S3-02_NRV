@@ -22,6 +22,7 @@ use iutnc\nrv\action\ModifierSpectacleAction;
 use iutnc\nrv\action\SupprimerSpectaclePrefAction;
 use iutnc\nrv\action\Inscription;
 use iutnc\nrv\action\Connexion;
+use iutnc\nrv\action\AjouterImageAction;
 use iutnc\nrv\action\UnknownAction;
 use iutnc\nrv\auth\AuthProvider;
 use iutnc\nrv\auth\Authz;
@@ -67,6 +68,7 @@ class Dispatcher
                 'ajouter-artiste' => new AjouterArtisteAction(1),
                 'modifier-spectacle' => new ModifierSpectacleAction(1),
                 'modifier-soiree' => new ModifierSoireeAction(1),
+                'ajouter-image' => new AjouterImageAction(1),
                 default => new UnknownAction(),
             };
             $html = $action->execute();
@@ -105,6 +107,7 @@ class Dispatcher
         <a href="?action=ajouter-soiree">Ajouter une soirée</a>
         <a href="?action=ajouter-lieu">Ajouter un lieu</a>
         <a href="?action=ajouter-artiste">Ajouter un artiste</a>
+        <a href="?action=ajouter-image">Ajouter une image</a>
     </div>
 </div>
 </li>
