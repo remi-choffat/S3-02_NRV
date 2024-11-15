@@ -157,8 +157,7 @@ HTML;
         }
         if (!isset($_POST['artistes'])) {
             $artistes = [];
-        }
-        else {
+        } else {
             $artistes = array_map('intval', $_POST['artistes']);
             $images = $_POST['images'];
         }
@@ -171,7 +170,9 @@ HTML;
             // Associe les artistes au spectacle
             $repo->addArtistesToSpectacle($spectacle->getId(), $artistes);
             // Associe les images au spectacle
-            $repo->addImagesToSpectacle($spectacle->getId(), $images);
+            if (isset($images)) {
+                $repo->addImagesToSpectacle($spectacle->getId(), $images);
+            }
             // Renvoie un message de succès
             return "<div class='notification is-success'>Spectacle ajouté avec succès</div>";
         } catch (Exception $e) {

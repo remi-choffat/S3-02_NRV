@@ -155,6 +155,7 @@ class NRVRepository
      * @param int $idSpectacle l'ID du spectacle
      * @return Spectacle
      * @throws DateMalformedStringException
+     * @throws DateIncompatibleException
      */
     public function getSpectacle(int $idSpectacle): Spectacle
     {
@@ -286,6 +287,7 @@ class NRVRepository
             $lieu,
             $spectacleData['description'],
             $spectacleData['annule'] === 1,
+            $spectacleData['url'] ?? null,
             $spectacleData['soiree'] ?? null,
         );
     }
@@ -590,7 +592,8 @@ class NRVRepository
      * @param int $idSpectacle
      * @param int $idImage
      */
-    public function addImagesToSpectacle(int $idSpectacle, array $images) : void{
+    public function addImagesToSpectacle(int $idSpectacle, array $images): void
+    {
         $stmt = $this->pdo->prepare('INSERT INTO IMAGESPECTACLE (idi, idsp) VALUES (:idi, :idsp)');
         foreach ($images as $image) {
             $idImage = $this->getIdImage($image);
@@ -607,7 +610,8 @@ class NRVRepository
      * @param int $idSpectacle
      * @param int $idImage
      */
-    public function removeImagesFromSpectacle(int $idSpectacle) : void{
+    public function removeImagesFromSpectacle(int $idSpectacle): void
+    {
         $stmt = $this->pdo->prepare('DELETE FROM IMAGESPECTACLE WHERE idsp = :idsp');
         $stmt->execute(['idsp' => $idSpectacle]);
     }
@@ -668,20 +672,22 @@ class NRVRepository
             'annule' => $annule ? 1 : 0
         ]);
     }
-     /**
+
+    /**
      * getIdImage retourne l'id d'une image
      * @param string $nom
      * @throws InvalidArgumentException
      */
-    public function getIdImage(String $nom){
+    public function getIdImage(string $nom)
+    {
         $stmt = $this->pdo->prepare('SELECT id FROM IMAGE WHERE nom = :nom');
         $stmt->execute([
             'nom' => $nom
         ]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if(!$row){
+        if (!$row) {
             throw new InvalidArgumentException('Image non trouvée');
-        }else{
+        } else {
             return $row['id'];
         }
     }

@@ -18,7 +18,7 @@ class Spectacle
     private string $titre;
     private array $artistes;
     private array $images;
-    private string $url;
+    private ?string $url;
     private DateTime $date;
     private string $horaire;
     private int $duree;
@@ -31,19 +31,20 @@ class Spectacle
 
     /**
      * Constructeur de la classe Spectacle
-     * @param int|null $id
-     * @param string $titre
-     * @param DateTime $date
-     * @param int $duree
-     * @param array $artistes
-     * @param string $style
-     * @param Lieu $lieu
-     * @param string $description
-     * @param bool $annule
-     * @param int|null $soireeId
+     * @param int|null $id l'ID du spectacle
+     * @param string $titre le nom du spectacle
+     * @param DateTime $date la date et l'heure de début du spectacle
+     * @param int $duree la durée du spectacle en minutes
+     * @param array $artistes la liste des artistes du spectacle
+     * @param string $style le style du spectacle
+     * @param Lieu $lieu le lieu du spectacle
+     * @param string $description la description du spectacle
+     * @param bool $annule true si le spectacle est annulé, false sinon
+     * @param string|null $url l'URL vers une vidéo du spectacle
+     * @param int|null $soireeId l'ID de la soirée à laquelle appartient le spectacle, null si le spectacle n'appartient pas à une soirée
      * @throws DateIncompatibleException
      */
-    public function __construct(?int $id, string $titre, DateTime $date, int $duree, array $artistes, string $style, Lieu $lieu, string $description, bool $annule, int $soireeId = null)
+    public function __construct(?int $id, string $titre, DateTime $date, int $duree, array $artistes, string $style, Lieu $lieu, string $description, bool $annule, ?string $url, int $soireeId = null)
     {
 
         // Vérifie la cohérence entre la date et le lieu du spectacle et la date et le lieu de la soirée,
@@ -77,6 +78,7 @@ class Spectacle
         } else {
             $this->images = [];
         }
+        $this->url = $url ?? null;
     }
 
 
@@ -174,11 +176,21 @@ class Spectacle
 
 
     /**
-     * @return string|null
+     * @return string un lecteur de vidéo HTML, une chaîne vide si le spectacle n'a pas de vidéo
      */
-    public function getUrl(): ?string
+    public function getVideo(): string
     {
-        return $this->url ?? null;
+        if ($this->url) {
+            // Convert mobile YouTube URL to standard embed URL
+            $embedUrl = str_replace('m.youtube.com', 'www.youtube.com', $this->url);
+            $embedUrl = str_replace('watch?v=', 'embed/', $embedUrl);
+
+            return <<<HTML
+            <iframe width="560" height="315" src="{$embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        HTML;
+        } else {
+            return "";
+        }
     }
 
 
@@ -430,6 +442,7 @@ HTML;
                     <p><b>Lieu :</b> {$this->lieu->getNom()} ({$this->lieu->getAdresse()})</p>
                     <p><b>Nombre de places :</b> {$this->lieu->getNbPlacesAssises()} assises, {$this->lieu->getNbPlacesDebout()} debout</p>
                     <p><b>Description :</b> $this->description</p>
+                    {$this->getVideo()}
                     $imagesHTML
                 </div>
         HTML;
