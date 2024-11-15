@@ -230,10 +230,14 @@ class NRVRepository
      * @param int $lieuId
      * @return Lieu
      */
-    private function fetchLieu(int $lieuId): Lieu
+    public function fetchLieu(int $lieuId): Lieu
     {
         $stmt = $this->pdo->prepare('SELECT * FROM LIEU WHERE id = :id');
         $stmt->execute(['id' => $lieuId]);
+
+        if (!$stmt->rowCount()) {
+            throw new InvalidArgumentException("Lieu non trouvé");
+        }
 
         $lieuData = $stmt->fetch(PDO::FETCH_ASSOC);
         return new Lieu($lieuData['id'], $lieuData['nom'], $lieuData['adresse'], $lieuData['nbplass'], $lieuData['nbpldeb']);
@@ -610,14 +614,14 @@ class NRVRepository
      * @param int $idSoiree
      * @param int $idImage
      */
-    public function addImagesToSoiree(int $idSoiree, array $images) : void
+    public function addImagesToSoiree(int $idSoiree, array $images): void
     {
         $stmt = $this->pdo->prepare('INSERT INTO IMAGESOIREE (idi, ids) VALUES (:idi, :ids)');
         foreach ($images as $image) {
             $idImage = $this->getIdImage($image);
             $stmt->execute([
-                'idi'=> $idImage,
-                'ids'=> $idSoiree
+                'idi' => $idImage,
+                'ids' => $idSoiree
             ]);
         }
     }
@@ -638,10 +642,10 @@ class NRVRepository
      * supprime les images d'une soirée
      * @param int $idSoiree
      */
-    public function removeImagesFromSoiree(int $idSoiree) : void
+    public function removeImagesFromSoiree(int $idSoiree): void
     {
         $stmt = $this->pdo->prepare('DELETE FROM IMAGESOIREE WHERE ids = :ids');
-        $stmt->execute(['ids'=> $idSoiree]);
+        $stmt->execute(['ids' => $idSoiree]);
     }
 
 
@@ -668,6 +672,20 @@ class NRVRepository
     {
         $stmt = $this->pdo->prepare('SELECT nom FROM IMAGE INNER JOIN IMAGESOIREE ON IMAGE.id = IMAGESOIREE.idi WHERE ids = :ids');
         $stmt->execute(['ids' => $idSoiree]);
+        $imagesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(fn($image) => $image['nom'], $imagesData);
+    }
+
+
+    /**
+     * getImages retourne les images d'un lieu
+     * @param int $idLieu
+     * @return array
+     */
+    public function getImagesLieu(int $idLieu): array
+    {
+        $stmt = $this->pdo->prepare('SELECT nom FROM IMAGE INNER JOIN IMAGELIEU ON IMAGE.id = IMAGELIEU.idi WHERE idl = :idl');
+        $stmt->execute(['idl' => $idLieu]);
         $imagesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return array_map(fn($image) => $image['nom'], $imagesData);
     }

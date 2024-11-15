@@ -439,7 +439,7 @@ HTML;
                     <p><b>Date :</b> {$this->getFormattedDate(false)}</p>
                     <p><b>Heure :</b> $this->horaire</p>
                     <p><b>Durée :</b> {$this->afficherDuree()}</p>
-                    <p><b>Lieu :</b> {$this->lieu->getNom()} ({$this->lieu->getAdresse()})</p>
+                    <p><b>Lieu :</b> <a href="?action=details-lieu&id={$this->lieu->getId()}" title="Voir les détails du lieu - {$this->lieu->getNom()}">{$this->lieu->getNom()}</a> ({$this->lieu->getAdresse()})</p>
                     <p><b>Nombre de places :</b> {$this->lieu->getNbPlacesAssises()} assises, {$this->lieu->getNbPlacesDebout()} debout</p>
                     <p><b>Description :</b> $this->description</p>
                     {$this->getVideo()}

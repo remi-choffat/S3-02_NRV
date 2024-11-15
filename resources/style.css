@@ -314,7 +314,7 @@ html, body {
     object-fit: cover; /* Gère l'ajustement de l'image */
 }
 
-.spectacle-image, .soiree-image {
+.spectacle-image, .soiree-image, .lieu-image {
     max-width: 250px !important;
     width: 250px !important;
     height: auto;
@@ -347,7 +347,7 @@ html, body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.spectacle-image:hover, .soiree-image:hover {
+.spectacle-image:hover, .soiree-image:hover, .lieu-image:hover {
     transform: scale(1.03);
     transition: transform 0.5s;
 }

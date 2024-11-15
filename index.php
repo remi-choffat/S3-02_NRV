@@ -19,5 +19,5 @@ $dispatcher = new Dispatcher($action);
 try {
     $dispatcher->run();
 } catch (Exception $e) {
-    echo $e->getMessage();
+    ExceptionHandler::handleException($e);
 }

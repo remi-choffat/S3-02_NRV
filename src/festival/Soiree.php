@@ -285,14 +285,16 @@ HTML;
             $imagesHTML = "";
         }
 
+        $lienLieu = "<a href='?action=details-lieu&id={$this->lieu->getId()}' title='Voir les détails du lieu - {$this->lieu->getNom()}'>{$this->lieu->getNom()}</a>";
+
         $theme = $this->theme ? "<p><b>Thème : </b>$this->theme</p>" : "";
         $sortie = "<div class='box list-spectacle'>
         <h3 class='title is-3'>{$this->nom}</h3>
         $theme
-        <p><b>Date : </b>{$this->date->format('d/m/Y')}</p>
-        <p><b>Débute à : </b>{$this->heureDebut}</p>
-        <p><b>Finit à : </b>{$this->getFin()->format("H:i")}</p>
-        <p><b>Lieu : </b>{$this->lieu->getNom()}</p>
+        <p><b>Date :</b> {$this->date->format('d/m/Y')}</p>
+        <p><b>Débute à :</b> {$this->heureDebut}</p>
+        <p><b>Finit à :</b> {$this->getFin()->format("H:i")}</p>
+        <p><b>Lieu :</b> $lienLieu ({$this->lieu->getAdresse()})</p>
         <br/>
         $imagesHTML
         <br/><br/>
