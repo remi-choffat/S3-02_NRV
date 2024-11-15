@@ -238,7 +238,7 @@ html, body {
 
 
 /* Menu pour modifier un spectacle */
-.spectacle-header {
+.spectacle-header, .soiree-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -295,4 +295,39 @@ html, body {
 
 .star.empty::before {
     content: "☆";
+}
+
+
+/* Images */
+.spectacle-image, .soiree-image {
+    max-width: 250px !important;
+    width: 250px !important;
+    height: auto;
+    margin: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.images-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.spectacle-content, .soiree-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.spectacle-text, .soiree-text {
+    flex: 1;
+}
+
+.spectacle-image-resume, .soiree-image-resume {
+    width: 150px;
+    height: auto;
+    margin-left: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }

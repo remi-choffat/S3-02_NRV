@@ -630,6 +630,20 @@ class NRVRepository
 
 
     /**
+     * getImages retourne les images d'une soirée
+     * @param int $idSoiree l'ID de la soirée
+     * @return array
+     */
+    public function getImagesSoiree(int $idSoiree): array
+    {
+        $stmt = $this->pdo->prepare('SELECT nom FROM IMAGE INNER JOIN IMAGESOIREE ON IMAGE.id = IMAGESOIREE.idi WHERE ids = :ids');
+        $stmt->execute(['ids' => $idSoiree]);
+        $imagesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(fn($image) => $image['nom'], $imagesData);
+    }
+
+
+    /**
      * getImages retourne les images
      * @return array
      */
@@ -656,5 +670,5 @@ class NRVRepository
             'annule' => $annule ? 1 : 0
         ]);
     }
-    
+
 }

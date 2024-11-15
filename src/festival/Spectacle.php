@@ -6,6 +6,7 @@ namespace iutnc\nrv\festival;
 use DateMalformedStringException;
 use DateTime;
 use iutnc\nrv\exception\DateIncompatibleException;
+use iutnc\nrv\repository\NRVRepository;
 
 
 /**
@@ -71,6 +72,39 @@ class Spectacle
         $this->lieu = $lieu;
         $this->soireeId = $soireeId;
         $this->style = $style;
+        if ($id !== null) {
+            $this->images = NRVRepository::getInstance()->getImagesSpectacle($this->id);
+        } else {
+            $this->images = [];
+        }
+    }
+
+
+    /**
+     * Renvoie, sous forme de tableau, le code HTML des images du spectacle
+     * @return array
+     */
+    public function getImagesHTML(): array
+    {
+        $imagesHTML = [];
+        foreach ($this->images as $image) {
+            $imagesHTML[] = "<img src='images/{$image}' alt='Image du spectacle {$this->titre}' class='spectacle-image'>";
+        }
+        return $imagesHTML;
+    }
+
+
+    /**
+     * Renvoie le code HTML de la première image du spectacle
+     * @return string
+     */
+    public function getFirstImageHTML(): string
+    {
+        if (empty($this->images)) {
+            return "";
+        } else {
+            return "<img src='images/{$this->images[0]}' alt='Image du spectacle {$this->titre}' class='spectacle-image'>";
+        }
     }
 
 
@@ -126,15 +160,6 @@ class Spectacle
     public function getDate(): DateTime
     {
         return $this->date;
-    }
-
-
-    /**
-     * @return array
-     */
-    public function getImages(): array
-    {
-        return $this->images;
     }
 
 
@@ -302,13 +327,13 @@ class Spectacle
             $cancelAction = $this->isAnnule() ? 'restaurer-spectacle' : 'annuler-spectacle';
             $cancelMessage = $this->isAnnule() ? 'Restaurer' : 'Annuler';
             $menu = <<<HTML
-        <div class="menu">
-            <button class="menu-btn">⋮</button>
-            <div class="menu-content">
-                <a href="index.php?action=modifier-spectacle&id={$this->id}">Modifier</a>
-                <a href="index.php?action={$cancelAction}&id={$this->id}">$cancelMessage</a>
-            </div>
+    <div class="menu">
+        <button class="menu-btn">⋮</button>
+        <div class="menu-content">
+            <a href="index.php?action=modifier-spectacle&id={$this->id}">Modifier</a>
+            <a href="index.php?action={$cancelAction}&id={$this->id}">$cancelMessage</a>
         </div>
+    </div>
 HTML;
         } else {
             $menu = "";
@@ -317,19 +342,31 @@ HTML;
         $annuleTag = $this->isAnnule() ? "<p><span class='tag is-danger'>Annulé</span></p>" : "";
         $starClass = in_array($this->id, $_SESSION["favoris"] ?? []) ? 'filled' : 'empty';
 
+        // Retrieve the first image
+        $firstImageHTML = "";
+        if (!empty($this->images)) {
+            $firstImage = $this->images[0];
+            $firstImageHTML = "<img src='images/{$firstImage}' alt='Image du spectacle {$this->titre}' class='spectacle-image-resume'>";
+        }
+
         return <<<HTML
-    <div class="box">
-        <div class="spectacle-header">
-            <h3 class="title is-4"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>
-            <div class="actions-container">
-                <span class="star $starClass" data-id="{$this->id}"></span>
-                $menu
-            </div>
+<div class="box">
+    <div class="spectacle-header">
+        <h3 class="title is-4"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>
+        <div class="actions-container">
+            <span class="star $starClass" data-id="{$this->id}"></span>
+            $menu
         </div>
-        $annuleTag
-        <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
-        <p><b>Date :</b> {$this->getFormattedDate(true)}</p>
     </div>
+    $annuleTag
+    <div class="spectacle-content">
+        <div class="spectacle-text">
+            <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
+            <p><b>Date :</b> {$this->getFormattedDate(true)}</p>
+        </div>
+        $firstImageHTML
+    </div>
+</div>
 HTML;
     }
 
@@ -376,6 +413,12 @@ HTML;
             $statut = "<span class='tag is-info'>Demain</span>";
         }
 
+        if ($this->images) {
+            $imagesHTML = "<div class='images-container'>" . implode('', $this->getImagesHTML()) . "</div>";
+        } else {
+            $imagesHTML = "";
+        }
+
         return <<<HTML
                 <div class="box">
                     <h3 class="title is-3">{$this->titre}</h3>
@@ -388,6 +431,7 @@ HTML;
                     <p><b>Lieu :</b> {$this->lieu->getNom()} ({$this->lieu->getAdresse()})</p>
                     <p><b>Nombre de places :</b> {$this->lieu->getNbPlacesAssises()} assises, {$this->lieu->getNbPlacesDebout()} debout</p>
                     <p><b>Description :</b> $this->description</p>
+                    $imagesHTML
                 </div>
         HTML;
     }

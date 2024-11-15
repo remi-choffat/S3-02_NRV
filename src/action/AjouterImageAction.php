@@ -68,7 +68,7 @@ class AjouterImageAction extends Action
             return "<div class='notification is-warning'>Tous les champs obligatoires ne sont pas remplis</div>";
         }
         //filtre les données
-        $filename = filter_var($_POST['file_name'], FILTER_SANITIZE_SPECIAL_CHARS);
+        $filename = filter_var($_POST['file_name'], FILTER_SANITIZE_SPECIAL_CHARS) . '.' . pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
         //validation du fichier : vérifie si le fichier est une image et si son extension est valide
         if (in_array($_FILES['image']['type'], ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']) &&
             preg_match('/\.(gif|png|jpg)$/i', $_FILES['image']['name'])) {
@@ -81,7 +81,7 @@ class AjouterImageAction extends Action
                 mkdir($uploaddir);
             }
 
-            $uploadfile = $uploaddir . $filename . '.' . pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+            $uploadfile = $uploaddir . $filename;
             move_uploaded_file($_FILES['image']['tmp_name'], $uploadfile);
 
             // Ajoute le nom de l'image dans la base de données
@@ -89,11 +89,11 @@ class AjouterImageAction extends Action
                 // verifie si l'image n'est pas déjà dans la base de données
                 $repo = NRVRepository::getInstance();
                 $images = $repo->getImages();
-                if (in_array($uploadfile, $images)) {
+                if (in_array($filename, $images)) {
                     return "<div class='notification is-warning'>Ce nom a déjà utilisé</div>";
                 }
                 // Ajoute le nom de l'image dans la base de données
-                $repo->UploadImage($uploadfile);
+                $repo->UploadImage($filename);
                 // Renvoie un message de succès
                 return "<div class='notification is-success'>Image ajoutée avec succès</div>";
             } catch (Exception $e) {
