@@ -606,14 +606,42 @@ class NRVRepository
 
 
     /**
+     * ajoute une image à une soirée
+     * @param int $idSoiree
+     * @param int $idImage
+     */
+    public function addImagesToSoiree(int $idSoiree, array $images) : void
+    {
+        $stmt = $this->pdo->prepare('INSERT INTO IMAGESOIREE (idi, ids) VALUES (:idi, :ids)');
+        foreach ($images as $image) {
+            $idImage = $this->getIdImage($image);
+            $stmt->execute([
+                'idi'=> $idImage,
+                'ids'=> $idSoiree
+            ]);
+        }
+    }
+
+
+    /**
      * supprime les images d'un spectacle
      * @param int $idSpectacle
-     * @param int $idImage
      */
     public function removeImagesFromSpectacle(int $idSpectacle): void
     {
         $stmt = $this->pdo->prepare('DELETE FROM IMAGESPECTACLE WHERE idsp = :idsp');
         $stmt->execute(['idsp' => $idSpectacle]);
+    }
+
+
+    /**
+     * supprime les images d'une soirée
+     * @param int $idSoiree
+     */
+    public function removeImagesFromSoiree(int $idSoiree) : void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM IMAGESOIREE WHERE ids = :ids');
+        $stmt->execute(['ids'=> $idSoiree]);
     }
 
 
