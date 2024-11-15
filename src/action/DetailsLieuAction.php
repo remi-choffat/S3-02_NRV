@@ -21,10 +21,6 @@ class DetailsLieuAction extends Action
         $repository = NRVRepository::getInstance();
         $lieu = $repository->fetchLieu($idLieu);
 
-        $html = $lieu->afficherDetails();
-
-        // TODO - Afficher la liste des spectacles et/ou soirées qui ont lieu dans ce lieu
-
-        return $html;
+        return $lieu->afficherDetails();
     }
 }

@@ -142,7 +142,14 @@ HTML;
                 Nancy Rock Vibration 🎶
             </h1>
             <nav>
-                <ul>
+                <div class="navbar-brand">
+                    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+                <ul id="navbarMenu" class="navbar-menu">
                     <li><a href='?action=default'>Accueil</a></li>
                     <li><a href='?action=liste-spectacles'>Liste des spectacles</a></li>
                     <li><a href='?action=liste-soirees'>Liste des soirées</a></li>
@@ -165,6 +172,16 @@ HTML;
             </div>
         </footer>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const burger = document.querySelector('.navbar-burger');
+            const menu = document.querySelector('#navbarMenu');
+            burger.addEventListener('click', () => {
+                burger.classList.toggle('is-active');
+                menu.classList.toggle('is-active');
+            });
+        });
+    </script>
     </body>
     </html>
 HTML;
