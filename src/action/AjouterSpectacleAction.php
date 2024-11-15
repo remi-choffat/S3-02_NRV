@@ -154,7 +154,7 @@ HTML;
         }
         if (!isset($_POST['artistes'])) {
             $artistes = [];
-        } 
+        }
         else {
             $artistes = array_map('intval', $_POST['artistes']);
             $images = $_POST['images'];
