@@ -24,10 +24,15 @@ class AjouterSoireeAction extends Action
     {
         $repo = NRVRepository::getInstance();
         $lieux = $repo->getLieux();
+        $images = $repo->getImages();
 
         $lieuOptions = "<option value='' selected disabled>Sélectionner un lieu</option>";
         foreach ($lieux as $lieu) {
             $lieuOptions .= "<option value='{$lieu->getId()}'>$lieu</option>";
+        }
+        $imageOptions = "";
+        foreach ($images as $image) {
+            $imageOptions .= "<option value='$image' data-image='resources/images/$image'>$image</option>";
         }
 
         return <<<HTML
@@ -53,6 +58,18 @@ class AjouterSoireeAction extends Action
                 </div>
             </div>
             <div class="field">
+                <label class="label" for="images">Images</label>
+                <div class="image-field">
+                    <div class="control select is-multiple">
+                        <select class="input" id="images" name="images[]" multiple>
+                            $imageOptions
+                        </select>
+                    </div>
+                    <!-- Image de prévisualisation -->
+                    <img id="imagePreview" class="preview-image" src="" alt="Prévisualisation de l'image">
+                </div>
+            </div>
+            <div class="field">
                 <label class="label required" for="lieu">Lieu</label>
                 <div class="control">
                     <select class="input" id="lieu" name="lieu" required>
@@ -68,6 +85,7 @@ class AjouterSoireeAction extends Action
             </div>
         </form>
 </section>
+<script src="resources/js/hoverImage.js"></script>
 HTML;
     }
 
@@ -87,13 +105,15 @@ HTML;
         $theme = filter_var($_POST['theme'], FILTER_SANITIZE_SPECIAL_CHARS);
         $date = filter_var($_POST['date'], FILTER_SANITIZE_SPECIAL_CHARS);
         $lieu = filter_var($_POST['lieu'], FILTER_SANITIZE_NUMBER_INT);
-
+        $images = $_POST['images'];
         try {
             // Crée un objet spectacle
             $soiree = new Soiree(null, $nom, $theme, new DateTime($date), new Lieu($lieu, '', '', 0, 0));
             $repo = NRVRepository::getInstance();
             // Ajoute le spectacle à la base de données et récupère son identifiant
             $soiree->setId($repo->addSoiree($soiree));
+            //ajoute les images à la base de données
+            $repo->addImagesToSoiree($soiree->getId(), $images);
             // Renvoie un message de succès
             return "<div class='notification is-success'>Soirée ajoutée avec succès</div>";
         } catch (Exception $e) {
