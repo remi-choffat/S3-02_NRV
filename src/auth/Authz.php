@@ -3,12 +3,13 @@
 namespace iutnc\nrv\auth;
 
 use iutnc\nrv\exception\AccessControlException;
+use iutnc\nrv\exception\AuthnException;
 
 class Authz
 {
     /**
-     * verifie si l'utilisateur peux faire une action
-     * @throws AccessControlException 
+     * Vérifie si l'utilisateur peut faire une action
+     * @throws AccessControlException|AuthnException
      */
     public static function checkRole(int $expectedRole): void
     {
