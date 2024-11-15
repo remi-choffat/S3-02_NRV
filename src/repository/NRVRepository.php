@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use iutnc\nrv\exception\AuthnException;
 use iutnc\nrv\exception\DateIncompatibleException;
 use iutnc\nrv\exception\InscriptionException;
+use iutnc\nrv\exception\SoireeAssignationException;
 use iutnc\nrv\exception\SpectacleAssignationException;
 use iutnc\nrv\festival\Artiste;
 use iutnc\nrv\festival\Lieu;
@@ -440,7 +441,7 @@ class NRVRepository
             $soiree = NRVRepository::getInstance()->getSoiree($spectacle->getSoireeId());
             $soiree->ajouterSpectaclePossible($spectacle);
         }
-        $stmt = $this->pdo->prepare('SELECT ID FROM SPECTACLE WHERE NOM+:nom');
+        $stmt = $this->pdo->prepare('SELECT ID FROM SPECTACLE WHERE NOM=:nom');
         $stmt->execute(['nom'=>$spectacle->getTitre()]);
         if(isarray($stmt->fetch())){
             throw new SpectacleAssignationException("Un spectacle de ce nom existe déjà");
@@ -469,6 +470,11 @@ class NRVRepository
      */
     public function addSoiree(Soiree $soiree): int
     {
+        $stmt = $this->pdo->prepare('SELECT ID FROM SOIREE WHERE NOM=:nom');
+        $stmt->execute(['nom'=>$soiree->getNom()]);
+        if(isarray($stmt->fetch())){
+            throw new SoireeAssignationException("Une soiree de ce nom existe déjà");
+        }
         $stmt = $this->pdo->prepare('INSERT INTO SOIREE (nom, theme, date, lieu) VALUES (:nom, :theme, :date, :lieu)');
         $stmt->execute([
             'nom' => $soiree->getNom(),
