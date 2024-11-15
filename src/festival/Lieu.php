@@ -97,7 +97,7 @@ class Lieu
      */
     public function equals(Lieu $l): bool
     {
-        return $this->nom === $l->getNom() && $this->adresse === $l->getAdresse();
+        return $this->id === $l->getId();
 
     }
 

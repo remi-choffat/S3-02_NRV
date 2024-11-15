@@ -63,10 +63,6 @@ class Spectacle
         $this->titre = $titre;
         $this->description = $description;
         $this->horaire = $date->format('H:i');
-        if ($soireeId !== null) {
-            $this->verifierDatePourSoiree();
-
-        }
         $this->artistes = $artistes;
         $this->lieu = $lieu;
         $this->soireeId = $soireeId;
@@ -194,13 +190,14 @@ class Spectacle
      */
     public function verifierDatePourSoiree(): void
     {
-        if (((int)$this->date->format("H") > 5 && (int)$this->date->format("H") < 17)
-            || ((int)$this->date->format("H") < 5 && $this->date->format("H:i") != "00:00")) {
-            throw new DateIncompatibleException("L'horaire de début choisit pour le spectacle doit être entre 17h et 5h");
+        if (((int)$this->date->format("H") > 5 &&
+            (int)$this->date->format("H") < 17&&
+            $this->date->format("H:i") != "00:00")) {
+            throw new DateIncompatibleException("L'horaire de début choisi pour le spectacle doit être entre 17h et 5h");
         } else {
             $datefin = $this->getFin();
             if (((int)$datefin->format("H") > 5 && (int)$datefin->format("H") < 17)
-                || ((int)$datefin->format("H") < 5 && $datefin->format("H:i") != "00:00")) {
+                || !(((int)$datefin->format("H") < 5 && $datefin->format("H:i") != "00:00"))) {
                 throw new DateIncompatibleException("La durée de spectacle est trop longue, le spectacle doit finir au plus tard à 5h");
             }
         }
@@ -334,6 +331,8 @@ HTML;
     }
 
 
+
+
     /**
      * Rendu HTML de l'objet (résumé compact)
      * @param string $type Type de résumé compact
@@ -349,6 +348,7 @@ HTML;
                 </div>
         HTML;
     }
+
 
 
     /**

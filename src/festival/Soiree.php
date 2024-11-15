@@ -7,7 +7,6 @@ use DateTime;
 use iutnc\nrv\exception\DateIncompatibleException;
 use iutnc\nrv\exception\LieuIncompatibleException;
 use iutnc\nrv\exception\SpectacleAssignationException;
-use iutnc\nrv\exception\ThemeIncompatibleException;
 
 /**
  * Représente une soirée
@@ -136,26 +135,34 @@ class Soiree
      * Vérifie si le spectacle n'est pas déjà dans la liste
      * @param Spectacle $spectacle
      * @throws LieuIncompatibleException le spectacle ne peut pas être ajouter à la soirée
-     * @throws ThemeIncompatibleException le spectacle n'est pas du même thème que la soirée donc il n'est pas ajoutée
      * @throws DateIncompatibleException le spectacle n'as pas lieu pendant le soir ou débute avant le début de la soiré
      * @throws SpectacleAssignationException le spectacle a lieu en même temps qu'un autre
      */
-    public function ajouterSpectacle(Spectacle $spectacle): void
+    public function ajouterSpectaclePossible(Spectacle $spectacle): void
     {
-        $spectacle->verifierDatePourSoiree();
-        if ($spectacle->getDate()->getTimestamp() - $this->date->getTimestamp() > 0) {
+        $time = $spectacle->getDate()->format("U") - ($this->getDate()->format("U"));
+        $time2 = $spectacle->getDate()->format("U") - ($this->getFinMax()->format("U"));
+        if ($time < 0) {
             throw new DateIncompatibleException("Le Spectacle débute avant la soirée");
+        } elseif ($time2 > 0) {
+            throw new DateIncompatibleException("Le Spectacle débute après la soirée");
         }
+        $spectacle->verifierDatePourSoiree();
         $this->spectacleSansChevauchement($spectacle);
-        if (!in_array($spectacle, $this->spectacles)) {
-            if ($this->theme == $spectacle->getStyle()) {
-                if ($spectacle->getLieu()->equals($this->lieu)) {
-                    $this->spectacles[] = $spectacle;
-                } else {
+        if (!$spectacle->getLieu()->equals($this->lieu)) {
                     throw new LieuIncompatibleException();
-                }
-            } else throw new ThemeIncompatibleException("Les thèmes ne sont pas identiques");
         }
+
+    }
+
+    public function getFinMax(): DateTime
+    {
+        if ($this->date->format("H") >= 17) {
+            return $this->date->setTime(5, 0)->modify("+1 day");
+        } else {
+            return $this->date->setTime(5, 0);
+        }
+
     }
 
     /**
@@ -165,30 +172,18 @@ class Soiree
 
     private function spectacleSansChevauchement(Spectacle $spectacle)
     {
-        $datesmin = [];
-        $datesmax = [];
         foreach ($this->spectacles as $sp) {
-            $datesmin[] = $sp->getDate();
-        }
-        foreach ($this->spectacles as $sp) {
-            $datesmax[] = $sp->getFin();
-        }
-        $datemin = null;
-        $datemax = null;
-        foreach ($datesmin as $date) {
-            $time = $date->diff($this->date);
-            if (is_null($datemin)) {
-                if ($time->h <= 12) {
-                    $datemin = $date;
+            // quand $sp->getFin()->format("U") - $spectacle->getDate()->format("U") >0 le spectacle comence après
+            // quand $sp->getFin()->format("U") - $spectacle->getDate()->format("U") <0 le spectacle comence avant
+                if ($sp->getFin()->format("U") - $spectacle->getDate()->format("U") < 0) {
+                    // donc faut vérif si le spectacle finit avant le commencement de celui déjà existant
+                    // quand $spectacle->getFin()->format("U") - $sp->getDate()->format("U")<0 le spectacle finit avant qu'un autre commence
+                    //quand $spectacle->getFin()->format("U") - $sp->getDate()->format("U")>0 le spectacle finit pendant qu'un autre est en cours
+                    if($spectacle->getFin()->format("U") - $sp->getDate()->format("U")>0){
+                        //donc erreur
+                        throw new SpectacleAssignationException("Le Spectacle à lieu pendant un autre spectacle");
+                    }
                 }
-            } else {
-                $datemax = $date;
-                break;
-            }
-        }
-        if ($datemin->getTimestamp() - $spectacle->getDate()->getTimestamp() > 0 ||
-            $spectacle->getDate()->getTimestamp() - $datemax->getTimestamp() > 0) {
-            throw new SpectacleAssignationException();
         }
     }
 
