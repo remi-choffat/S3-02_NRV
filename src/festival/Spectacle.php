@@ -6,6 +6,7 @@ namespace iutnc\nrv\festival;
 use DateMalformedStringException;
 use DateTime;
 use iutnc\nrv\exception\DateIncompatibleException;
+use iutnc\nrv\repository\NRVRepository;
 
 
 /**
@@ -17,7 +18,7 @@ class Spectacle
     private string $titre;
     private array $artistes;
     private array $images;
-    private string $url;
+    private ?string $url;
     private DateTime $date;
     private string $horaire;
     private int $duree;
@@ -30,19 +31,20 @@ class Spectacle
 
     /**
      * Constructeur de la classe Spectacle
-     * @param int|null $id
-     * @param string $titre
-     * @param DateTime $date
-     * @param int $duree
-     * @param array $artistes
-     * @param string $style
-     * @param Lieu $lieu
-     * @param string $description
-     * @param bool $annule
-     * @param int|null $soireeId
+     * @param int|null $id l'ID du spectacle
+     * @param string $titre le nom du spectacle
+     * @param DateTime $date la date et l'heure de début du spectacle
+     * @param int $duree la durée du spectacle en minutes
+     * @param array $artistes la liste des artistes du spectacle
+     * @param string $style le style du spectacle
+     * @param Lieu $lieu le lieu du spectacle
+     * @param string $description la description du spectacle
+     * @param bool $annule true si le spectacle est annulé, false sinon
+     * @param string|null $url l'URL vers une vidéo du spectacle
+     * @param int|null $soireeId l'ID de la soirée à laquelle appartient le spectacle, null si le spectacle n'appartient pas à une soirée
      * @throws DateIncompatibleException
      */
-    public function __construct(?int $id, string $titre, DateTime $date, int $duree, array $artistes, string $style, Lieu $lieu, string $description, bool $annule, int $soireeId = null)
+    public function __construct(?int $id, string $titre, DateTime $date, int $duree, array $artistes, string $style, Lieu $lieu, string $description, bool $annule, ?string $url, int $soireeId = null)
     {
 
         // Vérifie la cohérence entre la date et le lieu du spectacle et la date et le lieu de la soirée,
@@ -67,6 +69,40 @@ class Spectacle
         $this->lieu = $lieu;
         $this->soireeId = $soireeId;
         $this->style = $style;
+        if ($id !== null) {
+            $this->images = NRVRepository::getInstance()->getImagesSpectacle($this->id);
+        } else {
+            $this->images = [];
+        }
+        $this->url = $url ?? null;
+    }
+
+
+    /**
+     * Renvoie, sous forme de tableau, le code HTML des images du spectacle
+     * @return array
+     */
+    public function getImagesHTML(): array
+    {
+        $imagesHTML = [];
+        foreach ($this->images as $image) {
+            $imagesHTML[] = "<img src='resources/images/{$image}' alt='Image du spectacle {$this->titre}' class='spectacle-image'>";
+        }
+        return $imagesHTML;
+    }
+
+
+    /**
+     * Renvoie le code HTML de la première image du spectacle
+     * @return string
+     */
+    public function getFirstImageHTML(): string
+    {
+        if (empty($this->images)) {
+            return "";
+        } else {
+            return "<img src='resources/images/{$this->images[0]}' alt='Image du spectacle {$this->titre}' class='spectacle-image-resume'>";
+        }
     }
 
 
@@ -126,15 +162,6 @@ class Spectacle
 
 
     /**
-     * @return array
-     */
-    public function getImages(): array
-    {
-        return $this->images;
-    }
-
-
-    /**
      * Renvoie le style du spectacle
      * @return string
      */
@@ -144,6 +171,25 @@ class Spectacle
     }
 
 
+    /**
+     * @return string un lecteur de vidéo HTML, une chaîne vide si le spectacle n'a pas de vidéo
+     */
+    public function getVideo(): string
+    {
+        if ($this->url) {
+            // Convert mobile YouTube URL to standard embed URL
+            $embedUrl = str_replace('m.youtube.com', 'www.youtube.com', $this->url);
+            $embedUrl = str_replace('watch?v=', 'embed/', $embedUrl);
+
+            return <<<HTML
+            <iframe width="560" height="315" src="{$embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        HTML;
+        } else {
+            return "";
+        }
+    }
+    
+    
     /**
      * @return string|null
      */
@@ -299,13 +345,13 @@ class Spectacle
             $cancelAction = $this->isAnnule() ? 'restaurer-spectacle' : 'annuler-spectacle';
             $cancelMessage = $this->isAnnule() ? 'Restaurer' : 'Annuler';
             $menu = <<<HTML
-        <div class="menu">
-            <button class="menu-btn">⋮</button>
-            <div class="menu-content">
-                <a href="index.php?action=modifier-spectacle&id={$this->id}">Modifier</a>
-                <a href="index.php?action={$cancelAction}&id={$this->id}">$cancelMessage</a>
-            </div>
+    <div class="menu">
+        <button class="menu-btn">⋮</button>
+        <div class="menu-content">
+            <a href="index.php?action=modifier-spectacle&id={$this->id}">Modifier</a>
+            <a href="index.php?action={$cancelAction}&id={$this->id}">$cancelMessage</a>
         </div>
+    </div>
 HTML;
         } else {
             $menu = "";
@@ -314,19 +360,30 @@ HTML;
         $annuleTag = $this->isAnnule() ? "<p><span class='tag is-danger'>Annulé</span></p>" : "";
         $starClass = in_array($this->id, $_SESSION["favoris"] ?? []) ? 'filled' : 'empty';
 
+        // Retrieve the first image
+        $firstImageHTML = "";
+        if (!empty($this->images)) {
+            $firstImageHTML = $this->getFirstImageHTML();
+        }
+
         return <<<HTML
-    <div class="box">
-        <div class="spectacle-header">
-            <h3 class="title is-4"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>
-            <div class="actions-container">
-                <span class="star $starClass" data-id="{$this->id}"></span>
-                $menu
-            </div>
+<div class="box">
+    <div class="spectacle-header">
+        <h3 class="title is-4"><a href="?action=details-spectacle&id={$this->id}">{$this->titre}</a></h3>
+        <div class="actions-container">
+            <span class="star $starClass" data-id="{$this->id}"></span>
+            $menu
         </div>
-        $annuleTag
-        <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
-        <p><b>Date :</b> {$this->getFormattedDate(true)}</p>
     </div>
+    $annuleTag
+    <div class="spectacle-content">
+        <div class="spectacle-text">
+            <p><b>Artistes :</b> {$this->implodeArtistes()}</p>
+            <p><b>Date :</b> {$this->getFormattedDate(true)}</p>
+        </div>
+        $firstImageHTML
+    </div>
+</div>
 HTML;
     }
 
@@ -376,6 +433,12 @@ HTML;
             $statut = "<span class='tag is-info'>Demain</span>";
         }
 
+        if ($this->images) {
+            $imagesHTML = "<div class='images-container'>" . implode('', $this->getImagesHTML()) . "</div>";
+        } else {
+            $imagesHTML = "";
+        }
+
         return <<<HTML
                 <div class="box">
                     <h3 class="title is-3">{$this->titre}</h3>
@@ -385,9 +448,11 @@ HTML;
                     <p><b>Date :</b> {$this->getFormattedDate(false)}</p>
                     <p><b>Heure :</b> $this->horaire</p>
                     <p><b>Durée :</b> {$this->afficherDuree()}</p>
-                    <p><b>Lieu :</b> {$this->lieu->getNom()} ({$this->lieu->getAdresse()})</p>
+                    <p><b>Lieu :</b> <a href="?action=details-lieu&id={$this->lieu->getId()}" title="Voir les détails du lieu - {$this->lieu->getNom()}">{$this->lieu->getNom()}</a> ({$this->lieu->getAdresse()})</p>
                     <p><b>Nombre de places :</b> {$this->lieu->getNbPlacesAssises()} assises, {$this->lieu->getNbPlacesDebout()} debout</p>
                     <p><b>Description :</b> $this->description</p>
+                    {$this->getVideo()}
+                    $imagesHTML
                 </div>
         HTML;
     }

@@ -7,6 +7,7 @@ use DateTime;
 use iutnc\nrv\exception\DateIncompatibleException;
 use iutnc\nrv\exception\LieuIncompatibleException;
 use iutnc\nrv\exception\SpectacleAssignationException;
+use iutnc\nrv\repository\NRVRepository;
 
 /**
  * Représente une soirée
@@ -24,6 +25,7 @@ class Soiree
     private string $heureDebut;
     private Lieu $lieu;
     private array $spectacles;
+    private array $images;
 
 
     /**
@@ -45,6 +47,39 @@ class Soiree
         $this->verifierDate();
         $this->lieu = $lieu;
         $this->heureDebut = $date->format('H:i');
+        if ($id !== null) {
+            $this->images = NRVRepository::getInstance()->getImagesSoiree($this->id);
+        } else {
+            $this->images = [];
+        }
+    }
+
+
+    /**
+     * Renvoie, sous forme de tableau, le code HTML des images de la soirée
+     * @return array
+     */
+    public function getImagesHTML(): array
+    {
+        $imagesHTML = [];
+        foreach ($this->images as $image) {
+            $imagesHTML[] = "<img src='resources/images/{$image}' alt='Image de la soirée {$this->nom}' class='soiree-image'>";
+        }
+        return $imagesHTML;
+    }
+
+
+    /**
+     * Renvoie le code HTML de la première image de la soirée
+     * @return string
+     */
+    public function getFirstImageHTML(): string
+    {
+        if (empty($this->images)) {
+            return "";
+        } else {
+            return "<img src='resources/images/{$this->images[0]}' alt='Image de la soirée {$this->nom}' class='soiree-image-resume'>";
+        }
     }
 
 
@@ -208,17 +243,24 @@ class Soiree
             $menu = "";
         }
 
+        $firstImageHTML = $this->getFirstImageHTML();
+
         $theme = $this->theme ? "<p><b>Thème : </b>$this->theme</p>" : "";
         return <<<HTML
         <div class="box soiree">
-        <div class="spectacle-header">
-            <h3 class="title is-4"><a href="?action=details-soiree&id={$this->getId()}">{$this->nom}</a></h3>
-            $menu            
-        </div>
-            $theme
-            <p><b>Date : </b>{$this->date->format('d/m/Y')}</p>
-            <p><b>Débute à : </b>$this->heureDebut</p>
-            <p><b>Lieu : </b>{$this->lieu->getNom()}</p>
+            <div class="soiree-header">
+                <h3 class="title is-4"><a href="?action=details-soiree&id={$this->getId()}">{$this->nom}</a></h3>
+                $menu        
+            </div>    
+            <div class='soiree-content'>
+                <div class="soiree-text">
+                    $theme
+                    <p><b>Date : </b>{$this->date->format('d/m/Y')}</p>
+                    <p><b>Débute à : </b>$this->heureDebut</p>
+                    <p><b>Lieu : </b>{$this->lieu->getNom()}</p>
+                </div>
+                $firstImageHTML
+            </div>
         </div>
 HTML;
 
@@ -231,15 +273,26 @@ HTML;
      */
     public function afficherDetails(): string
     {
+
+        if ($this->images) {
+            $imagesHTML = "<div class='images-container'>" . implode('', $this->getImagesHTML()) . "</div>";
+        } else {
+            $imagesHTML = "";
+        }
+
+        $lienLieu = "<a href='?action=details-lieu&id={$this->lieu->getId()}' title='Voir les détails du lieu - {$this->lieu->getNom()}'>{$this->lieu->getNom()}</a>";
+
         $theme = $this->theme ? "<p><b>Thème : </b>$this->theme</p>" : "";
         $sortie = "<div class='box list-spectacle'>
         <h3 class='title is-3'>{$this->nom}</h3>
         $theme
-        <p><b>Date : </b>{$this->date->format('d/m/Y')}</p>
-        <p><b>Débute à : </b>{$this->heureDebut}</p>
-        <p><b>Finit à : </b>{$this->getFin()->format("H:i")}</p>
-        <p><b>Lieu : </b>{$this->lieu->getNom()}</p>
+        <p><b>Date :</b> {$this->date->format('d/m/Y')}</p>
+        <p><b>Débute à :</b> {$this->heureDebut}</p>
+        <p><b>Finit à :</b> {$this->getFin()->format("H:i")}</p>
+        <p><b>Lieu :</b> $lienLieu ({$this->lieu->getAdresse()})</p>
         <br/>
+        $imagesHTML
+        <br/><br/>
         <h4 class='title is-4'>Spectacles :</h4>";
 
         if (sizeof($this->spectacles) == 0) {

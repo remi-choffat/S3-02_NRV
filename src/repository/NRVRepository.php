@@ -156,6 +156,7 @@ class NRVRepository
      * @param int $idSpectacle l'ID du spectacle
      * @return Spectacle
      * @throws DateMalformedStringException
+     * @throws DateIncompatibleException
      */
     public function getSpectacle(int $idSpectacle): Spectacle
     {
@@ -230,10 +231,14 @@ class NRVRepository
      * @param int $lieuId
      * @return Lieu
      */
-    private function fetchLieu(int $lieuId): Lieu
+    public function fetchLieu(int $lieuId): Lieu
     {
         $stmt = $this->pdo->prepare('SELECT * FROM LIEU WHERE id = :id');
         $stmt->execute(['id' => $lieuId]);
+
+        if (!$stmt->rowCount()) {
+            throw new InvalidArgumentException("Lieu non trouvé");
+        }
 
         $lieuData = $stmt->fetch(PDO::FETCH_ASSOC);
         return new Lieu($lieuData['id'], $lieuData['nom'], $lieuData['adresse'], $lieuData['nbplass'], $lieuData['nbpldeb']);
@@ -287,6 +292,7 @@ class NRVRepository
             $lieu,
             $spectacleData['description'],
             $spectacleData['annule'] === 1,
+            $spectacleData['url'] ?? null,
             $spectacleData['soiree'] ?? null,
         );
     }
@@ -601,28 +607,56 @@ class NRVRepository
      * @param int $idSpectacle
      * @param int $idImage
      */
-    public function addImageSoiree(int $idSpectacle, int $idImage): void
+    public function addImagesToSpectacle(int $idSpectacle, array $images): void
     {
         $stmt = $this->pdo->prepare('INSERT INTO IMAGESPECTACLE (idi, idsp) VALUES (:idi, :idsp)');
-        $stmt->execute([
-            'idi' => $idImage,
-            'idsp' => $idSpectacle
-        ]);
+        foreach ($images as $image) {
+            $idImage = $this->getIdImage($image);
+            $stmt->execute([
+                'idi' => $idImage,
+                'idsp' => $idSpectacle
+            ]);
+        }
     }
 
 
     /**
-     * supprime une image d'un spectacle
-     * @param int $idSpectacle
+     * ajoute une image à une soirée
+     * @param int $idSoiree
      * @param int $idImage
      */
-    public function removeImageSoiree(int $idSpectacle, int $idImage): void
+    public function addImagesToSoiree(int $idSoiree, array $images): void
     {
-        $stmt = $this->pdo->prepare('DELETE FROM IMAGESPECTACLE WHERE idi = :idi AND idsp = :idsp');
-        $stmt->execute([
-            'idsp' => $idSpectacle,
-            'idi' => $idImage
-        ]);
+        $stmt = $this->pdo->prepare('INSERT INTO IMAGESOIREE (idi, ids) VALUES (:idi, :ids)');
+        foreach ($images as $image) {
+            $idImage = $this->getIdImage($image);
+            $stmt->execute([
+                'idi' => $idImage,
+                'ids' => $idSoiree
+            ]);
+        }
+    }
+
+
+    /**
+     * supprime les images d'un spectacle
+     * @param int $idSpectacle
+     */
+    public function removeImagesFromSpectacle(int $idSpectacle): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM IMAGESPECTACLE WHERE idsp = :idsp');
+        $stmt->execute(['idsp' => $idSpectacle]);
+    }
+
+
+    /**
+     * supprime les images d'une soirée
+     * @param int $idSoiree
+     */
+    public function removeImagesFromSoiree(int $idSoiree): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM IMAGESOIREE WHERE ids = :ids');
+        $stmt->execute(['ids' => $idSoiree]);
     }
 
 
@@ -635,6 +669,34 @@ class NRVRepository
     {
         $stmt = $this->pdo->prepare('SELECT nom FROM IMAGE INNER JOIN IMAGESPECTACLE ON IMAGE.id = IMAGESPECTACLE.idi WHERE idsp = :idsp');
         $stmt->execute(['idsp' => $idSpectacle]);
+        $imagesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(fn($image) => $image['nom'], $imagesData);
+    }
+
+
+    /**
+     * getImages retourne les images d'une soirée
+     * @param int $idSoiree l'ID de la soirée
+     * @return array
+     */
+    public function getImagesSoiree(int $idSoiree): array
+    {
+        $stmt = $this->pdo->prepare('SELECT nom FROM IMAGE INNER JOIN IMAGESOIREE ON IMAGE.id = IMAGESOIREE.idi WHERE ids = :ids');
+        $stmt->execute(['ids' => $idSoiree]);
+        $imagesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(fn($image) => $image['nom'], $imagesData);
+    }
+
+
+    /**
+     * getImages retourne les images d'un lieu
+     * @param int $idLieu
+     * @return array
+     */
+    public function getImagesLieu(int $idLieu): array
+    {
+        $stmt = $this->pdo->prepare('SELECT nom FROM IMAGE INNER JOIN IMAGELIEU ON IMAGE.id = IMAGELIEU.idi WHERE idl = :idl');
+        $stmt->execute(['idl' => $idLieu]);
         $imagesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return array_map(fn($image) => $image['nom'], $imagesData);
     }
@@ -667,5 +729,23 @@ class NRVRepository
             'annule' => $annule ? 1 : 0
         ]);
     }
-    
+
+    /**
+     * getIdImage retourne l'id d'une image
+     * @param string $nom
+     * @throws InvalidArgumentException
+     */
+    public function getIdImage(string $nom)
+    {
+        $stmt = $this->pdo->prepare('SELECT id FROM IMAGE WHERE nom = :nom');
+        $stmt->execute([
+            'nom' => $nom
+        ]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            throw new InvalidArgumentException('Image non trouvée');
+        } else {
+            return $row['id'];
+        }
+    }
 }

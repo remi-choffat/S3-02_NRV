@@ -13,6 +13,7 @@ use iutnc\nrv\action\AjouterSpectaclePrefAction;
 use iutnc\nrv\action\AnnulerSpectacleAction;
 use iutnc\nrv\action\Deconnexion;
 use iutnc\nrv\action\DefaultAction;
+use iutnc\nrv\action\DetailsLieuAction;
 use iutnc\nrv\action\DetailsSoireeAction;
 use iutnc\nrv\action\DetailsSpectacleAction;
 use iutnc\nrv\action\ErrorAction;
@@ -74,13 +75,13 @@ class Dispatcher
                 'ajouter-image' => new AjouterImageAction(1),
                 'annuler-spectacle' => new AnnulerSpectacleAction(1),
                 'restaurer-spectacle' => new RestaurerSpectacleAction(1),
+                'details-lieu' => new DetailsLieuAction(),
                 'error' => new ErrorAction(),
                 default => new UnknownAction(),
             };
             $html = $action->execute();
-        }
-        catch (UnauthorizedActionException $e){
-            $html=$e->getMessage();
+        } catch (UnauthorizedActionException $e) {
+            $html = $e->getMessage();
         }
         $this->renderPage($html);
     }
