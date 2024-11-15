@@ -106,6 +106,12 @@ class AjouterSpectacleAction extends Action
                 </div>
             </div>
             <div class="field">
+                <label class="label" for="video_url">URL de la vidéo</label>
+                <div class="control">
+                    <input class="input" type="url" id="video_url" name="video_url" placeholder="https://example.com/video.mp4" required>
+                </div>
+            </div>
+            <div class="field">
                 <label class="label" for="description">Description</label>
                 <div class="control">
                     <textarea class="textarea" id="description" name="description"></textarea>
@@ -149,6 +155,7 @@ HTML;
         $duree = filter_var($_POST['duree'], FILTER_SANITIZE_NUMBER_INT);
         $description = filter_var($_POST['description'], FILTER_SANITIZE_SPECIAL_CHARS);
         $lieu = filter_var($_POST['lieu'], FILTER_SANITIZE_NUMBER_INT);
+        $urlvideo = filter_var($_POST['video_url'], FILTER_SANITIZE_URL);
         if (!isset($_POST['soiree'])) {
             $soiree = null;
         } else {
@@ -163,7 +170,7 @@ HTML;
         }
         try {
             // Crée un objet spectacle
-            $spectacle = new Spectacle(null, $nom, new DateTime($date), $duree, $artistes, $style, new Lieu($lieu, '', '', 0, 0), $description, false, $soiree);
+            $spectacle = new Spectacle(null, $nom, new DateTime($date), $duree, $artistes, $style, new Lieu($lieu, '', '', 0, 0), $description, false,$urlvideo,$soiree);
             $repo = NRVRepository::getInstance();
             // Ajoute le spectacle à la base de données et récupère son identifiant
             $spectacle->setId($repo->addSpectacle($spectacle));

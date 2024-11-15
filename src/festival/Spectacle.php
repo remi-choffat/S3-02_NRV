@@ -192,6 +192,15 @@ class Spectacle
             return "";
         }
     }
+    
+    
+    /**
+     * @return string|null
+     */
+    public function getUrl(): ?string
+    {
+        return $this->url ?? null;
+    }
 
 
     /**
