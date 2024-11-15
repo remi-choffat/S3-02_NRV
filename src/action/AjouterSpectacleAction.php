@@ -26,6 +26,7 @@ class AjouterSpectacleAction extends Action
         $soirees = $repo->getSoirees();
         $lieux = $repo->getLieux();
         $artistes = $repo->getArtistes();
+        $images = $repo->getImages();
 
         $soireeOptions = "<option value='' selected disabled>Sélectionner une soirée</option>";
         foreach ($soirees as $soiree) {
@@ -41,6 +42,11 @@ class AjouterSpectacleAction extends Action
         foreach ($artistes as $artiste) {
             $artisteOptions .= "<option value='{$artiste->getId()}'>{$artiste->getNomArtiste()}</option>";
         }
+        $imageOptions = "";
+        foreach ($images as $image) {
+            $imageOptions .= "<option value='$image' data-image='images/$image'>$image</option>";
+        }
+
 
         return <<<HTML
     <section class="section">
@@ -87,6 +93,16 @@ class AjouterSpectacleAction extends Action
                 </div>
             </div>
             <div class="field">
+                <label class="label" for="images">Images</label>
+                <div class="control select is-multiple">
+                    <select class="input" id="images" name="images[]" multiple>
+                        $imageOptions
+                    </select>
+                </div>
+                  <!-- Image de prévisualisation -->
+                  <img id="imagePreview" class="preview-image" src="" alt="Prévisualisation de l'image">
+            </div>
+            <div class="field">
                 <label class="label" for="description">Description</label>
                 <div class="control">
                     <textarea class="textarea" id="description" name="description"></textarea>
@@ -108,6 +124,7 @@ class AjouterSpectacleAction extends Action
             </div>
         </form>
 </section>
+<script src="src/js/hoverImage.js"></script>
 HTML;
     }
 
@@ -137,10 +154,11 @@ HTML;
         }
         if (!isset($_POST['artistes'])) {
             $artistes = [];
-        } else {
-        $artistes = array_map('intval', $_POST['artistes']);
+        } 
+        else {
+            $artistes = array_map('intval', $_POST['artistes']);
+            $images = $_POST['images'];
         }
-
         try {
             // Crée un objet spectacle
             $spectacle = new Spectacle(null, $nom, new DateTime($date), $duree, $artistes, $style, new Lieu($lieu, '', '', 0, 0), $description, false, $soiree);
@@ -149,6 +167,8 @@ HTML;
             $spectacle->setId($repo->addSpectacle($spectacle));
             // Associe les artistes au spectacle
             $repo->addArtistesToSpectacle($spectacle->getId(), $artistes);
+            // Associe les images au spectacle
+            $repo->addImagesToSpectacle($spectacle->getId(), $images);
             // Renvoie un message de succès
             return "<div class='notification is-success'>Spectacle ajouté avec succès</div>";
         } catch (Exception $e) {

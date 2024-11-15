@@ -27,6 +27,7 @@ class ModifierSpectacleAction extends Action
         $soirees = $repo->getSoirees();
         $lieux = $repo->getLieux();
         $artistes = $repo->getArtistes();
+        $images = $repo->getImages();
 
         $soireeOptions = "<option value=''>Aucune soirée</option>";
         foreach ($soirees as $soiree) {
@@ -44,6 +45,11 @@ class ModifierSpectacleAction extends Action
         foreach ($artistes as $artiste) {
             $selected = in_array($artiste, $repo->fetchArtistes($id)) ? 'selected' : '';
             $artisteOptions .= "<option value='{$artiste->getId()}' $selected>{$artiste->getNomArtiste()}</option>";
+        }
+        $imageOptions = "";
+        foreach ($images as $image) {
+            $selected = in_array($image, $repo->getImagesSpectacle($id)) ? 'selected' : '';
+            $imageOptions .= "<option value='{$image}' $selected data-image='images/$image'>{$image}</option>";
         }
 
         return <<<HTML
@@ -91,6 +97,16 @@ class ModifierSpectacleAction extends Action
                 </div>
             </div>
             <div class="field">
+                <label class="label" for="images">Images</label>
+                <div class="control select is-multiple">
+                    <select class="input" id="images" name="images[]" multiple>
+                        $imageOptions
+                    </select>
+                </div>
+                <!-- Image de prévisualisation -->
+                <img id="imagePreview" class="preview-image" src="" alt="Prévisualisation de l'image">
+            </div>
+            <div class="field">
                 <label class="label" for="description">Description</label>
                 <div class="control">
                     <textarea class="textarea" id="description" name="description">{$spectacle->getDescription()}</textarea>
@@ -111,7 +127,8 @@ class ModifierSpectacleAction extends Action
                 </div>
             </div>
         </form>
-    </section>
+</section>
+<script src="src/js/hoverImage.js"></script>
 HTML;
     }
 
@@ -139,6 +156,7 @@ HTML;
             $soiree = $soiree === '' ? null : intval($soiree);
         }
         $artistes = array_map('intval', $_POST['artistes']);
+        $images = $_POST['images'];
 
         try {
             // Crée un objet spectacle
@@ -146,10 +164,12 @@ HTML;
             $repo = NRVRepository::getInstance();
             // Met à jour le spectacle dans la base de données
             $repo->updateSpectacle($spectacle);
-            // Supprime tous les artistes associés au spectacle
+            // Supprime tous les artistes associés au spectacle et toutes les images
             $repo->removeArtistesFromSpectacle($spectacle->getId());
-            // Met à jour les artistes associés au spectacle
+            $repo->removeImagesFromSpectacle($spectacle->getId());
+            // Met à jour les artistes associés au spectacle et toutes les images
             $repo->addArtistesToSpectacle($spectacle->getId(), $artistes);
+            $repo->addImagesToSpectacle($spectacle->getId(), $images);
             // Renvoie un message de succès
             return "<div class='notification is-success'>Spectacle mis à jour avec succès</div>";
         } catch (Exception $e) {

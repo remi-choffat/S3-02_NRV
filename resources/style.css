@@ -296,7 +296,18 @@ html, body {
 .star.empty::before {
     content: "☆";
 }
+.field {
+    display: flex; /* Active le flexbox */
+    align-items: center; /* Aligne verticalement */
+    gap: 20px; /* Espace entre le select et l'image */
+}
 
+.preview-image {
+    width: 150px;
+    height: 150px;
+    display: none; /* Masqué par défaut */
+    object-fit: cover; /* Gère l'ajustement de l'image */
+}
 
 /* Images */
 .spectacle-image, .soiree-image {

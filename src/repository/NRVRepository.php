@@ -590,28 +590,26 @@ class NRVRepository
      * @param int $idSpectacle
      * @param int $idImage
      */
-    public function addImageSoiree(int $idSpectacle, int $idImage): void
-    {
+    public function addImagesToSpectacle(int $idSpectacle, array $images) : void{
         $stmt = $this->pdo->prepare('INSERT INTO IMAGESPECTACLE (idi, idsp) VALUES (:idi, :idsp)');
-        $stmt->execute([
-            'idi' => $idImage,
-            'idsp' => $idSpectacle
-        ]);
+        foreach ($images as $image) {
+            $idImage = $this->getIdImage($image);
+            $stmt->execute([
+                'idi' => $idImage,
+                'idsp' => $idSpectacle
+            ]);
+        }
     }
 
 
     /**
-     * supprime une image d'un spectacle
+     * supprime les images d'un spectacle
      * @param int $idSpectacle
      * @param int $idImage
      */
-    public function removeImageSoiree(int $idSpectacle, int $idImage): void
-    {
-        $stmt = $this->pdo->prepare('DELETE FROM IMAGESPECTACLE WHERE idi = :idi AND idsp = :idsp');
-        $stmt->execute([
-            'idsp' => $idSpectacle,
-            'idi' => $idImage
-        ]);
+    public function removeImagesFromSpectacle(int $idSpectacle) : void{
+        $stmt = $this->pdo->prepare('DELETE FROM IMAGESPECTACLE WHERE idsp = :idsp');
+        $stmt->execute(['idsp' => $idSpectacle]);
     }
 
 
@@ -670,5 +668,21 @@ class NRVRepository
             'annule' => $annule ? 1 : 0
         ]);
     }
-
+     /**
+     * getIdImage retourne l'id d'une image
+     * @param string $nom
+     * @throws InvalidArgumentException
+     */
+    public function getIdImage(String $nom){
+        $stmt = $this->pdo->prepare('SELECT id FROM IMAGE WHERE nom = :nom');
+        $stmt->execute([
+            'nom' => $nom
+        ]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if(!$row){
+            throw new InvalidArgumentException('Image non trouvée');
+        }else{
+            return $row['id'];
+        }
+    }
 }
