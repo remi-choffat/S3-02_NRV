@@ -443,7 +443,7 @@ class NRVRepository
         }
         $stmt = $this->pdo->prepare('SELECT ID FROM SPECTACLE WHERE NOM=:nom');
         $stmt->execute(['nom'=>$spectacle->getTitre()]);
-        if(isarray($stmt->fetch())){
+        if(is_array($stmt->fetch())){
             throw new SpectacleAssignationException("Un spectacle de ce nom existe déjà");
         }
         $stmt = $this->pdo->prepare('INSERT INTO SPECTACLE (nom, style, url, date, duree, annule, description, lieu, soiree) VALUES (:nom, :style, :url, :date, :duree, :annule, :description, :lieu, :soiree)');
@@ -472,7 +472,7 @@ class NRVRepository
     {
         $stmt = $this->pdo->prepare('SELECT ID FROM SOIREE WHERE NOM=:nom');
         $stmt->execute(['nom'=>$soiree->getNom()]);
-        if(isarray($stmt->fetch())){
+        if(is_array($stmt->fetch())){
             throw new SoireeAssignationException("Une soiree de ce nom existe déjà");
         }
         $stmt = $this->pdo->prepare('INSERT INTO SOIREE (nom, theme, date, lieu) VALUES (:nom, :theme, :date, :lieu)');
