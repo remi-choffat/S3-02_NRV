@@ -5,9 +5,11 @@ namespace iutnc\nrv\repository;
 use DateMalformedStringException;
 use DateTime;
 use InvalidArgumentException;
+use iutnc\nrv\exception\ArtisteDuplicationException;
 use iutnc\nrv\exception\AuthnException;
 use iutnc\nrv\exception\DateIncompatibleException;
 use iutnc\nrv\exception\InscriptionException;
+use iutnc\nrv\exception\LieuDuplicationException;
 use iutnc\nrv\exception\SoireeAssignationException;
 use iutnc\nrv\exception\SpectacleAssignationException;
 use iutnc\nrv\festival\Artiste;
@@ -437,13 +439,13 @@ class NRVRepository
      */
     public function addSpectacle(Spectacle $spectacle): int
     {
-        if($spectacle->getSoireeId()!=null){
+        if ($spectacle->getSoireeId() != null) {
             $soiree = NRVRepository::getInstance()->getSoiree($spectacle->getSoireeId());
             $soiree->ajouterSpectaclePossible($spectacle);
         }
         $stmt = $this->pdo->prepare('SELECT ID FROM SPECTACLE WHERE NOM=:nom');
-        $stmt->execute(['nom'=>$spectacle->getTitre()]);
-        if(is_array($stmt->fetch())){
+        $stmt->execute(['nom' => $spectacle->getTitre()]);
+        if (is_array($stmt->fetch())) {
             throw new SpectacleAssignationException("Un spectacle de ce nom existe déjà");
         }
         $stmt = $this->pdo->prepare('INSERT INTO SPECTACLE (nom, style, url, date, duree, annule, description, lieu, soiree) VALUES (:nom, :style, :url, :date, :duree, :annule, :description, :lieu, :soiree)');
@@ -471,8 +473,8 @@ class NRVRepository
     public function addSoiree(Soiree $soiree): int
     {
         $stmt = $this->pdo->prepare('SELECT ID FROM SOIREE WHERE NOM=:nom');
-        $stmt->execute(['nom'=>$soiree->getNom()]);
-        if(is_array($stmt->fetch())){
+        $stmt->execute(['nom' => $soiree->getNom()]);
+        if (is_array($stmt->fetch())) {
             throw new SoireeAssignationException("Une soiree de ce nom existe déjà");
         }
         $stmt = $this->pdo->prepare('INSERT INTO SOIREE (nom, theme, date, lieu) VALUES (:nom, :theme, :date, :lieu)');
@@ -493,6 +495,12 @@ class NRVRepository
      */
     public function addArtiste(string $artiste): int
     {
+        $stmt = $this->pdo->prepare('SELECT ID FROM ARTISTE WHERE NOMARTISTE=:nom');
+        $stmt->execute(['nom' => $artiste]);
+        if (is_array($stmt->fetch())) {
+            throw new ArtisteDuplicationException("Un Artiste de ce nom existe déjà");
+        }
+
         $stmt = $this->pdo->prepare('INSERT INTO ARTISTE (nomArtiste) VALUES (:nomArtiste)');
         $stmt->execute([
             'nomArtiste' => $artiste
@@ -508,6 +516,12 @@ class NRVRepository
      */
     public function addLieu(Lieu $lieu): int
     {
+        $stmt = $this->pdo->prepare('SELECT ID FROM LIEU WHERE NOM=:nom');
+        $stmt->execute(['nom' => $lieu->getAdresse()]);
+        if (is_array($stmt->fetch())) {
+            throw new LieuDuplicationException("Ce lieu existe déjà");
+        }
+
         $stmt = $this->pdo->prepare('INSERT INTO LIEU (nom, adresse, nbpldeb, nbplass) VALUES (:nom, :adresse, :nbpldeb, :nbplass)');
         $stmt->execute([
             'nom' => $lieu->getNom(),
@@ -644,7 +658,7 @@ class NRVRepository
     }
 
     /**
-     * ajoute une image à un lieu 
+     * ajoute une image à un lieu
      * @param int $idLieu
      * @param array $idImage
      */
@@ -659,7 +673,6 @@ class NRVRepository
             ]);
         }
     }
-
 
 
     /**

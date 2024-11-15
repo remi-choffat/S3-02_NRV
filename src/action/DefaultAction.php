@@ -34,7 +34,7 @@ class DefaultAction extends Action
                     <h2 class="subtitle">🎶 Les artistes</h2>
                     <p>Une programmation explosive mêlant talents locaux, stars internationales et pépites émergentes.</p>
                     <h2 class="subtitle">🌟 Infos pratiques</h2>
-                    <p>Tout ce que vous devez savoir pour profiter pleinement du festival ce trouve sur le site.</p>
+                    <p>Tout ce que vous devez savoir pour profiter pleinement du festival se trouve sur le site.</p>
                 <p class="cta">
                     Préparez-vous à vibrer, chanter, danser et célébrer la musique dans une ambiance festive et conviviale. 
                     <strong>Nancy Rock Vibrations</strong> n'attend plus que vous !
