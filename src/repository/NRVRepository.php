@@ -611,7 +611,7 @@ class NRVRepository
     /**
      * ajoute une image à un spectacle
      * @param int $idSpectacle
-     * @param int $idImage
+     * @param array $idImage
      */
     public function addImagesToSpectacle(int $idSpectacle, array $images): void
     {
@@ -629,7 +629,7 @@ class NRVRepository
     /**
      * ajoute une image à une soirée
      * @param int $idSoiree
-     * @param int $idImage
+     * @param array $idImage
      */
     public function addImagesToSoiree(int $idSoiree, array $images): void
     {
@@ -642,6 +642,24 @@ class NRVRepository
             ]);
         }
     }
+
+    /**
+     * ajoute une image à un lieu 
+     * @param int $idLieu
+     * @param array $idImage
+     */
+    public function addImageToLieu(int $idLieu, array $images): void
+    {
+        $stmt = $this->pdo->prepare('INSERT INTO IMAGELIEU (idi, idl) VALUES (:idi, :idl)');
+        foreach ($images as $image) {
+            $idImage = $this->getIdImage($image);
+            $stmt->execute([
+                'idi' => $idImage,
+                'idl' => $idLieu
+            ]);
+        }
+    }
+
 
 
     /**

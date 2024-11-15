@@ -14,13 +14,18 @@ use iutnc\nrv\repository\NRVRepository;
  */
 class AjouterLieuAction extends Action
 {
-
     /**
      * Retourne le formulaire d'ajout d'un lieu
      * @return string Formulaire d'ajout d'un lieu
      */
     private function getAddLieu(): string
     {
+        $repo = NRVRepository::getInstance();
+        $images = $repo->getImages();
+        $imageOptions = "";
+        foreach ($images as $image) {
+            $imageOptions .= "<option value='$image' data-image='resources/images/$image'>$image</option>";
+        }
         return <<<HTML
     <section class="section">
         <h1 class="title">Ajouter un lieu</h1>
@@ -49,6 +54,18 @@ class AjouterLieuAction extends Action
                     <input class="input" id="nbplass" type="number" name="nbplass" required>
                 </div>
             </div>
+            <div class="field">
+                <label class="label" for="images">Images</label>
+                <div class="image-field">
+                    <div class="control select is-multiple">
+                        <select class="input" id="images" name="images[]" multiple>
+                            $imageOptions
+                        </select>
+                    </div>
+                    <!-- Image de prévisualisation -->
+                    <img id="imagePreview" class="preview-image" src="" alt="Prévisualisation de l'image">
+                </div>
+            </div>
             <br/>
             <div class="field">
                 <div class="control">
@@ -57,6 +74,7 @@ class AjouterLieuAction extends Action
             </div>
         </form>
 </section>
+<script src="resources/js/hoverImage.js"></script>
 HTML;
     }
 
@@ -76,13 +94,15 @@ HTML;
         $adresse = filter_var($_POST['adresse'], FILTER_SANITIZE_SPECIAL_CHARS);
         $nbpldeb = filter_var($_POST['nbpldeb'], FILTER_SANITIZE_NUMBER_INT);
         $nbplass = filter_var($_POST['nbplass'], FILTER_SANITIZE_NUMBER_INT);
-
+        $images = $_POST['images'];
         try {
             // Crée un objet lieu
             $lieu = new Lieu(null, $nom, $adresse, $nbpldeb, $nbplass);
             $repo = NRVRepository::getInstance();
             // Ajoute le lieu à la base de données et récupère son identifiant
             $lieu->setId($repo->addLieu($lieu));
+            // ajoute les images du lieu
+            $repo->addImageToLieu($lieu->getId(), $images);
             // Renvoie un message de succès
             return "<div class='notification is-success'>Lieu ajouté avec succès</div>";
         } catch (Exception $e) {

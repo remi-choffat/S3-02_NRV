@@ -108,7 +108,7 @@ class AjouterSpectacleAction extends Action
             <div class="field">
                 <label class="label" for="video_url">URL de la vidéo</label>
                 <div class="control">
-                    <input class="input" type="url" id="video_url" name="video_url" placeholder="https://example.com/video.mp4" required>
+                    <input class="input" type="url" id="video_url" name="video_url" placeholder="https://example.com/video.mp4">
                 </div>
             </div>
             <div class="field">
@@ -166,8 +166,8 @@ HTML;
             $artistes = [];
         } else {
             $artistes = array_map('intval', $_POST['artistes']);
-            $images = $_POST['images'];
         }
+        $images = $_POST['images'];
         try {
             // Crée un objet spectacle
             $spectacle = new Spectacle(null, $nom, new DateTime($date), $duree, $artistes, $style, new Lieu($lieu, '', '', 0, 0), $description, false,$urlvideo,$soiree);
