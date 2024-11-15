@@ -42,9 +42,10 @@ class AjouterSpectacleAction extends Action
         foreach ($artistes as $artiste) {
             $artisteOptions .= "<option value='{$artiste->getId()}'>{$artiste->getNomArtiste()}</option>";
         }
+
         $imageOptions = "";
         foreach ($images as $image) {
-            $imageOptions .= "<option value='$image' data-image='images/$image'>$image</option>";
+            $imageOptions .= "<option value='$image' data-image='resources/images/$image'>$image</option>";
         }
 
 
@@ -94,13 +95,15 @@ class AjouterSpectacleAction extends Action
             </div>
             <div class="field">
                 <label class="label" for="images">Images</label>
-                <div class="control select is-multiple">
-                    <select class="input" id="images" name="images[]" multiple>
-                        $imageOptions
-                    </select>
+                <div class="image-field">
+                    <div class="control select is-multiple">
+                        <select class="input" id="images" name="images[]" multiple>
+                            $imageOptions
+                        </select>
+                    </div>
+                    <!-- Image de prévisualisation -->
+                    <img id="imagePreview" class="preview-image" src="" alt="Prévisualisation de l'image">
                 </div>
-                  <!-- Image de prévisualisation -->
-                  <img id="imagePreview" class="preview-image" src="" alt="Prévisualisation de l'image">
             </div>
             <div class="field">
                 <label class="label" for="description">Description</label>
@@ -124,7 +127,7 @@ class AjouterSpectacleAction extends Action
             </div>
         </form>
 </section>
-<script src="src/js/hoverImage.js"></script>
+<script src="resources/js/hoverImage.js"></script>
 HTML;
     }
 

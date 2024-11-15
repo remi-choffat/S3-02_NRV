@@ -64,7 +64,7 @@ class Soiree
     {
         $imagesHTML = [];
         foreach ($this->images as $image) {
-            $imagesHTML[] = "<img src='images/{$image}' alt='Image de la soirée {$this->nom}' class='soiree-image'>";
+            $imagesHTML[] = "<img src='resources/images/{$image}' alt='Image de la soirée {$this->nom}' class='soiree-image'>";
         }
         return $imagesHTML;
     }
@@ -79,7 +79,7 @@ class Soiree
         if (empty($this->images)) {
             return "";
         } else {
-            return "<img src='images/{$this->images[0]}' alt='Image de la soirée {$this->nom}' class='soiree-image-resume'>";
+            return "<img src='resources/images/{$this->images[0]}' alt='Image de la soirée {$this->nom}' class='soiree-image-resume'>";
         }
     }
 

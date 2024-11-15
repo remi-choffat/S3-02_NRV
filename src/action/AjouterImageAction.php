@@ -68,13 +68,13 @@ class AjouterImageAction extends Action
             return "<div class='notification is-warning'>Tous les champs obligatoires ne sont pas remplis</div>";
         }
         //filtre les données
-        $filename = filter_var($_POST['file_name'], FILTER_SANITIZE_SPECIAL_CHARS). '.' . pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION) . '.' . pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+        $filename = filter_var($_POST['file_name'], FILTER_SANITIZE_SPECIAL_CHARS) . '.' . pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
         //validation du fichier : vérifie si le fichier est une image et si son extension est valide
         if (in_array($_FILES['image']['type'], ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']) &&
             preg_match('/\.(gif|png|jpg)$/i', $_FILES['image']['name'])) {
 
             // Si fichier valide alors upload
-            $uploaddir = 'images/';
+            $uploaddir = 'resources/images/';
 
             // Si le dossier n'existe pas, le crée
             if (!file_exists($uploaddir)) {

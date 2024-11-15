@@ -46,10 +46,11 @@ class ModifierSpectacleAction extends Action
             $selected = in_array($artiste, $repo->fetchArtistes($id)) ? 'selected' : '';
             $artisteOptions .= "<option value='{$artiste->getId()}' $selected>{$artiste->getNomArtiste()}</option>";
         }
+
         $imageOptions = "";
         foreach ($images as $image) {
             $selected = in_array($image, $repo->getImagesSpectacle($id)) ? 'selected' : '';
-            $imageOptions .= "<option value='{$image}' $selected data-image='images/$image'>{$image}</option>";
+            $imageOptions .= "<option value='{$image}' $selected data-image='resources/images/$image'>{$image}</option>";
         }
 
         return <<<HTML
@@ -98,13 +99,15 @@ class ModifierSpectacleAction extends Action
             </div>
             <div class="field">
                 <label class="label" for="images">Images</label>
-                <div class="control select is-multiple">
-                    <select class="input" id="images" name="images[]" multiple>
-                        $imageOptions
-                    </select>
+                <div class="image-field">
+                    <div class="control select is-multiple">
+                        <select class="input" id="images" name="images[]" multiple>
+                            $imageOptions
+                        </select>
+                    </div>
+                    <!-- Image de prévisualisation -->
+                    <img id="imagePreview" class="preview-image" src="" alt="Prévisualisation de l'image">
                 </div>
-                <!-- Image de prévisualisation -->
-                <img id="imagePreview" class="preview-image" src="" alt="Prévisualisation de l'image">
             </div>
             <div class="field">
                 <label class="label" for="description">Description</label>
@@ -128,7 +131,7 @@ class ModifierSpectacleAction extends Action
             </div>
         </form>
 </section>
-<script src="src/js/hoverImage.js"></script>
+<script src="resources/js/hoverImage.js"></script>
 HTML;
     }
 

@@ -117,6 +117,7 @@ nav ul li div button {
 .similar-spectacles {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 10px;
 }
 
 .similar-spectacles .box {
@@ -296,7 +297,11 @@ html, body {
 .star.empty::before {
     content: "☆";
 }
-.field {
+
+
+/* Images */
+
+.image-field {
     display: flex; /* Active le flexbox */
     align-items: center; /* Aligne verticalement */
     gap: 20px; /* Espace entre le select et l'image */
@@ -309,7 +314,6 @@ html, body {
     object-fit: cover; /* Gère l'ajustement de l'image */
 }
 
-/* Images */
 .spectacle-image, .soiree-image {
     max-width: 250px !important;
     width: 250px !important;
@@ -341,4 +345,9 @@ html, body {
     margin-left: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.spectacle-image:hover, .soiree-image:hover {
+    transform: scale(1.03);
+    transition: transform 0.5s;
 }

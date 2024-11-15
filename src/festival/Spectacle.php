@@ -88,7 +88,7 @@ class Spectacle
     {
         $imagesHTML = [];
         foreach ($this->images as $image) {
-            $imagesHTML[] = "<img src='images/{$image}' alt='Image du spectacle {$this->titre}' class='spectacle-image'>";
+            $imagesHTML[] = "<img src='resources/images/{$image}' alt='Image du spectacle {$this->titre}' class='spectacle-image'>";
         }
         return $imagesHTML;
     }
@@ -103,7 +103,7 @@ class Spectacle
         if (empty($this->images)) {
             return "";
         } else {
-            return "<img src='images/{$this->images[0]}' alt='Image du spectacle {$this->titre}' class='spectacle-image'>";
+            return "<img src='resources/images/{$this->images[0]}' alt='Image du spectacle {$this->titre}' class='spectacle-image-resume'>";
         }
     }
 
@@ -345,8 +345,7 @@ HTML;
         // Retrieve the first image
         $firstImageHTML = "";
         if (!empty($this->images)) {
-            $firstImage = $this->images[0];
-            $firstImageHTML = "<img src='images/{$firstImage}' alt='Image du spectacle {$this->titre}' class='spectacle-image-resume'>";
+            $firstImageHTML = $this->getFirstImageHTML();
         }
 
         return <<<HTML
